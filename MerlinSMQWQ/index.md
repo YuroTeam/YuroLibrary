@@ -15,6 +15,6 @@
 - [[Python/index|Python]]
 - [[Soul/index|Soul]]
 - [[Web3/index|Web3]]
-- [[zellij和helix/index|zellij和helix]]
+- [[工具/index|zellij和helix]]
 
 

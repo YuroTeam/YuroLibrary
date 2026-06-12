@@ -1,3 +1,17 @@
+---
+tags:
+  - 网络协议/icmp
+  - wireshark
+  - 以太网
+  - ttl
+  - 网络抓包
+  - 计算机网络
+  - 数据链路层
+  - mac地址
+  - ipv4
+  - ping命令
+---
+
 在 WireShark 中抓取 `ping baidu.com` 时的 ICMP 数据包
 
 WireShark 是非常强大的网络抓包工具，并且被广泛用于网络安全等领域，是学校计算机网络的好工具。
