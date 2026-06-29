@@ -1,4 +1,4 @@
-## ArkTS（上）
+## ArkTS_P1
 
 ## 《鸿蒙 HarmonyOS 应用开发基础》
 
