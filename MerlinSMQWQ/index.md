@@ -7,7 +7,7 @@
 - [[高等数学/index|高等数学]]
 - [[知识星球/index|知识星球]]
 - [[深度学习神经网络/index|深度学习神经网络]]
-- [[408/index|408]]
+- [[计算机基础/index|计算机基础]]
 - Annex
 - [[Excalidraw/index|Excalidraw]]
 - [[novel/index|novel]]
