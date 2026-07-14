@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="980" viewBox="0 0 1180 980" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="p_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1180" height="980" fill="#f8fafc"/>
+
+  <text x="590" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti LLM 提示词设计</text>
+  <text x="590" y="72" text-anchor="middle" font-size="14" fill="#64748b">集中管理 · 结构化输出 · 密集的提示词工程手法</text>
+
+  <!-- ===== LEFT: call chain ===== -->
+  <text x="50" y="118" font-size="16" font-weight="700" fill="#1e293b">一、调用链：函数(context) → messages → LLM</text>
+
+  <!-- context -->
+  <rect x="50" y="136" width="500" height="66" rx="10" fill="#1e293b"/>
+  <text x="70" y="160" font-size="13.5" font-weight="700" fill="#ffffff">① 准备 context 字典</text>
+  <text x="70" y="182" font-size="11" fill="#cbd5e1" font-family="monospace">episode_content · previous_episodes · nodes ·</text>
+  <text x="70" y="196" font-size="11" fill="#cbd5e1" font-family="monospace">reference_time · entity_types ...</text>
+  <line x1="300" y1="202" x2="300" y2="224" stroke="#475569" stroke-width="2.2" marker-end="url(#p_arrow)"/>
+
+  <!-- prompt_library call -->
+  <rect x="50" y="226" width="500" height="94" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+  <text x="70" y="250" font-size="13.5" font-weight="700" fill="#4338ca">② prompt_library.&lt;任务&gt;.&lt;版本&gt;(context)</text>
+  <text x="70" y="272" font-size="11" fill="#475569" font-family="monospace">prompt_library.extract_edges.edge(context)</text>
+  <text x="70" y="292" font-size="11" fill="#64748b">三层包装：Library → TypeWrapper(任务) → VersionWrapper(版本)</text>
+  <text x="70" y="310" font-size="10.5" fill="#7c3aed">VersionWrapper 自动给 system 追加「Do not escape unicode」</text>
+  <line x1="300" y1="320" x2="300" y2="342" stroke="#475569" stroke-width="2.2" marker-end="url(#p_arrow)"/>
+
+  <!-- messages -->
+  <rect x="50" y="344" width="500" height="86" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="1.6"/>
+  <text x="70" y="368" font-size="13.5" font-weight="700" fill="#334155">③ 返回 list[Message]</text>
+  <rect x="70" y="378" width="200" height="42" rx="6" fill="#fef3c7" stroke="#d97706"/>
+  <text x="170" y="396" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b45309">system</text>
+  <text x="170" y="412" text-anchor="middle" font-size="10" fill="#92400e">人设 + 硬约束</text>
+  <rect x="290" y="378" width="240" height="42" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="410" y="396" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1d4ed8">user</text>
+  <text x="410" y="412" text-anchor="middle" font-size="10" fill="#1e40af">上下文 + 规则 + few-shot</text>
+  <line x1="300" y1="430" x2="300" y2="452" stroke="#475569" stroke-width="2.2" marker-end="url(#p_arrow)"/>
+
+  <!-- LLM + response_model -->
+  <rect x="50" y="454" width="500" height="100" rx="10" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="70" y="478" font-size="13.5" font-weight="700" fill="#6d28d9">④ llm_client.generate_response(messages,</text>
+  <text x="90" y="498" font-size="13.5" font-weight="700" fill="#6d28d9">response_model=ExtractedEdges) 🧠</text>
+  <text x="70" y="522" font-size="11" fill="#475569">Pydantic 模型作为「输出契约」，LLM 被强制返回符合 schema 的 JSON</text>
+  <text x="70" y="542" font-size="11" fill="#a21caf">🔑 Field(description=...) 本身就是提示词的一部分！</text>
+  <line x1="300" y1="554" x2="300" y2="576" stroke="#475569" stroke-width="2.2" marker-end="url(#p_arrow)"/>
+
+  <!-- output -->
+  <rect x="120" y="578" width="360" height="52" rx="10" fill="#0f766e"/>
+  <text x="300" y="602" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">⑤ 直接得到结构化对象</text>
+  <text x="300" y="620" text-anchor="middle" font-size="11" fill="#ccfbf1" font-family="monospace">result.edges → 无需正则解析</text>
+
+  <!-- structured output model box -->
+  <rect x="50" y="656" width="500" height="150" rx="10" fill="#fdf4ff" stroke="#a21caf" stroke-width="1.6"/>
+  <text x="70" y="680" font-size="13" font-weight="700" fill="#86198f">结构化输出模型示例（extract_edges.py）</text>
+  <text x="70" y="702" font-size="10.5" fill="#475569" font-family="monospace">class Edge(BaseModel):</text>
+  <text x="82" y="720" font-size="10.5" fill="#475569" font-family="monospace">source_entity_name: str = Field(...)</text>
+  <text x="82" y="737" font-size="10.5" fill="#475569" font-family="monospace">relation_type: str  # SCREAMING_SNAKE_CASE</text>
+  <text x="82" y="754" font-size="10.5" fill="#475569" font-family="monospace">fact: str</text>
+  <text x="82" y="771" font-size="10.5" fill="#16a34a" font-family="monospace">valid_at / invalid_at  # ISO8601（双时态）</text>
+  <text x="70" y="794" font-size="10.5" fill="#94a3b8">描述会随 schema 发给 LLM，告诉它每个字段填什么、什么格式</text>
+
+  <!-- ===== RIGHT: 8 techniques ===== -->
+  <text x="610" y="118" font-size="16" font-weight="700" fill="#1e293b">二、8 个提示词工程手法 🎨</text>
+
+  <g font-size="11.5">
+    <!-- 1 -->
+    <rect x="610" y="134" width="520" height="66" rx="9" fill="#fff7ed" stroke="#ea580c"/>
+    <text x="626" y="156" font-size="12.5" font-weight="700" fill="#c2410c">① 人设 + 硬约束（system）</text>
+    <text x="626" y="176" fill="#475569">"You are an entity extraction specialist..."</text>
+    <text x="626" y="193" fill="#475569">+ 大写强调禁令 "NEVER extract abstract concepts"</text>
+
+    <!-- 2 -->
+    <rect x="610" y="208" width="520" height="60" rx="9" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="626" y="230" font-size="12.5" font-weight="700" fill="#1d4ed8">② XML 风格分隔符划分区块</text>
+    <text x="626" y="251" fill="#475569" font-family="monospace">&lt;ENTITY TYPES&gt; &lt;PREVIOUS MESSAGES&gt; &lt;CURRENT MESSAGE&gt;</text>
+
+    <!-- 3 -->
+    <rect x="610" y="276" width="520" height="72" rx="9" fill="#fef2f2" stroke="#dc2626"/>
+    <text x="626" y="298" font-size="12.5" font-weight="700" fill="#b91c1c">③ 超长「NEVER extract」排除清单（负面指令）</text>
+    <text x="626" y="318" fill="#475569">代词 · 抽象概念/情绪 · 泛化名词 · 裸称谓(dad→Nisha's dad)</text>
+    <text x="626" y="336" fill="#64748b">LLM 天生爱多抽，反面堵死常见错误比正面说更有效</text>
+
+    <!-- 4 -->
+    <rect x="610" y="356" width="520" height="72" rx="9" fill="#faf5ff" stroke="#7c3aed"/>
+    <text x="626" y="378" font-size="12.5" font-weight="700" fill="#6d28d9">④ 大量 Good/Bad few-shot 示例</text>
+    <text x="626" y="398" fill="#475569">每例同时给「该抽的 + 不该抽的 + 原因」</text>
+    <text x="626" y="416" fill="#64748b">去重：Sam=Sam · NYC=New York City · Java语言≠Java岛</text>
+
+    <!-- 5 -->
+    <rect x="610" y="436" width="520" height="60" rx="9" fill="#f0fdf4" stroke="#16a34a"/>
+    <text x="626" y="458" font-size="12.5" font-weight="700" fill="#15803d">⑤ 编号规则 + 内联 BAD/GOOD 对比</text>
+    <text x="626" y="479" fill="#475569">BAD:"Alice feels happy" → GOOD:"...happy about Bob's promotion"</text>
+
+    <!-- 6 -->
+    <rect x="610" y="504" width="520" height="72" rx="9" fill="#f0fdfa" stroke="#0d9488"/>
+    <text x="626" y="526" font-size="12.5" font-weight="700" fill="#0f766e">⑥ 时态分离——各司其职</text>
+    <text x="626" y="546" fill="#475569">抽实体："Do NOT extract dates — handled separately"</text>
+    <text x="626" y="564" fill="#64748b">抽边才处理时间，用 REFERENCE_TIME 解析「上周」</text>
+
+    <!-- 7 -->
+    <rect x="610" y="584" width="520" height="72" rx="9" fill="#fffbeb" stroke="#f59e0b"/>
+    <text x="626" y="606" font-size="12.5" font-weight="700" fill="#b45309">⑦ 防幻觉 + 拒绝泛化</text>
+    <text x="626" y="626" fill="#475569">"names not in the list will cause the edge to be rejected"</text>
+    <text x="626" y="644" fill="#64748b">"NEVER generalize 'Gamecube' to 'gaming console'" 保信息密度</text>
+
+    <!-- 8 -->
+    <rect x="610" y="664" width="520" height="60" rx="9" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="626" y="686" font-size="12.5" font-weight="700" fill="#334155">⑧ 可复用提示片段（snippets.py）</text>
+    <text x="626" y="707" fill="#475569">summary_instructions 被多个摘要类 prompt 共享</text>
+  </g>
+
+  <!-- prompt family bottom -->
+  <rect x="610" y="736" width="520" height="70" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="626" y="758" font-size="12.5" font-weight="700" fill="#1e293b">提示词全家福（命名规律）</text>
+  <text x="626" y="779" font-size="11" fill="#475569"><tspan font-weight="700" fill="#6d28d9">extract_*</tspan> 抽结构 ·　<tspan font-weight="700" fill="#0d9488">dedupe_*</tspan> 去重消解 ·　<tspan font-weight="700" fill="#b45309">summarize_*</tspan> 浓缩摘要</text>
+  <text x="626" y="797" font-size="10.5" fill="#94a3b8">正好对应写入管道的三大动作</text>
+
+  <!-- bottom takeaway -->
+  <rect x="50" y="836" width="1080" height="112" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="70" y="862" font-size="14" font-weight="700" fill="#b45309">💡 核心思想</text>
+  <text x="70" y="886" font-size="12.5" fill="#334155">目标：让 LLM 输出<tspan font-weight="700">稳定、结构化、信息密集、不污染图谱</tspan>。</text>
+  <text x="70" y="908" font-size="12.5" fill="#334155">把「抽实体/抽边/抽时间/去重/摘要」拆成独立 prompt，每个只干一件事 → 更稳、更好调优（呼应写入管道分步设计）。</text>
+  <text x="70" y="932" font-size="12.5" font-weight="600" fill="#b45309">Pydantic 模型的 Field 描述本身就是提示词 —— 写模型和写 prompt 是一体的。</text>
+</svg>

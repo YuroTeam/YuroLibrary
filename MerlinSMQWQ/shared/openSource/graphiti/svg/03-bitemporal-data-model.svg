@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="960" viewBox="0 0 1160 960" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="bt_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+    <marker id="bt_axis" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#334155"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1160" height="960" fill="#f8fafc"/>
+
+  <text x="580" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 双时态数据模型</text>
+  <text x="580" y="72" text-anchor="middle" font-size="14" fill="#64748b">3 类节点 + 3 类边，灵魂是 EntityEdge 上的两条时间轴</text>
+
+  <!-- ===== PART 1: data model graph ===== -->
+  <text x="60" y="118" font-size="16" font-weight="700" fill="#1e293b">一、图的构成</text>
+
+  <!-- Episodic node -->
+  <rect x="70" y="140" width="200" height="96" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+  <text x="170" y="166" text-anchor="middle" font-size="15" font-weight="700" fill="#4338ca">EpisodicNode</text>
+  <text x="170" y="186" text-anchor="middle" font-size="11.5" fill="#475569">:Episodic · 原始输入</text>
+  <text x="170" y="204" text-anchor="middle" font-size="10.5" fill="#64748b">content · source · valid_at</text>
+  <text x="170" y="222" text-anchor="middle" font-size="10.5" fill="#94a3b8">❌ 无嵌入</text>
+
+  <!-- MENTIONS -->
+  <line x1="270" y1="188" x2="440" y2="188" stroke="#475569" stroke-width="2" marker-end="url(#bt_arrow)"/>
+  <text x="355" y="180" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">:MENTIONS</text>
+  <text x="355" y="202" text-anchor="middle" font-size="10" fill="#94a3b8">情节提到实体</text>
+
+  <!-- Entity node -->
+  <rect x="440" y="140" width="200" height="96" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="540" y="166" text-anchor="middle" font-size="15" font-weight="700" fill="#6d28d9">EntityNode</text>
+  <text x="540" y="186" text-anchor="middle" font-size="11.5" fill="#475569">:Entity · 抽出的实体</text>
+  <text x="540" y="204" text-anchor="middle" font-size="10.5" fill="#64748b">summary · attributes</text>
+  <text x="540" y="222" text-anchor="middle" font-size="10.5" fill="#16a34a">✅ name_embedding</text>
+
+  <!-- RELATES_TO self-ish to second entity -->
+  <line x1="640" y1="188" x2="810" y2="188" stroke="#a21caf" stroke-width="2.4" marker-end="url(#bt_arrow)"/>
+  <text x="725" y="180" text-anchor="middle" font-size="11.5" font-weight="700" fill="#a21caf">:RELATES_TO</text>
+  <text x="725" y="202" text-anchor="middle" font-size="10" fill="#a21caf">★事实边(双时态)</text>
+
+  <!-- Entity node 2 -->
+  <rect x="810" y="140" width="200" height="96" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="910" y="166" text-anchor="middle" font-size="15" font-weight="700" fill="#6d28d9">EntityNode</text>
+  <text x="910" y="186" text-anchor="middle" font-size="11.5" fill="#475569">:Entity</text>
+  <text x="910" y="206" text-anchor="middle" font-size="10.5" fill="#16a34a">✅ fact_embedding</text>
+  <text x="910" y="222" text-anchor="middle" font-size="10" fill="#94a3b8">（挂在边上）</text>
+
+  <!-- Community node -->
+  <rect x="440" y="270" width="200" height="90" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <text x="540" y="296" text-anchor="middle" font-size="15" font-weight="700" fill="#0f766e">CommunityNode</text>
+  <text x="540" y="316" text-anchor="middle" font-size="11.5" fill="#475569">:Community · 实体聚类</text>
+  <text x="540" y="336" text-anchor="middle" font-size="10.5" fill="#16a34a">✅ name_embedding</text>
+  <line x1="540" y1="270" x2="540" y2="236" stroke="#0d9488" stroke-width="2" marker-end="url(#bt_arrow)"/>
+  <text x="556" y="258" font-size="11" font-weight="600" fill="#0f766e">:HAS_MEMBER</text>
+
+  <!-- embedding rule note -->
+  <rect x="700" y="270" width="310" height="90" rx="10" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="716" y="292" font-size="12.5" font-weight="700" fill="#059669">🔑 嵌入向量只挂 3 处</text>
+  <text x="716" y="313" font-size="11.5" fill="#475569">EntityNode.name_embedding</text>
+  <text x="716" y="331" font-size="11.5" fill="#475569">CommunityNode.name_embedding</text>
+  <text x="716" y="349" font-size="11.5" fill="#475569">EntityEdge.fact_embedding（供语义检索）</text>
+
+  <!-- divider -->
+  <line x1="60" y1="392" x2="1100" y2="392" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- ===== PART 2: the two time axes ===== -->
+  <text x="60" y="424" font-size="16" font-weight="700" fill="#1e293b">二、双时态：EntityEdge 上的两条独立时间轴</text>
+  <text x="60" y="446" font-size="12.5" fill="#64748b">例：[Alice] —WORKS_AT→ [Acme公司]　（2020-01 入职，2023-06 离职；但你 2026-07 才把这段历史喂进系统）</text>
+
+  <!-- Event axis -->
+  <rect x="60" y="466" width="1040" height="150" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="80" y="492" font-size="14.5" font-weight="700" fill="#15803d">🟢 事件时间轴 (Event / Valid Time)</text>
+  <text x="80" y="512" font-size="12" fill="#475569">回答：「这件事在现实世界里，从何时到何时是真的？」——可以早于入库，甚至是未来</text>
+  <!-- axis line -->
+  <line x1="130" y1="576" x2="1040" y2="576" stroke="#334155" stroke-width="2" marker-end="url(#bt_axis)"/>
+  <text x="1048" y="580" font-size="11" fill="#64748b">现实时间</text>
+  <!-- valid_at point -->
+  <circle cx="300" cy="576" r="7" fill="#16a34a"/>
+  <line x1="300" y1="576" x2="300" y2="548" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <text x="300" y="542" text-anchor="middle" font-size="11.5" font-weight="700" fill="#15803d">valid_at</text>
+  <text x="300" y="600" text-anchor="middle" font-size="11" fill="#475569">2020-01 入职</text>
+  <text x="300" y="614" text-anchor="middle" font-size="10" fill="#94a3b8">事实开始为真</text>
+  <!-- invalid_at point -->
+  <circle cx="720" cy="576" r="7" fill="#16a34a"/>
+  <line x1="720" y1="576" x2="720" y2="548" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <text x="720" y="542" text-anchor="middle" font-size="11.5" font-weight="700" fill="#15803d">invalid_at</text>
+  <text x="720" y="600" text-anchor="middle" font-size="11" fill="#475569">2023-06 离职</text>
+  <text x="720" y="614" text-anchor="middle" font-size="10" fill="#94a3b8">事实停止为真</text>
+  <!-- valid interval highlight -->
+  <rect x="300" y="571" width="420" height="10" rx="5" fill="#86efac" opacity="0.6"/>
+
+  <!-- System axis -->
+  <rect x="60" y="632" width="1040" height="150" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="80" y="658" font-size="14.5" font-weight="700" fill="#1d4ed8">🔵 系统时间轴 (System / Transaction Time)</text>
+  <text x="80" y="678" font-size="12" fill="#475569">回答：「系统在何时得知、又在何时推翻了这条记录？」——永远是系统操作的实际时刻</text>
+  <line x1="130" y1="742" x2="1040" y2="742" stroke="#334155" stroke-width="2" marker-end="url(#bt_axis)"/>
+  <text x="1048" y="746" font-size="11" fill="#64748b">系统时间</text>
+  <!-- created_at -->
+  <circle cx="820" cy="742" r="7" fill="#2563eb"/>
+  <line x1="820" y1="742" x2="820" y2="714" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <text x="820" y="708" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1d4ed8">created_at</text>
+  <text x="820" y="766" text-anchor="middle" font-size="11" fill="#475569">2026-07 入库</text>
+  <text x="820" y="780" text-anchor="middle" font-size="10" fill="#94a3b8">系统得知这条记录</text>
+  <!-- expired_at -->
+  <circle cx="960" cy="742" r="7" fill="#2563eb"/>
+  <line x1="960" y1="742" x2="960" y2="714" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <text x="960" y="708" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1d4ed8">expired_at</text>
+  <text x="960" y="766" text-anchor="middle" font-size="11" fill="#475569">被新情节推翻时</text>
+  <text x="960" y="780" text-anchor="middle" font-size="10" fill="#94a3b8">记录被作废（不删除）</text>
+  <!-- note: created far right of valid_at -->
+  <text x="300" y="742" text-anchor="middle" font-size="10" fill="#94a3b8">← valid_at 在 2020</text>
+  <line x1="360" y1="742" x2="800" y2="742" stroke="#93c5fd" stroke-width="1" stroke-dasharray="2 3"/>
+
+  <!-- ===== bottom takeaway ===== -->
+  <rect x="60" y="800" width="1040" height="120" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="80" y="826" font-size="14" font-weight="700" fill="#b45309">💡 为什么要分两条轴？—— 支持两种「时间旅行」</text>
+  <text x="80" y="850" font-size="12.5" fill="#334155">① 「2021 年时，现实世界的真相是什么？」→ 按事件时间过滤（valid_at ≤ 2021 &lt; invalid_at）</text>
+  <text x="80" y="872" font-size="12.5" fill="#334155">② 「系统在 2021 年时，以为真相是什么？」→ 按系统时间过滤（created_at ≤ 2021 &lt; expired_at）</text>
+  <text x="80" y="900" font-size="12.5" font-weight="600" fill="#b45309">关键：事实更新时旧边不删除，只打 expired_at / invalid_at 失效标记 → 完整审计轨迹，可任意回溯</text>
+</svg>

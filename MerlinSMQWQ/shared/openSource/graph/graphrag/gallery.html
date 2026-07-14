@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GraphRAG 架构图集</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#0f172a; --sub:#64748b; --line:#e2e8f0;
+    --accent:#0d9488; --shadow:0 1px 3px rgba(15,23,42,.08),0 8px 24px rgba(15,23,42,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1220; --card:#131c2e; --ink:#e8eef7; --sub:#94a3b8; --line:#22304a;
+      --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Segoe UI',system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1280px;margin:0 auto;padding:40px 24px 80px}
+  header h1{font-size:34px;font-weight:800;margin:0 0 8px;letter-spacing:.5px}
+  header p{margin:0;color:var(--sub);font-size:15px;line-height:1.6}
+  .hint{margin-top:14px;display:inline-block;font-size:13px;color:var(--sub);
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+  h2.sec{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--accent);margin:48px 0 4px}
+  h2.sec small{display:block;font-weight:500;letter-spacing:normal;text-transform:none;
+    color:var(--sub);font-size:13px;margin-top:4px}
+  .grid{display:grid;gap:22px;margin-top:22px;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .grid.feature{grid-template-columns:1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;box-shadow:var(--shadow);cursor:zoom-in;transition:transform .15s ease,box-shadow .15s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:0 4px 8px rgba(15,23,42,.12),0 16px 40px rgba(15,23,42,.12)}
+  .thumb{height:200px;background:#fff;border-bottom:1px solid var(--line);overflow:hidden;position:relative}
+  .card.big .thumb{height:340px}
+  .thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .meta{padding:14px 16px 16px}
+  .meta .no{display:inline-block;font-size:11px;font-weight:800;color:#fff;
+    background:var(--accent);border-radius:6px;padding:2px 8px;margin-bottom:8px}
+  .meta h3{margin:0 0 4px;font-size:16px;font-weight:700}
+  .meta p{margin:0;font-size:12.5px;color:var(--sub);line-height:1.5}
+  footer{margin-top:64px;color:var(--sub);font-size:12.5px;line-height:1.7;border-top:1px solid var(--line);padding-top:20px}
+  footer code{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12px}
+  /* lightbox */
+  .lb{position:fixed;inset:0;background:rgba(6,10,20,.82);backdrop-filter:blur(3px);
+    display:none;z-index:50;padding:24px}
+  .lb.open{display:flex;flex-direction:column}
+  .lb-bar{flex:0 0 auto;display:flex;align-items:center;gap:14px;color:#e8eef7;padding:4px 6px 14px}
+  .lb-bar h3{margin:0;font-size:16px;font-weight:700}
+  .lb-bar .sp{flex:1}
+  .lb-bar a,.lb-bar button{color:#cbd5e1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+    border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;text-decoration:none;font-family:inherit}
+  .lb-bar a:hover,.lb-bar button:hover{background:rgba(255,255,255,.16);color:#fff}
+  .lb-stage{flex:1 1 auto;overflow:auto;border-radius:12px;background:#fff;
+    display:flex;justify-content:center;align-items:flex-start}
+  .lb-stage img{width:100%;max-width:1440px;height:auto;display:block}
+  .kbd{font-size:11px;color:#94a3b8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>GraphRAG 架构图集</h1>
+    <p>Microsoft GraphRAG v3.1.0 的源码级结构图 · 全程用同一个示例（Alice / Acme Corp / Berlin）串起来。<br>点任意一张看大图；每张图都能独立看懂，不用读文档。</p>
+    <span class="hint">💡 点缩略图放大 · Esc 或点空白关闭 · 可「在新标签打开」看原始 SVG</span>
+  </header>
+
+  <h2 class="sec">总览<small>一屏看全 GraphRAG 的完整链路</small></h2>
+  <div class="grid feature" id="grid-overview"></div>
+
+  <h2 class="sec">核心机制 · 真实数据流详细版<small>①→⑤ 五个环节，每张带具体数据演算</small></h2>
+  <div class="grid" id="grid-core"></div>
+
+  <h2 class="sec">工程骨架<small>系统怎么搭起来的（分层 / 管道 / 检索 / 中间件）</small></h2>
+  <div class="grid" id="grid-arch"></div>
+
+  <footer>
+    图集共 10 张 SVG，位于 <code>svg/</code> 目录 · 配套文字详解见各 <code>core-0X.md</code>（可选读）· 总入口 <code>README.md</code>。<br>
+    基于 GraphRAG 3.1.0 源码实读绘制。
+  </footer>
+</div>
+
+<div class="lb" id="lb" aria-hidden="true">
+  <div class="lb-bar">
+    <h3 id="lb-title"></h3>
+    <span class="kbd" id="lb-sub"></span>
+    <span class="sp"></span>
+    <a id="lb-open" href="#" target="_blank" rel="noopener">在新标签打开 ↗</a>
+    <button id="lb-close">关闭 ✕</button>
+  </div>
+  <div class="lb-stage"><img id="lb-img" alt=""></div>
+</div>
+
+<script>
+const OVERVIEW = [
+  {f:"00-overview-map.svg", no:"总览", t:"GraphRAG 全景图", d:"从文本到有据问答：索引建库 → 制品层 → 四种检索，一屏看全。"}
+];
+const CORE = [
+  {f:"08-graph-extraction-gleaning.svg", no:"① 图 08", t:"LLM 图抽取", d:"抽取→gleaning 补抽→跨块合并(权重相加)→描述滚动摘要。含真实记录与 9+8=17 演算。"},
+  {f:"09-hierarchical-leiden.svg", no:"② 图 09", t:"层次化 Leiden 聚类", d:"调用→递归细分成多层社区树→确定性三层→communities 表。Alice 下钻路径高亮。"},
+  {f:"05-community-report-substitution.svg", no:"③ 图 05 ★", t:"社区报告 · 自底向上递归摘要", d:"核心创新。超预算时用子报告替换原始数据：20000→8400→3750 token 演算。"},
+  {f:"06-global-mapreduce.svg", no:"④ 图 06", t:"Global Search · Map-Reduce", d:"报告洗牌切批→分批打分(Map)→过滤排序截断合成(Reduce)。三批真实要点+分数。"},
+  {f:"07-drift-reasoning-tree.svg", no:"⑤ 图 07", t:"DRIFT · 多跳推理树", d:"primer 定调→问题树逐轮下钻→reduce 汇总。含 while 循环注释与三个反直觉点。"}
+];
+const ARCH = [
+  {f:"01-overview.svg", no:"图 01", t:"总体分层架构", d:"配置聚合根 · CLI/API · 索引与查询两大子系统 · 可插拔后端。"},
+  {f:"02-indexing-pipeline.svg", no:"图 02", t:"索引管道", d:"有序 workflow 列表；workflow 间通过共享表存储通信；Fast/更新变体。"},
+  {f:"03-query-methods.svg", no:"图 03", t:"四种检索策略", d:"Local / Global / DRIFT / Basic 的机制与适用问题一览。"},
+  {f:"04-llm-middleware.svg", no:"图 04", t:"LLM 中间件管道", d:"cache / retry / ratelimit / metrics / logging 层层包裹，顺序精心设计。"}
+];
+
+function card(item, big){
+  const el = document.createElement('div');
+  el.className = 'card' + (big ? ' big' : '');
+  el.innerHTML =
+    `<div class="thumb"><img loading="lazy" src="svg/${item.f}" alt="${item.t}"></div>`+
+    `<div class="meta"><span class="no">${item.no}</span>`+
+    `<h3>${item.t}</h3><p>${item.d}</p></div>`;
+  el.addEventListener('click', ()=>openLb(item));
+  return el;
+}
+function fill(id, arr, big){
+  const g = document.getElementById(id);
+  arr.forEach(it => g.appendChild(card(it, big)));
+}
+fill('grid-overview', OVERVIEW, true);
+fill('grid-core', CORE, false);
+fill('grid-arch', ARCH, false);
+
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lb-img');
+const lbTitle = document.getElementById('lb-title');
+const lbSub = document.getElementById('lb-sub');
+const lbOpen = document.getElementById('lb-open');
+function openLb(it){
+  lbImg.src = 'svg/'+it.f;
+  lbTitle.textContent = it.no + ' · ' + it.t;
+  lbSub.textContent = it.f;
+  lbOpen.href = 'svg/'+it.f;
+  lb.classList.add('open');
+  lb.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  lb.querySelector('.lb-stage').scrollTop = 0;
+}
+function closeLb(){
+  lb.classList.remove('open');
+  lb.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  lbImg.src='';
+}
+document.getElementById('lb-close').addEventListener('click', closeLb);
+lb.addEventListener('click', e=>{ if(e.target===lb || e.target.classList.contains('lb-stage')) closeLb(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLb(); });
+</script>
+</body>
+</html>

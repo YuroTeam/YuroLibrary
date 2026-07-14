@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1000" viewBox="0 0 1180 1000" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="b_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1180" height="1000" fill="#f8fafc"/>
+
+  <text x="590" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 批量导入 · add_episode_bulk</text>
+  <text x="590" y="72" text-anchor="middle" font-size="14" fill="#64748b">并行 + 批量去重 换吞吐量，代价是牺牲批内因果可见性</text>
+
+  <!-- ===== compare: serial vs bulk ===== -->
+  <text x="40" y="112" font-size="16" font-weight="700" fill="#1e293b">一、为什么批量更快：重排处理维度</text>
+
+  <!-- single serial -->
+  <rect x="40" y="128" width="540" height="150" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="60" y="152" font-size="13.5" font-weight="700" fill="#b91c1c">单条模式（串行）</text>
+  <text x="60" y="172" font-size="11" fill="#64748b">一条 episode 走完全部阶段，才轮到下一条</text>
+  <!-- ep1 chain -->
+  <g font-size="9.5" fill="#7f1d1d">
+    <rect x="58" y="186" width="58" height="26" rx="5" fill="#fecaca"/><text x="87" y="203" text-anchor="middle">抽节点</text>
+    <rect x="120" y="186" width="58" height="26" rx="5" fill="#fecaca"/><text x="149" y="203" text-anchor="middle">解析</text>
+    <rect x="182" y="186" width="50" height="26" rx="5" fill="#fecaca"/><text x="207" y="203" text-anchor="middle">抽边</text>
+    <rect x="236" y="186" width="58" height="26" rx="5" fill="#fecaca"/><text x="265" y="203" text-anchor="middle">属性</text>
+    <text x="304" y="203" font-size="10" fill="#b91c1c">ep1 落库 →</text>
+  </g>
+  <g font-size="9.5" fill="#7f1d1d">
+    <rect x="58" y="220" width="58" height="26" rx="5" fill="#fecaca" opacity="0.6"/><text x="87" y="237" text-anchor="middle">抽节点</text>
+    <rect x="120" y="220" width="58" height="26" rx="5" fill="#fecaca" opacity="0.6"/><text x="149" y="237" text-anchor="middle">解析</text>
+    <rect x="182" y="220" width="50" height="26" rx="5" fill="#fecaca" opacity="0.6"/><text x="207" y="237" text-anchor="middle">抽边</text>
+    <rect x="236" y="220" width="58" height="26" rx="5" fill="#fecaca" opacity="0.6"/><text x="265" y="237" text-anchor="middle">属性</text>
+    <text x="304" y="237" font-size="10" fill="#b91c1c">ep2（能看到ep1）</text>
+  </g>
+  <text x="60" y="268" font-size="10.5" font-weight="600" fill="#b91c1c">✓ 后一条能看到前一条已入库的知识（因果链）</text>
+
+  <!-- bulk parallel -->
+  <rect x="600" y="128" width="540" height="150" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
+  <text x="620" y="152" font-size="13.5" font-weight="700" fill="#15803d">批量模式（阶段内并发）</text>
+  <text x="620" y="172" font-size="11" fill="#64748b">每阶段所有 episode 并发，阶段间串行</text>
+  <g font-size="9.5" fill="#14532d">
+    <rect x="618" y="186" width="110" height="26" rx="5" fill="#bbf7d0"/><text x="673" y="203" text-anchor="middle">阶段1 全部抽取</text>
+    <rect x="732" y="186" width="110" height="26" rx="5" fill="#bbf7d0"/><text x="787" y="203" text-anchor="middle">阶段2 批内去重</text>
+    <rect x="846" y="186" width="110" height="26" rx="5" fill="#bbf7d0"/><text x="901" y="203" text-anchor="middle">阶段3 最终解析</text>
+    <rect x="960" y="186" width="150" height="26" rx="5" fill="#86efac"/><text x="1035" y="203" text-anchor="middle" font-weight="700">一次性落库</text>
+  </g>
+  <text x="620" y="234" font-size="10.5" fill="#14532d">阶段内：ep1‖ep2‖ep3… 并发（semaphore_gather ≤20 协程）</text>
+  <text x="620" y="252" font-size="10.5" fill="#14532d">等待时间重叠 → 提速来源① 并行</text>
+  <text x="620" y="270" font-size="10.5" font-weight="600" fill="#15803d">✗ 批内 episode 互相看不见对方新知识（同一快照）</text>
+
+  <!-- ===== bulk stages ===== -->
+  <text x="40" y="316" font-size="16" font-weight="700" fill="#1e293b">二、批量流程 7 阶段</text>
+  <g font-size="11">
+    <rect x="40" y="330" width="1100" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6"/>
+    <text x="56" y="355" fill="#1d4ed8" font-weight="600">① 建所有 EpisodicNode + 先落库</text>
+    <text x="330" y="355" fill="#334155">② 批量检索历史上下文（每条取 valid_at 前 3 条）— 这就是"世界快照"</text>
+  </g>
+  <g font-size="11">
+    <rect x="40" y="376" width="540" height="40" rx="8" fill="#faf5ff" stroke="#7c3aed"/>
+    <text x="56" y="401" fill="#6d28d9" font-weight="600">③ 抽取 + 批内去重节点（两趟）🧠</text>
+    <rect x="600" y="376" width="540" height="40" rx="8" fill="#faf5ff" stroke="#7c3aed"/>
+    <text x="616" y="401" fill="#6d28d9" font-weight="600">④ 建 MENTIONS 边　⑤ 重映射指针 + 批内去重边</text>
+  </g>
+  <g font-size="11">
+    <rect x="40" y="422" width="540" height="40" rx="8" fill="#fdf4ff" stroke="#a21caf"/>
+    <text x="56" y="447" fill="#86198f" font-weight="600">⑥ 与库已有实体/边最终解析（含边失效判定 ⏳）</text>
+    <rect x="600" y="422" width="540" height="40" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="616" y="447" fill="#1d4ed8" font-weight="600">⑦ 一次性批量落库（节点+边+失效边）💾</text>
+  </g>
+
+  <!-- ===== two-pass dedup + union find ===== -->
+  <text x="40" y="500" font-size="16" font-weight="700" fill="#7c3aed">三、批内去重：两趟策略 + 两套并查集 🌟</text>
+
+  <rect x="40" y="514" width="545" height="150" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="60" y="538" font-size="13" font-weight="700" fill="#6d28d9">两趟去重</text>
+  <text x="60" y="560" font-size="11" fill="#334155">第一趟：每条 episode 各自和「库已有实体」对齐</text>
+  <text x="60" y="580" font-size="11" fill="#334155">第二趟：所有 episode 节点汇成池，抓「只在本批内</text>
+  <text x="60" y="596" font-size="11" fill="#334155">跨 episode 才共现」的重复（复用 MinHash/LSH）</text>
+  <text x="60" y="622" font-size="10.5" fill="#64748b">例：ep_A、ep_B 都提「张三」但库里还没有 → 第一趟</text>
+  <text x="60" y="638" font-size="10.5" fill="#64748b">各判新实体，第二趟才发现俩是一个</text>
+  <text x="60" y="658" font-size="10.5" font-style="italic" fill="#7c3aed">合并链 3→2、2→1 要塌缩成 3→1 → 用并查集</text>
+
+  <rect x="600" y="514" width="540" height="150" rx="12" fill="#ffffff" stroke="#c4b5fd" stroke-width="1.6"/>
+  <text x="620" y="538" font-size="13" font-weight="700" fill="#6d28d9">两套并查集 Union-Find</text>
+  <rect x="616" y="550" width="255" height="100" rx="8" fill="#f5f3ff" stroke="#a78bfa"/>
+  <text x="632" y="570" font-size="11.5" font-weight="700" fill="#6d28d9">节点：有向并查集</text>
+  <text x="632" y="590" font-size="10" fill="#475569">保方向：别名→规范由 dedup</text>
+  <text x="632" y="605" font-size="10" fill="#475569">发现顺序定，不按字典序</text>
+  <text x="632" y="625" font-size="9.5" fill="#94a3b8">（别名 uuid 字典序可能更小，</text>
+  <text x="632" y="638" font-size="9.5" fill="#94a3b8">普通取最小会选错方向）</text>
+  <rect x="879" y="550" width="245" height="100" rx="8" fill="#f5f3ff" stroke="#a78bfa"/>
+  <text x="895" y="570" font-size="11.5" font-weight="700" fill="#6d28d9">边：字典序并查集</text>
+  <text x="895" y="590" font-size="10" fill="#475569">compress_uuid_map</text>
+  <text x="895" y="610" font-size="10" fill="#475569">整个重复集塌缩到</text>
+  <text x="895" y="625" font-size="10" fill="#475569">字典序最小的 uuid</text>
+
+  <!-- ===== what is sacrificed ===== -->
+  <rect x="40" y="684" width="1100" height="180" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="60" y="710" font-size="15" font-weight="700" fill="#b45309">四、批量牺牲了什么？（重点澄清）</text>
+
+  <rect x="60" y="724" width="520" height="60" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="76" y="746" font-size="12.5" font-weight="700" fill="#15803d">✅ 没牺牲：边失效 + 日期抽取</text>
+  <text x="76" y="766" font-size="10.5" fill="#475569">双时态语义保留，失效延后到阶段⑥统一做</text>
+  <text x="76" y="779" font-size="10" fill="#64748b">"won't track invalidation" 只指去重那步，非整体丢弃</text>
+
+  <rect x="600" y="724" width="520" height="60" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="616" y="746" font-size="12.5" font-weight="700" fill="#b91c1c">⚠️ 牺牲：批内增量因果可见性</text>
+  <text x="616" y="766" font-size="10.5" fill="#475569">所有 ep 基于同一快照，互相看不见对方新知识</text>
+  <text x="616" y="779" font-size="10" fill="#64748b">＋ 社区增量更新（communities 恒为空）</text>
+
+  <text x="76" y="808" font-size="12" font-weight="700" fill="#b45309">选型：</text>
+  <text x="130" y="808" font-size="11.5" fill="#334155">大批量<tspan font-weight="700">历史</tspan>导入 → 批量（历史本就是一个快照，因果不重要）</text>
+  <text x="76" y="830" font-size="11.5" fill="#334155">　　　实时<tspan font-weight="700">增量</tspan>对话 / 需要社区更新 / episode 互相引用 → 单条（要严格时序因果）</text>
+  <text x="76" y="854" font-size="11" font-style="italic" fill="#b45309">※ 坑：CHUNK_SIZE=10 是死常量，实际不分块；超大批量请自己在调用侧分批（并发上限 SEMAPHORE_LIMIT=20）</text>
+
+  <!-- footer -->
+  <text x="590" y="898" text-anchor="middle" font-size="12.5" font-weight="600" fill="#475569">一句话：批量 = 同一世界快照 + 分阶段并行 + 批内去重(两套并查集) → 换吞吐，牺牲批内因果与社区更新</text>
+</svg>

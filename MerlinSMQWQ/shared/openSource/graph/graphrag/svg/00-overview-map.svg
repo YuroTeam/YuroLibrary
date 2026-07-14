@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="t" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0d9488"/></marker>
+    <marker id="s" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#64748b"/></marker>
+    <marker id="b" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#2563eb"/></marker>
+    <style>
+      .title{font-size:32px;font-weight:800;fill:#0f172a}
+      .sub{font-size:15px;fill:#64748b}
+      .zone{font-size:19px;font-weight:800;letter-spacing:.02em}
+      .card-t{font-size:16px;font-weight:800;fill:#0f172a}
+      .card-d{font-size:12px;fill:#475569}
+      .pill-t{font-size:13px;font-weight:700}
+      .badge{font-size:11px;font-weight:800;fill:#fff}
+      .note{font-size:13px;fill:#475569}
+      .small{font-size:11.5px;fill:#64748b}
+      .thread{font-size:13px;font-weight:700;fill:#b45309}
+      .cap{font-size:14px;font-weight:600;fill:#334155}
+    </style>
+  </defs>
+  <rect width="1600" height="1040" fill="#f8fafc"/>
+
+  <!-- header -->
+  <text x="44" y="52" class="title">GraphRAG 全景图 · 从文本到有据问答</text>
+  <text x="44" y="82" class="sub">离线把文本炼成「实体图 → 社区树 → 层层摘要」，在线用四种检索提问 · 每个环节的详细数据流图见 ①–⑤（右下角标注图号）</text>
+  <!-- thread pill -->
+  <rect x="1140" y="30" width="416" height="60" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1160" y="54" class="thread">🧵 全程同一个示例</text>
+  <text x="1160" y="76" class="small" fill="#92400e">Alice（人）· Acme Corp（公司）· Berlin（地点）</text>
+
+  <!-- ============ INDEXING ZONE ============ -->
+  <rect x="40" y="108" width="1520" height="404" rx="16" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.8"/>
+  <circle cx="72" cy="140" r="15" fill="#0d9488"/><text x="72" y="146" text-anchor="middle" class="badge" font-size="15">1</text>
+  <text x="98" y="146" class="zone" fill="#0d9488">索引 INDEXING · 离线建库（跑一次，把文档炼成图谱制品）</text>
+
+  <!-- pipeline cards -->
+  <!-- 原始文档 -->
+  <rect x="66" y="180" width="190" height="118" rx="11" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="86" y="212" class="card-t" fill="#334155">原始文档</text>
+  <text x="86" y="238" class="card-d">一堆非结构化文本</text>
+  <text x="86" y="258" class="card-d">（新闻 / 书 / 报告…）</text>
+  <text x="86" y="284" class="small">"Alice works at Acme…"</text>
+
+  <!-- 分块 -->
+  <rect x="296" y="180" width="190" height="118" rx="11" fill="#ccfbf1" stroke="#2dd4bf" stroke-width="1.4"/>
+  <text x="316" y="212" class="card-t" fill="#115e59">分块</text>
+  <text x="316" y="238" class="card-d">切成 text_units</text>
+  <text x="316" y="258" class="card-d">≈ 1200 token / 块</text>
+  <text x="316" y="284" class="small" fill="#0f766e">太长喂不进 LLM，先切小</text>
+
+  <!-- ① 图抽取 -->
+  <rect x="526" y="180" width="196" height="118" rx="11" fill="#99f6e4" stroke="#14b8a6" stroke-width="1.6"/>
+  <text x="546" y="212" class="card-t" fill="#115e59">① 图抽取 ⚡</text>
+  <text x="546" y="236" class="card-d">LLM 抽实体+关系</text>
+  <text x="546" y="254" class="card-d">→ 跨块合并 → 描述摘要</text>
+  <text x="546" y="284" class="small" fill="#0f766e">gleaning 补抽 · 权重累加</text>
+  <rect x="662" y="186" width="52" height="20" rx="6" fill="#0d9488"/><text x="688" y="200" text-anchor="middle" class="badge">图 08</text>
+
+  <!-- ② Leiden -->
+  <rect x="762" y="180" width="196" height="118" rx="11" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.6"/>
+  <text x="782" y="212" class="card-t" fill="#3730a3">② 层次化 Leiden</text>
+  <text x="782" y="236" class="card-d">按关系权重聚类</text>
+  <text x="782" y="254" class="card-d">→ 多层社区树</text>
+  <text x="782" y="284" class="small" fill="#4338ca">大社区递归拆细 · 可复现</text>
+  <rect x="898" y="186" width="52" height="20" rx="6" fill="#4f46e5"/><text x="924" y="200" text-anchor="middle" class="badge">图 09</text>
+
+  <!-- ③ 社区报告 -->
+  <rect x="998" y="180" width="210" height="118" rx="11" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.8"/>
+  <text x="1018" y="212" class="card-t" fill="#14532d">③ 社区报告 ★⚡</text>
+  <text x="1018" y="236" class="card-d">自底向上递归摘要</text>
+  <text x="1018" y="254" class="card-d">超预算→用子报告替换</text>
+  <text x="1018" y="284" class="small" fill="#15803d">核心创新：全局问题的弹药</text>
+  <rect x="1148" y="186" width="52" height="20" rx="6" fill="#16a34a"/><text x="1174" y="200" text-anchor="middle" class="badge">图 05</text>
+
+  <!-- pipeline arrows -->
+  <g stroke-width="2.4">
+    <line x1="256" y1="239" x2="294" y2="239" stroke="#0d9488" marker-end="url(#t)"/>
+    <line x1="486" y1="239" x2="524" y2="239" stroke="#0d9488" marker-end="url(#t)"/>
+    <line x1="722" y1="239" x2="760" y2="239" stroke="#0d9488" marker-end="url(#t)"/>
+    <line x1="958" y1="239" x2="996" y2="239" stroke="#0d9488" marker-end="url(#t)"/>
+  </g>
+
+  <!-- alice thread through indexing -->
+  <rect x="1236" y="180" width="300" height="118" rx="11" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.4"/>
+  <text x="1254" y="206" class="thread">🧵 示例在这一行怎么走</text>
+  <text x="1254" y="230" class="small" fill="#92400e">Alice/Acme/Berlin 被抽成点线（①）</text>
+  <text x="1254" y="250" class="small" fill="#92400e">→ 聚进「柏林公司圈」社区（②）</text>
+  <text x="1254" y="270" class="small" fill="#92400e">→ 写成一份社区报告（③）</text>
+  <text x="1254" y="290" class="small" fill="#b45309">⚡ = 该环节需要调用 LLM</text>
+
+  <!-- indexing -> artifacts big arrow -->
+  <text x="66" y="342" class="note">这一行从左到右跑完，产物全部落到下方「制品层」：</text>
+  <line x1="800" y1="330" x2="800" y2="352" stroke="#0d9488" stroke-width="3" marker-end="url(#t)"/>
+
+  <!-- artifacts band inside indexing zone bottom -->
+  <rect x="66" y="360" width="1470" height="132" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="86" y="386" class="zone" font-size="15" fill="#475569">制品层 · parquet 表 + 向量库　（索引与查询之间的稳定契约）</text>
+  <g>
+    <rect x="86" y="402" width="150" height="34" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="161" y="424" text-anchor="middle" class="pill-t" fill="#334155">documents</text>
+    <rect x="248" y="402" width="150" height="34" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="323" y="424" text-anchor="middle" class="pill-t" fill="#334155">text_units</text>
+    <rect x="410" y="402" width="140" height="34" rx="7" fill="#d1fae5" stroke="#34d399"/><text x="480" y="424" text-anchor="middle" class="pill-t" fill="#065f46">entities</text>
+    <rect x="562" y="402" width="160" height="34" rx="7" fill="#d1fae5" stroke="#34d399"/><text x="642" y="424" text-anchor="middle" class="pill-t" fill="#065f46">relationships</text>
+    <rect x="734" y="402" width="150" height="34" rx="7" fill="#e0e7ff" stroke="#a5b4fc"/><text x="809" y="424" text-anchor="middle" class="pill-t" fill="#3730a3">communities</text>
+    <rect x="896" y="402" width="210" height="34" rx="7" fill="#dcfce7" stroke="#4ade80"/><text x="1001" y="424" text-anchor="middle" class="pill-t" fill="#14532d">community_reports ★</text>
+    <rect x="1118" y="402" width="180" height="34" rx="7" fill="#fef9c3" stroke="#fde047"/><text x="1208" y="424" text-anchor="middle" class="pill-t" fill="#854d0e">向量库 LanceDB</text>
+    <rect x="1310" y="402" width="210" height="34" rx="7" fill="#fee2e2" stroke="#fca5a5"/><text x="1415" y="424" text-anchor="middle" class="pill-t" fill="#991b1b">covariates（声明·可选）</text>
+  </g>
+  <text x="86" y="470" class="small">每个 entity/边带唯一描述 + 向量；community_reports 是 Global 检索的主要单元；向量库存 text_unit / entity / community 的嵌入。</text>
+
+  <!-- artifacts -> query big arrow -->
+  <line x1="800" y1="512" x2="800" y2="552" stroke="#64748b" stroke-width="3" marker-end="url(#s)"/>
+  <text x="820" y="538" class="note">查询只读、不改制品层 ↓</text>
+
+  <!-- ============ QUERY ZONE ============ -->
+  <rect x="40" y="560" width="1520" height="392" rx="16" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
+  <circle cx="72" cy="592" r="15" fill="#2563eb"/><text x="72" y="598" text-anchor="middle" class="badge" font-size="15">2</text>
+  <text x="98" y="598" class="zone" fill="#1d4ed8">查询 QUERY · 在线问答（读制品层，四种检索策略，各答一类问题）</text>
+
+  <!-- Basic -->
+  <rect x="66" y="628" width="352" height="290" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="88" y="662" class="card-t" fill="#334155">Basic · 纯向量 RAG</text>
+  <text x="88" y="690" class="card-d">完全忽略图（基线）</text>
+  <text x="88" y="716" class="card-d">query → 向量检索 top-k 文本块</text>
+  <text x="88" y="736" class="card-d">→ 打包 CSV → 单次 LLM</text>
+  <rect x="88" y="756" width="308" height="60" rx="8" fill="#e2e8f0"/>
+  <text x="104" y="778" class="small" fill="#334155">读：text_units 向量</text>
+  <text x="104" y="800" class="small" fill="#334155">适合：直接的段落检索 / 对照基线</text>
+  <text x="88" y="850" class="small" fill="#64748b">— 就是普通 RAG，图 / 社区都不用 —</text>
+
+  <!-- Local -->
+  <rect x="430" y="628" width="352" height="290" rx="12" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.6"/>
+  <text x="452" y="662" class="card-t" fill="#1e3a8a">Local · 混合上下文</text>
+  <text x="452" y="690" class="card-d">从具体实体出发，深挖周边</text>
+  <text x="452" y="716" class="card-d">query→top-k 实体→拼「报告+实体</text>
+  <text x="452" y="736" class="card-d">+关系+原文」→ 单次 LLM</text>
+  <rect x="452" y="756" width="308" height="60" rx="8" fill="#bfdbfe"/>
+  <text x="468" y="778" class="small" fill="#1e40af">读：实体/关系/报告/原文（按比例分预算）</text>
+  <text x="468" y="800" class="small" fill="#1e40af">适合："Alice 和 Acme 是什么关系？"</text>
+  <text x="452" y="850" class="small" fill="#1d4ed8">in/out-network 关系排序 · 允许常识</text>
+  <rect x="672" y="634" width="94" height="20" rx="6" fill="#2563eb"/><text x="719" y="648" text-anchor="middle" class="badge">core-04 篇</text>
+
+  <!-- Global -->
+  <rect x="794" y="628" width="352" height="290" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.8"/>
+  <text x="816" y="662" class="card-t" fill="#1e3a8a">Global · Map-Reduce</text>
+  <text x="816" y="690" class="card-d">综合全部社区报告答全局</text>
+  <text x="816" y="716" class="card-d">报告分批→各出要点+打分(Map)</text>
+  <text x="816" y="736" class="card-d">→ 排序截断→终局合成(Reduce)</text>
+  <rect x="816" y="756" width="308" height="60" rx="8" fill="#bfdbfe"/>
+  <text x="832" y="778" class="small" fill="#1e40af">读：community_reports ★（③ 的层层摘要）</text>
+  <text x="832" y="800" class="small" fill="#1e40af">适合："这批文档主要在讲什么？"</text>
+  <text x="816" y="850" class="small" fill="#1d4ed8">★ 普通向量 RAG 答不了的「全局问题」</text>
+  <rect x="1036" y="634" width="94" height="20" rx="6" fill="#2563eb"/><text x="1083" y="648" text-anchor="middle" class="badge">图 06</text>
+
+  <!-- DRIFT -->
+  <rect x="1158" y="628" width="376" height="290" rx="12" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.8"/>
+  <text x="1180" y="662" class="card-t" fill="#5b21b6">DRIFT · 多跳推理</text>
+  <text x="1180" y="690" class="card-d">Global 的广度 + Local 的深度</text>
+  <text x="1180" y="716" class="card-d">primer 定调 → 迭代局部下钻</text>
+  <text x="1180" y="736" class="card-d">→ 长成问题树 → reduce 汇总</text>
+  <rect x="1180" y="756" width="332" height="60" rx="8" fill="#ddd6fe"/>
+  <text x="1196" y="778" class="small" fill="#5b21b6">读：社区报告（定调）+ 局部（下钻）</text>
+  <text x="1196" y="800" class="small" fill="#5b21b6">适合："创办 Acme 的人还和柏林哪些组织有关？"</text>
+  <text x="1180" y="850" class="small" fill="#6d28d9">n_depth 轮迭代 · 每个节点跑一次 Local</text>
+  <rect x="1424" y="634" width="94" height="20" rx="6" fill="#7c3aed"/><text x="1471" y="648" text-anchor="middle" class="badge">图 07</text>
+
+  <!-- fan-out arrows from artifacts to query cards -->
+  <g stroke="#2563eb" stroke-width="2" fill="none">
+    <path d="M800,558 C560,590 300,596 242,626" marker-end="url(#b)"/>
+    <path d="M800,558 C700,592 640,600 606,626" marker-end="url(#b)"/>
+    <path d="M800,558 C880,592 940,600 970,626" marker-end="url(#b)"/>
+    <path d="M800,558 C1080,590 1280,596 1346,626" marker-end="url(#b)"/>
+  </g>
+
+  <!-- bottom caption -->
+  <rect x="40" y="972" width="1520" height="48" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.4"/>
+  <text x="60" y="1002" class="cap" fill="#166534">一句话：离线三级压缩（实体图 → 社区树 → 递归摘要）让在线既能做局部检索（Basic/Local），又能做普通向量 RAG 做不到的「全局综合」（Global）与「多跳推理」（DRIFT）。</text>
+</svg>

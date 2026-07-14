@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1080" viewBox="0 0 1120 1080" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="d_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+    <marker id="d_hit" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#16a34a"/>
+    </marker>
+    <marker id="d_miss" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#d97706"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1120" height="1080" fill="#f8fafc"/>
+
+  <text x="560" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 实体去重 · 三级漏斗</text>
+  <text x="560" y="72" text-anchor="middle" font-size="14" fill="#64748b">能用便宜的确定性算法解决的，绝不劳烦 LLM —— 精确 → MinHash/LSH → LLM</text>
+
+  <!-- input -->
+  <rect x="410" y="96" width="300" height="52" rx="12" fill="#1e293b"/>
+  <text x="560" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">新抽取的实体</text>
+  <text x="560" y="139" text-anchor="middle" font-size="11" fill="#cbd5e1">是不是图里已有的那个？</text>
+  <line x1="560" y1="148" x2="560" y2="172" stroke="#475569" stroke-width="2.2" marker-end="url(#d_arrow)"/>
+
+  <!-- Level 0: semantic retrieval -->
+  <rect x="230" y="174" width="660" height="70" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.8"/>
+  <text x="250" y="200" font-size="14" font-weight="700" fill="#1d4ed8">【第 0 级】语义检索缩小范围</text>
+  <text x="250" y="222" font-size="12" fill="#334155">对每个实体做向量检索 → 取 ≤15 个 余弦相似度&gt;0.6 的候选</text>
+  <text x="250" y="238" font-size="11" fill="#64748b">把「全库 O(N²) 两两比」变成「每个实体只比一小撮」</text>
+  <text x="870" y="212" text-anchor="end" font-size="11" fill="#3b82f6">1 次 embedding</text>
+  <line x1="560" y1="244" x2="560" y2="268" stroke="#475569" stroke-width="2.2" marker-end="url(#d_arrow)"/>
+
+  <!-- Level 1: exact -->
+  <rect x="200" y="270" width="720" height="104" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="220" y="296" font-size="14" font-weight="700" fill="#15803d">【第 1 级】精确名字匹配</text>
+  <text x="900" y="296" text-anchor="end" font-size="11" fill="#16a34a">纯 CPU · 极快</text>
+  <text x="220" y="318" font-size="12" fill="#334155">规范化（转小写 + 折叠连续空格）→ 查精确表　"New  York" = "new york"</text>
+  <rect x="220" y="330" width="215" height="34" rx="7" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="327" y="351" text-anchor="middle" font-size="11.5" font-weight="600" fill="#15803d">唯一同名 → ✅ 立即合并</text>
+  <rect x="447" y="330" width="215" height="34" rx="7" fill="#fef3c7" stroke="#d97706"/>
+  <text x="554" y="351" text-anchor="middle" font-size="11.5" font-weight="600" fill="#b45309">多个同名 → ⚠️ 交 LLM</text>
+  <rect x="674" y="330" width="228" height="34" rx="7" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="788" y="351" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">0 个同名 → 进第 2 级 ↓</text>
+  <line x1="788" y1="374" x2="788" y2="398" stroke="#475569" stroke-width="2" marker-end="url(#d_arrow)"/>
+
+  <!-- Level 2: MinHash/LSH -->
+  <rect x="150" y="400" width="820" height="330" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.2"/>
+  <text x="170" y="426" font-size="14.5" font-weight="700" fill="#6d28d9">【第 2 级】MinHash + LSH 模糊匹配 🌟</text>
+  <text x="950" y="426" text-anchor="end" font-size="11" fill="#7c3aed">纯 CPU · 快</text>
+  <text x="170" y="446" font-size="12" fill="#475569">字面接近但不完全相同（拼写变体、多余修饰词）也能自动判同</text>
+
+  <!-- entropy gate -->
+  <rect x="170" y="458" width="780" height="40" rx="8" fill="#fef2f2" stroke="#dc2626"/>
+  <text x="184" y="475" font-size="12" font-weight="700" fill="#b91c1c">熵门控（守门员）</text>
+  <text x="184" y="491" font-size="11" fill="#475569">名字太短(&lt;6字符且&lt;2词) 或 香农熵&lt;1.5 → 踢出模糊路径，直接交 LLM（防 "AB"/"123" 误判）</text>
+
+  <!-- 4 steps -->
+  <rect x="170" y="510" width="185" height="150" rx="8" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="262" y="530" text-anchor="middle" font-size="12" font-weight="700" fill="#6d28d9">① Shingling</text>
+  <text x="184" y="552" font-size="10.5" fill="#334155">切成 3 字符片段（去重集合）</text>
+  <text x="184" y="574" font-size="10" fill="#64748b">"newyork" →</text>
+  <text x="184" y="590" font-size="9.5" fill="#94a3b8" font-family="monospace">{new,ewy,wyo,yor,ork}</text>
+  <text x="184" y="614" font-size="10" fill="#7c3aed">相似串共享很多片段</text>
+  <text x="184" y="634" font-size="10" fill="#94a3b8">shingle 大小 = 3</text>
+
+  <rect x="365" y="510" width="185" height="150" rx="8" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="457" y="530" text-anchor="middle" font-size="12" font-weight="700" fill="#6d28d9">② MinHash</text>
+  <text x="379" y="552" font-size="10.5" fill="#334155">32 个哈希函数，各取</text>
+  <text x="379" y="568" font-size="10.5" fill="#334155">片段哈希的最小值</text>
+  <text x="379" y="588" font-size="10" fill="#64748b">→ 长度 32 的指纹</text>
+  <text x="379" y="612" font-size="10" fill="#7c3aed">两集合最小值相等的概率</text>
+  <text x="379" y="627" font-size="10" fill="#7c3aed">= Jaccard 相似度</text>
+  <text x="379" y="648" font-size="10" fill="#94a3b8">大集合压成固定指纹</text>
+
+  <rect x="560" y="510" width="185" height="150" rx="8" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="652" y="530" text-anchor="middle" font-size="12" font-weight="700" fill="#6d28d9">③ LSH 分带</text>
+  <text x="574" y="552" font-size="10.5" fill="#334155">32 位切成 8 带(每带4)</text>
+  <text x="574" y="572" font-size="10.5" fill="#334155">任一带相同 → 同桶</text>
+  <text x="574" y="596" font-size="10" fill="#7c3aed">只比同桶的少数几个</text>
+  <text x="574" y="611" font-size="10" fill="#7c3aed">O(N²) → 大幅降低</text>
+  <text x="574" y="634" font-size="10" fill="#94a3b8">band 越小越宽松</text>
+  <text x="574" y="650" font-size="10" fill="#94a3b8">band=4 中等偏严</text>
+
+  <rect x="755" y="510" width="195" height="150" rx="8" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="852" y="530" text-anchor="middle" font-size="12" font-weight="700" fill="#6d28d9">④ Jaccard 裁决</text>
+  <text x="769" y="552" font-size="10.5" fill="#334155">对同桶候选算真实</text>
+  <text x="769" y="568" font-size="10.5" fill="#334155">|交集|/|并集|</text>
+  <text x="769" y="592" font-size="10" fill="#64748b">LSH 粗筛 + Jaccard 精排</text>
+  <text x="769" y="618" font-size="11" font-weight="700" fill="#15803d">≥ 0.9 → ✅ 合并</text>
+  <text x="769" y="638" font-size="11" font-weight="700" fill="#b45309">&lt; 0.9 → ⚠️ 交 LLM</text>
+
+  <!-- arrows between steps -->
+  <line x1="355" y1="585" x2="365" y2="585" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#d_arrow)"/>
+  <line x1="550" y1="585" x2="560" y2="585" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#d_arrow)"/>
+  <line x1="745" y1="585" x2="755" y2="585" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#d_arrow)"/>
+
+  <!-- funnel arrows to LLM -->
+  <text x="672" y="700" font-size="11" fill="#b45309">前两级搞不定的少数实体 ↓</text>
+  <line x1="560" y1="730" x2="560" y2="754" stroke="#d97706" stroke-width="2.2" marker-end="url(#d_miss)"/>
+
+  <!-- Level 3: LLM -->
+  <rect x="230" y="756" width="660" height="130" rx="12" fill="#fdf4ff" stroke="#a21caf" stroke-width="2"/>
+  <text x="250" y="782" font-size="14" font-weight="700" fill="#86198f">【第 3 级】LLM 兜底 🧠</text>
+  <text x="880" y="782" text-anchor="end" font-size="11" fill="#a21caf">贵 · 慢 · 但最聪明</text>
+  <text x="250" y="804" font-size="12" fill="#334155">处理确定性算法搞不定的：缩写、同义词、上下文消歧</text>
+  <text x="250" y="826" font-size="11.5" fill="#475569">few-shot 覆盖难点：Sam=Sam · NYC=New York City · Java语言≠Java岛(返回-1) · car=vehicle</text>
+  <text x="250" y="848" font-size="11" fill="#64748b">system: "NEVER fabricate names or mark distinct entities as duplicates" + 大量防御性护栏</text>
+  <text x="250" y="870" font-size="11" fill="#a21caf">返回 duplicate_candidate_id（-1 = 无重复，是新实体）</text>
+
+  <!-- output uuid_map -->
+  <line x1="560" y1="886" x2="560" y2="910" stroke="#475569" stroke-width="2.2" marker-end="url(#d_arrow)"/>
+  <rect x="360" y="912" width="400" height="58" rx="12" fill="#0f766e"/>
+  <text x="560" y="937" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">产出 uuid_map</text>
+  <text x="560" y="957" text-anchor="middle" font-size="11" fill="#ccfbf1" font-family="monospace">抽取uuid → 规范uuid（供边重定向指针用）</text>
+
+  <!-- cost note -->
+  <rect x="60" y="998" width="1000" height="62" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="80" y="1022" font-size="13" font-weight="700" fill="#b45309">💡 成本 vs 准确度</text>
+  <text x="80" y="1044" font-size="11.5" fill="#334155">越往下越贵但走到的实体越少 · 便宜的层用高阈值(0.9)+熵门控保守判断，宁可漏判交 LLM 也不误合并 · 模棱两可的都留给最聪明的 LLM</text>
+</svg>

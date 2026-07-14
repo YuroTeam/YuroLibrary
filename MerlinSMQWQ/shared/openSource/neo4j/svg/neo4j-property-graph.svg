@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="rel" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,4 L0,8 Z" fill="#2f855a"/>
+    </marker>
+    <marker id="relBlue" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,4 L0,8 Z" fill="#3b6fd4"/>
+    </marker>
+    <marker id="callout" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#94a3b8"/>
+    </marker>
+    <radialGradient id="gPerson" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#5aa0ff"/>
+      <stop offset="1" stop-color="#3b6fd4"/>
+    </radialGradient>
+    <radialGradient id="gMovie" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#f6ad55"/>
+      <stop offset="1" stop-color="#dd8b32"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="960" height="720" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="480" y="46" text-anchor="middle" font-size="26" font-weight="700" fill="#1e293b">Neo4j 属性图模型（Property Graph）</text>
+  <text x="480" y="72" text-anchor="middle" font-size="14" fill="#64748b">数据 = 节点 + 关系 + 标签 + 属性，一张能"走"的关系网</text>
+
+  <!-- ============ Relationships (draw lines first, under nodes) ============ -->
+  <!-- 张三 -KNOWS-> 李四 -->
+  <line x1="255" y1="235" x2="655" y2="235" stroke="#3b6fd4" stroke-width="2.5" marker-end="url(#relBlue)"/>
+  <rect x="400" y="212" width="128" height="26" rx="13" fill="#eaf1fd" stroke="#3b6fd4" stroke-width="1.2"/>
+  <text x="464" y="230" text-anchor="middle" font-size="12.5" font-weight="600" fill="#2f5bb0" font-family="monospace">:KNOWS since:2020</text>
+
+  <!-- 张三 -ACTED_IN-> 流浪地球 -->
+  <line x1="200" y1="290" x2="430" y2="470" stroke="#2f855a" stroke-width="2.5" marker-end="url(#rel)"/>
+  <rect x="228" y="360" width="150" height="26" rx="13" fill="#e6f4ec" stroke="#2f855a" stroke-width="1.2" transform="rotate(38 303 373)"/>
+  <text x="303" y="378" text-anchor="middle" font-size="12" font-weight="600" fill="#276749" font-family="monospace" transform="rotate(38 303 373)">:ACTED_IN role:主角</text>
+
+  <!-- 李四 -ACTED_IN-> 流浪地球 -->
+  <line x1="700" y1="290" x2="510" y2="470" stroke="#2f855a" stroke-width="2.5" marker-end="url(#rel)"/>
+  <rect x="560" y="360" width="120" height="26" rx="13" fill="#e6f4ec" stroke="#2f855a" stroke-width="1.2" transform="rotate(-42 620 373)"/>
+  <text x="620" y="378" text-anchor="middle" font-size="12" font-weight="600" fill="#276749" font-family="monospace" transform="rotate(-42 620 373)">:ACTED_IN</text>
+
+  <!-- ============ Nodes ============ -->
+  <!-- 张三 -->
+  <circle cx="200" cy="235" r="60" fill="url(#gPerson)" stroke="#2f5bb0" stroke-width="2"/>
+  <text x="200" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">:Person</text>
+  <text x="200" y="244" text-anchor="middle" font-size="14" fill="#eaf1fd">name:'张三'</text>
+  <text x="200" y="262" text-anchor="middle" font-size="13" fill="#dbeafe">age:30</text>
+
+  <!-- 李四 -->
+  <circle cx="700" cy="235" r="60" fill="url(#gPerson)" stroke="#2f5bb0" stroke-width="2"/>
+  <text x="700" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">:Person</text>
+  <text x="700" y="244" text-anchor="middle" font-size="14" fill="#eaf1fd">name:'李四'</text>
+  <text x="700" y="262" text-anchor="middle" font-size="13" fill="#dbeafe">age:28</text>
+
+  <!-- 流浪地球 -->
+  <circle cx="470" cy="500" r="62" fill="url(#gMovie)" stroke="#c9791f" stroke-width="2"/>
+  <text x="470" y="490" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">:Movie</text>
+  <text x="470" y="512" text-anchor="middle" font-size="13.5" fill="#fff7ed">title:</text>
+  <text x="470" y="530" text-anchor="middle" font-size="13.5" fill="#fff7ed">'流浪地球'</text>
+
+  <!-- ============ Callouts (annotations) ============ -->
+  <!-- Node callout -->
+  <line x1="150" y1="150" x2="180" y2="185" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#callout)"/>
+  <rect x="60" y="120" width="190" height="34" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="72" y="135" font-size="12.5" font-weight="700" fill="#3b6fd4">① 节点 Node</text>
+  <text x="72" y="150" font-size="11.5" fill="#64748b">一个实体（用圆圈）</text>
+
+  <!-- Label callout -->
+  <line x1="230" y1="150" x2="200" y2="212" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#callout)"/>
+  <rect x="270" y="120" width="210" height="34" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="282" y="135" font-size="12.5" font-weight="700" fill="#2f5bb0">② 标签 Label</text>
+  <text x="282" y="150" font-size="11.5" fill="#64748b">节点的分类，如 :Person</text>
+
+  <!-- Relationship callout -->
+  <line x1="560" y1="180" x2="500" y2="215" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#callout)"/>
+  <rect x="520" y="120" width="230" height="50" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="532" y="138" font-size="12.5" font-weight="700" fill="#2f855a">③ 关系 Relationship</text>
+  <text x="532" y="154" font-size="11.5" fill="#64748b">有方向、有类型的连线</text>
+  <text x="532" y="167" font-size="11.5" fill="#64748b">箭头方向 = 语义方向</text>
+
+  <!-- Property callout -->
+  <line x1="760" y1="300" x2="720" y2="260" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#callout)"/>
+  <rect x="720" y="300" width="200" height="50" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="732" y="318" font-size="12.5" font-weight="700" fill="#b45309">④ 属性 Property</text>
+  <text x="732" y="334" font-size="11.5" fill="#64748b">键值对，节点和关系</text>
+  <text x="732" y="347" font-size="11.5" fill="#64748b">上都能挂，如 name:'张三'</text>
+
+  <!-- ============ Read-as caption ============ -->
+  <rect x="150" y="608" width="660" height="72" rx="12" fill="#1e293b"/>
+  <text x="480" y="636" text-anchor="middle" font-size="13.5" fill="#94a3b8">这张图读作 ——</text>
+  <text x="480" y="660" text-anchor="middle" font-size="15" font-weight="600" fill="#ffffff">张三 和 李四 互相认识，两人都演过《流浪地球》，张三是主角</text>
+
+  <!-- Cypher hint bottom-left -->
+  <text x="40" y="628" font-size="11.5" fill="#94a3b8" font-family="monospace">Cypher 写法：</text>
+  <text x="40" y="646" font-size="11" fill="#64748b" font-family="monospace">(:Person)</text>
+  <text x="40" y="662" font-size="11" fill="#64748b" font-family="monospace">-[:ACTED_IN]-&gt;</text>
+  <text x="40" y="678" font-size="11" fill="#64748b" font-family="monospace">(:Movie)</text>
+</svg>

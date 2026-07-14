@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1000" viewBox="0 0 1240 1000" font-family="'Segoe UI',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1240" height="1000" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="620" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#f1f5f9">Graphiti 架构结构图</text>
+  <text x="620" y="72" text-anchor="middle" font-size="14" fill="#94a3b8">面向 AI Agent 的时序知识图谱框架 · graphiti-core 0.29.2</text>
+
+  <!-- ===================== 服务封装层 ===================== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="100" width="1160" height="92" rx="12" fill="#1e293b" stroke="#334155"/>
+  </g>
+  <text x="66" y="128" font-size="15" font-weight="700" fill="#38bdf8">服务封装层 · Serving</text>
+  <!-- REST -->
+  <rect x="66" y="140" width="540" height="40" rx="8" fill="#0b3b52" stroke="#0891b2"/>
+  <text x="86" y="165" font-size="14" font-weight="600" fill="#e0f2fe">server/  ·  FastAPI REST</text>
+  <text x="330" y="165" font-size="12" fill="#7dd3fc">routers(ingest/retrieve) · dto · zep_graphiti</text>
+  <!-- MCP -->
+  <rect x="634" y="140" width="540" height="40" rx="8" fill="#0b3b52" stroke="#0891b2"/>
+  <text x="654" y="165" font-size="14" font-weight="600" fill="#e0f2fe">mcp_server/  ·  Model Context Protocol</text>
+  <text x="930" y="165" font-size="12" fill="#7dd3fc">给 Claude / Cursor 的记忆</text>
+
+  <!-- arrow down to facade -->
+  <line x1="620" y1="192" x2="620" y2="216" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== 编排层 ===================== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="220" width="1160" height="86" rx="12" fill="#312e5b" stroke="#6d5ae0"/>
+  </g>
+  <text x="66" y="248" font-size="15" font-weight="700" fill="#c4b5fd">编排 / 门面层 · graphiti_core/graphiti.py</text>
+  <text x="66" y="270" font-size="13" fill="#e9e5ff" font-weight="600">class Graphiti</text>
+  <g font-size="12.5" fill="#ddd6fe">
+    <text x="170" y="270">add_episode</text>
+    <text x="285" y="270">add_episode_bulk</text>
+    <text x="425" y="270">add_triplet</text>
+    <text x="530" y="270">search / search_</text>
+    <text x="670" y="270">retrieve_episodes</text>
+    <text x="815" y="270">build_communities</text>
+    <text x="965" y="270">summarize_saga</text>
+    <text x="1085" y="270">remove_episode</text>
+  </g>
+  <text x="66" y="293" font-size="12" fill="#a5b4fc">依赖注入：driver · llm_client · embedder · cross_encoder</text>
+
+  <!-- two arrows to pipeline / search -->
+  <line x1="360" y1="306" x2="360" y2="332" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="880" y1="306" x2="880" y2="332" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== 管道层 & 检索层 ===================== -->
+  <!-- Pipeline -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="336" width="620" height="220" rx="12" fill="#14342a" stroke="#10b981"/>
+  </g>
+  <text x="66" y="364" font-size="15" font-weight="700" fill="#6ee7b7">写入管道 · utils/maintenance</text>
+  <g font-size="12.5">
+    <rect x="66" y="378" width="568" height="26" rx="6" fill="#0f2f26" stroke="#059669"/>
+    <text x="80" y="395" fill="#d1fae5">① 抽取 extract_nodes / extract_edges / combined_extraction</text>
+    <rect x="66" y="410" width="568" height="26" rx="6" fill="#0f2f26" stroke="#059669"/>
+    <text x="80" y="427" fill="#d1fae5">② 去重 dedup_helpers · node_operations（精确 + 语义）</text>
+    <rect x="66" y="442" width="568" height="26" rx="6" fill="#0f2f26" stroke="#059669"/>
+    <text x="80" y="459" fill="#d1fae5">③ 消解 resolve_extracted_edges（与既有图对齐）</text>
+    <rect x="66" y="474" width="568" height="26" rx="6" fill="#0f2f26" stroke="#059669"/>
+    <text x="80" y="491" fill="#d1fae5">④ 时序 valid_at/invalid_at · resolve_edge_contradictions</text>
+    <rect x="66" y="506" width="278" height="26" rx="6" fill="#0f2f26" stroke="#059669"/>
+    <text x="80" y="523" fill="#d1fae5">⑤ Embedding 向量化</text>
+    <rect x="356" y="506" width="278" height="26" rx="6" fill="#0f2f26" stroke="#059669"/>
+    <text x="370" y="523" fill="#d1fae5">⑥ 落库 driver ops + 溯源边</text>
+  </g>
+
+  <!-- Search -->
+  <g filter="url(#shadow)">
+    <rect x="680" y="336" width="520" height="220" rx="12" fill="#3a2416" stroke="#f59e0b"/>
+  </g>
+  <text x="706" y="364" font-size="15" font-weight="700" fill="#fcd34d">检索层 · search/</text>
+  <g font-size="12.5">
+    <rect x="706" y="378" width="468" height="26" rx="6" fill="#33200f" stroke="#d97706"/>
+    <text x="720" y="395" fill="#fde68a">三路召回：语义向量 · BM25 全文 · 图遍历</text>
+    <rect x="706" y="410" width="468" height="26" rx="6" fill="#33200f" stroke="#d97706"/>
+    <text x="720" y="427" fill="#fde68a">重排：RRF · MMR · Cross-Encoder · NodeDistance</text>
+    <rect x="706" y="442" width="468" height="26" rx="6" fill="#33200f" stroke="#d97706"/>
+    <text x="720" y="459" fill="#fde68a">SearchConfig · search_filters · search_utils</text>
+    <rect x="706" y="474" width="468" height="26" rx="6" fill="#33200f" stroke="#d97706"/>
+    <text x="720" y="491" fill="#fde68a">配方 recipes：COMBINED / EDGE / NODE / COMMUNITY</text>
+    <rect x="706" y="506" width="468" height="26" rx="6" fill="#33200f" stroke="#d97706"/>
+    <text x="720" y="523" fill="#fde68a">→ SearchResults (edges · nodes · communities)</text>
+  </g>
+
+  <!-- arrows to providers -->
+  <line x1="350" y1="556" x2="350" y2="590" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="880" y1="556" x2="880" y2="590" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== Provider 层 ===================== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="594" width="1160" height="132" rx="12" fill="#1e293b" stroke="#334155"/>
+  </g>
+  <text x="66" y="622" font-size="15" font-weight="700" fill="#f472b6">可插拔 Provider 层（抽象基类 + 多实现）</text>
+
+  <!-- LLM -->
+  <rect x="66" y="636" width="270" height="76" rx="8" fill="#3b1f33" stroke="#db2777"/>
+  <text x="80" y="658" font-size="13.5" font-weight="700" fill="#fbcfe8">llm_client/</text>
+  <text x="80" y="677" font-size="11.5" fill="#f9a8d4">OpenAI · Azure · Anthropic</text>
+  <text x="80" y="693" font-size="11.5" fill="#f9a8d4">Gemini · Groq · GLiNER2</text>
+  <text x="80" y="708" font-size="11" fill="#e879b9">cache · token_tracker</text>
+
+  <!-- Embedder -->
+  <rect x="350" y="636" width="230" height="76" rx="8" fill="#3b1f33" stroke="#db2777"/>
+  <text x="364" y="658" font-size="13.5" font-weight="700" fill="#fbcfe8">embedder/</text>
+  <text x="364" y="677" font-size="11.5" fill="#f9a8d4">OpenAI · Azure</text>
+  <text x="364" y="693" font-size="11.5" fill="#f9a8d4">Gemini · Voyage</text>
+
+  <!-- Cross-encoder -->
+  <rect x="594" y="636" width="240" height="76" rx="8" fill="#3b1f33" stroke="#db2777"/>
+  <text x="608" y="658" font-size="13.5" font-weight="700" fill="#fbcfe8">cross_encoder/</text>
+  <text x="608" y="677" font-size="11.5" fill="#f9a8d4">BGE reranker</text>
+  <text x="608" y="693" font-size="11.5" fill="#f9a8d4">OpenAI · Gemini</text>
+
+  <!-- Prompts -->
+  <rect x="848" y="636" width="326" height="76" rx="8" fill="#3b1f33" stroke="#db2777"/>
+  <text x="862" y="658" font-size="13.5" font-weight="700" fill="#fbcfe8">prompts/ （智能层）</text>
+  <text x="862" y="677" font-size="11.5" fill="#f9a8d4">extract · dedupe · summarize · eval</text>
+  <text x="862" y="693" font-size="11.5" fill="#f9a8d4">lib · models · snippets · helpers</text>
+
+  <!-- arrow to driver -->
+  <line x1="620" y1="726" x2="620" y2="752" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== 存储抽象层 ===================== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="756" width="1160" height="150" rx="12" fill="#152436" stroke="#3b82f6"/>
+  </g>
+  <text x="66" y="784" font-size="15" font-weight="700" fill="#93c5fd">存储抽象层 · driver/</text>
+  <text x="66" y="805" font-size="12.5" fill="#bfdbfe">GraphDriver / GraphDriverSession（抽象）· operations/（每类节点·边的 CRUD）· query_executor · record_parsers</text>
+
+  <!-- data structures line -->
+  <rect x="66" y="816" width="1108" height="30" rx="6" fill="#0f1e30" stroke="#2563eb"/>
+  <text x="80" y="836" font-size="12" fill="#c7deff">数据模型 nodes.py / edges.py：EpisodicNode · EntityNode · CommunityNode · SagaNode  ｜  EntityEdge(双时序) · EpisodicEdge(溯源) · CommunityEdge · Has/NextEpisodeEdge</text>
+
+  <!-- backends -->
+  <g font-size="13" font-weight="700">
+    <rect x="66" y="856" width="262" height="38" rx="8" fill="#12325a" stroke="#60a5fa"/>
+    <text x="197" y="880" text-anchor="middle" fill="#dbeafe">Neo4j  (5.26+)</text>
+    <rect x="342" y="856" width="262" height="38" rx="8" fill="#12325a" stroke="#60a5fa"/>
+    <text x="473" y="880" text-anchor="middle" fill="#dbeafe">FalkorDB  (1.1.2+)</text>
+    <rect x="618" y="856" width="262" height="38" rx="8" fill="#12325a" stroke="#60a5fa"/>
+    <text x="749" y="880" text-anchor="middle" fill="#dbeafe">Kuzu</text>
+    <rect x="894" y="856" width="280" height="38" rx="8" fill="#12325a" stroke="#60a5fa"/>
+    <text x="1034" y="880" text-anchor="middle" fill="#dbeafe">AWS Neptune</text>
+  </g>
+
+  <!-- footer -->
+  <text x="620" y="948" text-anchor="middle" font-size="12" fill="#64748b">横切能力：namespaces(group_id 多租户) · telemetry · tracer(OpenTelemetry) · migrations · bulk_utils · datetime_utils(双时序)</text>
+  <text x="620" y="972" text-anchor="middle" font-size="11" fill="#475569">基于源码静态分析 · 2026-07-03</text>
+</svg>

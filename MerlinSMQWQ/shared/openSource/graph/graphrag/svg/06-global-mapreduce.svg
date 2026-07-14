@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1910" viewBox="0 0 1440 1910" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/></marker>
+    <marker id="bb" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#2563eb"/></marker>
+    <style>
+      .title{font-size:30px;font-weight:700;fill:#0f172a}
+      .sub{font-size:15px;fill:#64748b}
+      .band{font-size:18px;font-weight:700;letter-spacing:.03em;fill:#1d4ed8}
+      .bandn{font-size:18px;font-weight:800;fill:#fff}
+      .box-t{font-size:13.5px;font-weight:700;fill:#1e3a8a}
+      .box-d{font-size:11.5px;fill:#1d4ed8}
+      .note{font-size:12.5px;fill:#475569}
+      .small{font-size:11px;fill:#64748b}
+      .mono{font-size:12px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#334155}
+      .mons{font-size:11px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#475569}
+      .th{font-size:11px;font-weight:700;fill:#1d4ed8}
+      .amber{font-size:12.5px;font-weight:700;fill:#b45309}
+      .step{font-size:13px;font-weight:700;fill:#1e3a8a}
+    </style>
+  </defs>
+  <rect width="1440" height="1910" fill="#f8fafc"/>
+
+  <!-- ===================== HEADER ===================== -->
+  <text x="48" y="52" class="title">④ Global Search · Map-Reduce 详细结构图</text>
+  <text x="48" y="82" class="sub">query/structured_search/global_search/ — 报告数远超单窗口：洗牌切批 → 分批并行打分(Map) → 过滤排序截断合成(Reduce)，全程用一个例子串起来</text>
+
+  <!-- running example banner -->
+  <rect x="48" y="100" width="1344" height="64" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="66" y="126" class="box-t" fill="#92400e">🧵 贯穿示例 · 一个典型的全局问题</text>
+  <text x="66" y="150" class="mono" fill="#92400e">用户问："这批文档主要在讲什么？"　库里有成百上千条 ③ 产出的社区报告（Alice / Acme / Berlin 的世界）—— 这类问题要综合全部社区，而非局部检索。</text>
+
+  <!-- stage circles on left spine -->
+  <circle cx="30" cy="232" r="16" fill="#2563eb"/><text x="30" y="238" text-anchor="middle" class="bandn">A</text>
+  <circle cx="30" cy="628" r="16" fill="#2563eb"/><text x="30" y="634" text-anchor="middle" class="bandn">B</text>
+  <circle cx="30" cy="1108" r="16" fill="#2563eb"/><text x="30" y="1114" text-anchor="middle" class="bandn">C</text>
+  <circle cx="30" cy="1634" r="16" fill="#2563eb"/><text x="30" y="1640" text-anchor="middle" class="bandn">D</text>
+
+  <!-- ===================== STAGE A ===================== -->
+  <text x="58" y="206" class="band">A · 批分（Batch）：洗牌 shuffle → 按 token 预算切成多批</text>
+  <rect x="58" y="218" width="1334" height="340" rx="14" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="80" y="244" class="note">③ 的社区报告可能<tspan font-weight="700">成百上千条</tspan>，文字量远超单个 LLM 上下文窗口 → 一次塞不下。先洗牌保证公平，再按预算切批。（community_context.py）</text>
+
+  <!-- reports source -->
+  <rect x="80" y="262" width="272" height="228" rx="9" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.3"/>
+  <text x="96" y="284" class="box-t" fill="#334155">全部 community_reports</text>
+  <text x="96" y="300" class="small">③ 的层层摘要 · 每条带 weight/rank</text>
+  <rect x="94" y="312" width="244" height="22" rx="4" fill="#e2e8f0" stroke="#94a3b8"/><text x="102" y="327" class="mons">报告 R1 · weight=35 rank=8</text>
+  <rect x="94" y="338" width="244" height="22" rx="4" fill="#e2e8f0" stroke="#94a3b8"/><text x="102" y="353" class="mons">报告 R2 · weight=12 rank=6</text>
+  <rect x="94" y="364" width="244" height="22" rx="4" fill="#e2e8f0" stroke="#94a3b8"/><text x="102" y="379" class="mons">报告 R3 · weight=28 rank=9</text>
+  <rect x="94" y="390" width="244" height="22" rx="4" fill="#e2e8f0" stroke="#94a3b8"/><text x="102" y="405" class="mons">… 成百上千条</text>
+  <text x="96" y="432" class="small" fill="#475569">先渲染成一张<tspan font-weight="700">定界表</tspan>（带分隔符的表格文本）</text>
+  <text x="96" y="452" class="small" fill="#475569">weight = 社区实体涉及的去重 text-unit 数</text>
+  <text x="96" y="470" class="small" fill="#475569">→ 关联原文越多，语料里"戏份"越重</text>
+
+  <!-- shuffle node -->
+  <rect x="380" y="300" width="196" height="150" rx="12" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.6"/>
+  <text x="478" y="330" text-anchor="middle" class="box-t" fill="#fff">shuffle 洗牌</text>
+  <text x="478" y="354" text-anchor="middle" fill="#dbeafe" font-size="12" font-family="'SF Mono',Menlo,monospace">random.seed(86)</text>
+  <text x="478" y="378" text-anchor="middle" fill="#dbeafe" font-size="11.5">打乱报告顺序</text>
+  <text x="478" y="402" text-anchor="middle" fill="#bfdbfe" font-size="11">single_batch=False</text>
+  <text x="478" y="422" text-anchor="middle" fill="#bfdbfe" font-size="11">→ 允许多批</text>
+  <text x="478" y="440" text-anchor="middle" fill="#bfdbfe" font-size="10.5">community_context.py</text>
+  <line x1="352" y1="375" x2="378" y2="375" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#g)"/>
+
+  <!-- batches -->
+  <text x="604" y="284" class="box-t">切成多批 · 每批 ≈ max_context_tokens=12000 · 批内按 (weight, rank) 降序</text>
+  <rect x="604" y="296" width="404" height="46" rx="8" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.3"/>
+  <text x="618" y="315" class="box-t">批 1 ≈ 12000 token</text>
+  <text x="618" y="333" class="mons">R_a(w40) · R1(w35) · R3(w28) · … 重要的先上</text>
+  <rect x="604" y="350" width="404" height="46" rx="8" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.3"/>
+  <text x="618" y="369" class="box-t">批 2 ≈ 12000 token</text>
+  <text x="618" y="387" class="mons">R_d(w22) · R_e(w18) · R2(w12) · …</text>
+  <rect x="604" y="404" width="404" height="46" rx="8" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.3"/>
+  <text x="618" y="423" class="box-t" fill="#9a3412">批 3（尾批）</text>
+  <text x="618" y="441" class="mons">R_f(w9) · R_g(w5) · … 洗牌后每批都是随机一把</text>
+  <text x="604" y="472" class="small" fill="#1d4ed8">📌 洗牌保证公平 · 切批保证塞得下 · 批内排序保证每批里重要的先上</text>
+  <line x1="576" y1="375" x2="602" y2="319" stroke="#2563eb" stroke-width="1.6" marker-end="url(#b)"/>
+  <line x1="576" y1="375" x2="602" y2="427" stroke="#2563eb" stroke-width="1.6" marker-end="url(#b)"/>
+
+  <!-- why shuffle callout -->
+  <rect x="1030" y="262" width="342" height="228" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.4"/>
+  <text x="1046" y="286" class="box-t" fill="#92400e">📌 为什么非得洗牌？</text>
+  <text x="1046" y="310" class="box-d" fill="#a16207">不打乱 → 排序靠前的报告<tspan font-weight="700">永远进</tspan></text>
+  <text x="1046" y="328" class="box-d" fill="#a16207">第一批，靠后的<tspan font-weight="700">永远进尾批</tspan>。</text>
+  <text x="1046" y="352" class="box-d" fill="#a16207">万一尾批因预算截断被丢掉 →</text>
+  <text x="1046" y="370" class="box-d" fill="#a16207">那些报告就被<tspan font-weight="700">系统性冷落</tspan>。</text>
+  <text x="1046" y="394" class="box-d" fill="#a16207">洗牌让每批都是"随机一把"，</text>
+  <text x="1046" y="412" class="box-d" fill="#a16207">谁进哪批全凭运气 → 公平。</text>
+  <line x1="1040" y1="428" x2="1362" y2="428" stroke="#fde68a"/>
+  <text x="1046" y="452" class="small" fill="#b45309">批内再按 (weight, rank) 降序：</text>
+  <text x="1046" y="470" class="small" fill="#b45309">即使批被截断，重要报告也已在前。</text>
+
+  <!-- A -> B arrow -->
+  <line x1="725" y1="560" x2="725" y2="600" stroke="#2563eb" stroke-width="2.4" marker-end="url(#bb)"/>
+
+  <!-- ===================== STAGE B ===================== -->
+  <text x="58" y="600" class="band">B · Map：分批并行打分（每批一次 LLM，返回 JSON 要点+分数）</text>
+  <rect x="58" y="614" width="1334" height="440" rx="14" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="80" y="640" class="note"><tspan font-family="'SF Mono',Menlo,monospace">asyncio.Semaphore(32)</tspan> 限并发（最多 32 批同时跑）· 强制 JSON · <tspan font-weight="700">解析失败→跳过该批</tspan>（当空要点）· map_max_length=1000 词 · search.py:216-274</text>
+
+  <!-- left process box -->
+  <rect x="80" y="658" width="252" height="248" rx="10" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.3"/>
+  <text x="96" y="682" class="box-t">MAP_SYSTEM_PROMPT</text>
+  <text x="96" y="706" class="box-d">· 每批 = 一次独立 LLM 调用</text>
+  <text x="96" y="726" class="box-d">· 各批<tspan font-weight="700">同时并行</tspan>跑，谁先</text>
+  <text x="108" y="744" class="box-d">回来不重要</text>
+  <text x="96" y="768" class="mons" fill="#1d4ed8">Semaphore(32) = 限流阀</text>
+  <text x="96" y="786" class="box-d">最多 32 个请求进 API，</text>
+  <text x="108" y="804" class="box-d">防止一次打爆</text>
+  <text x="96" y="830" class="box-d">· 强制返回 <tspan font-weight="700">JSON</tspan></text>
+  <text x="96" y="854" class="box-d">· 提示词规定："<tspan font-weight="700">'我不知道'</tspan></text>
+  <text x="108" y="872" class="box-d">这类回答给 score 0"</text>
+  <text x="96" y="896" class="small" fill="#1d4ed8">每条要点标注 analyst = 批号</text>
+
+  <!-- batch 1 -->
+  <rect x="352" y="658" width="486" height="76" rx="9" fill="#fff" stroke="#93c5fd" stroke-width="1.3"/>
+  <text x="366" y="678" class="box-t">批 1 → LLM　<tspan class="mons" fill="#1d4ed8">analyst=1</tspan></text>
+  <text x="366" y="700" class="mons">{"description":"Acme 是叙事核心 [Data: Reports (12,34)]",</text>
+  <text x="382" y="716" class="mons">"score":<tspan fill="#059669" font-weight="700">90</tspan>}, {"description":"提及 2010 融资 …","score":<tspan fill="#d97706" font-weight="700">40</tspan>}</text>
+
+  <!-- batch 2 -->
+  <rect x="352" y="742" width="486" height="76" rx="9" fill="#fff" stroke="#93c5fd" stroke-width="1.3"/>
+  <text x="366" y="762" class="box-t">批 2 → LLM　<tspan class="mons" fill="#1d4ed8">analyst=2</tspan></text>
+  <text x="366" y="784" class="mons">{"description":"Berlin 是主要地理背景 [Data: Reports (7)]",</text>
+  <text x="382" y="800" class="mons">"score":<tspan fill="#059669" font-weight="700">75</tspan>}, {"description":"我不知道","score":<tspan fill="#dc2626" font-weight="700">0</tspan>}</text>
+
+  <!-- batch 3 -->
+  <rect x="352" y="826" width="486" height="62" rx="9" fill="#fff" stroke="#93c5fd" stroke-width="1.3"/>
+  <text x="366" y="846" class="box-t">批 3 → LLM　<tspan class="mons" fill="#1d4ed8">analyst=3</tspan></text>
+  <text x="366" y="868" class="mons">{"description":"Alice 是关键人物 [Data: Reports (3,9)]","score":<tspan fill="#059669" font-weight="700">85</tspan>}</text>
+
+  <line x1="332" y1="696" x2="350" y2="696" stroke="#2563eb" stroke-width="1.6" marker-end="url(#b)"/>
+
+  <!-- right JSON format box -->
+  <rect x="858" y="658" width="514" height="230" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="874" y="680" class="box-t" fill="#334155">每批必须返回的 JSON 格式</text>
+  <text x="874" y="704" class="mono">{"points": [</text>
+  <text x="890" y="722" class="mono">{"description": "要点，含 [Data: Reports (ids)]",</text>
+  <text x="906" y="740" class="mono">"score": 0-100 },  …</text>
+  <text x="874" y="758" class="mono">]}</text>
+  <line x1="868" y1="772" x2="1362" y2="772" stroke="#e2e8f0"/>
+  <text x="874" y="794" class="box-d" fill="#475569">· <tspan font-weight="700">score</tspan> = 0–100 整数重要度（这条对回答有多重要）</text>
+  <text x="874" y="814" class="box-d" fill="#475569">· 解析后重塑为 <tspan class="mons">{"answer":description,"score":int}</tspan></text>
+  <text x="874" y="836" class="box-d" fill="#be123c">· 🔧 某批 JSON 解析失败 → 跳过该批（当空要点），</text>
+  <text x="886" y="854" class="box-d" fill="#be123c">不让一批坏数据搞崩整个查询。</text>
+  <text x="874" y="876" class="small" fill="#475569">→ 5 条要点分散在 3 批里，交给 C 汇总。</text>
+
+  <!-- dynamic community selection amber -->
+  <rect x="80" y="912" width="1292" height="128" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.4"/>
+  <text x="96" y="936" class="amber">可选优化 · DynamicCommunitySelection（先剪枝再打分）—— 社区树可能很大，全部报告都拿去 Map 又慢又贵，很多和问题八竿子打不着</text>
+  <text x="96" y="960" class="box-d" fill="#a16207">· 从 <tspan font-weight="700">level-0</tspan>（最粗顶层社区）起 <tspan font-weight="700">BFS 下钻</tspan>；<tspan class="mons">rate_relevancy</tspan> 对每个社区 full_content 打相关性分（重复 num_repeats 次做<tspan font-weight="700">多数投票</tspan>，解析失败默认保留）</text>
+  <text x="96" y="982" class="box-d" fill="#a16207">· <tspan font-weight="700">rating ≥ threshold(1)</tspan> 才保留，并把它的 children 入队继续下钻；<tspan class="mons">keep_parent=False</tspan> → 孩子一旦被探索就丢父报告（只留最具体层级）；<tspan class="mons">max_level=2</tspan> 封顶</text>
+  <text x="96" y="1006" class="box-d" fill="#a16207">· 📌 一句话：别全取，用 LLM 打分把不相关社区剪掉，只把相关报告送进 Map → 省钱又提质。</text>
+  <text x="96" y="1028" class="small" fill="#b45309">出处：dynamic_community_selection.py（threshold / keep_parent / max_level 默认 = 1 / False / 2）</text>
+
+  <!-- B -> C arrow -->
+  <line x1="725" y1="1056" x2="725" y2="1096" stroke="#2563eb" stroke-width="2.4" marker-end="url(#bb)"/>
+
+  <!-- ===================== STAGE C ===================== -->
+  <text x="58" y="1096" class="band">C · Reduce：过滤 → 排序 → 截断 → 终局合成（五步走）</text>
+  <rect x="58" y="1110" width="1334" height="466" rx="14" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="80" y="1136" class="note">把 3 批的 <tspan font-weight="700">5 条要点摊平</tspan>进一个大列表，各自标注来源批号 analyst → 五步走。（_reduce_response · search.py:306-431）</text>
+
+  <!-- step 1 -->
+  <rect x="80" y="1150" width="616" height="40" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.2"/>
+  <text x="94" y="1168" class="step">① 摊平</text>
+  <text x="152" y="1168" class="box-d">3 批的 5 条要点 → 一个大列表，每条带 analyst 批号</text>
+  <text x="94" y="1184" class="mons" fill="#475569">[Acme·90, 融资·40, Berlin·75, 我不知道·0, Alice·85]</text>
+
+  <!-- step 2 -->
+  <rect x="80" y="1198" width="616" height="58" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.2"/>
+  <text x="94" y="1218" class="step">② 过滤 score &gt; 0</text>
+  <text x="240" y="1218" class="box-d">0 分的要点扔掉 → "我不知道"(0) 被删</text>
+  <text x="94" y="1240" class="box-d" fill="#be123c">⚠️ 若<tspan font-weight="700">全被滤光</tspan>且 allow_general_knowledge=False → 返回 <tspan font-weight="700">NO_DATA_ANSWER</tspan>（诚实说没依据，不硬编）</text>
+
+  <!-- step 3 -->
+  <rect x="80" y="1264" width="616" height="52" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.2"/>
+  <text x="94" y="1284" class="step">③ 按 score 降序排</text>
+  <text x="94" y="1306" class="mono">Acme(90) → Alice(85) → Berlin(75) → 融资(40)</text>
+
+  <!-- step 4 -->
+  <rect x="80" y="1324" width="616" height="98" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.2"/>
+  <text x="94" y="1344" class="step">④ 截断到 data_max_tokens=12000</text>
+  <text x="94" y="1364" class="box-d">逐条格式化累加，<tspan font-weight="700">超预算即停</tspan> → 排序在前的先塞，才不被截掉</text>
+  <rect x="94" y="1374" width="588" height="40" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="106" y="1391" class="mons">----Analyst 1----　Importance Score: 90</text>
+  <text x="106" y="1408" class="mons">Acme 是叙事核心 …　（下接 Analyst 3 / 2 …）</text>
+
+  <!-- step 5 -->
+  <rect x="80" y="1430" width="616" height="88" rx="8" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.4"/>
+  <text x="94" y="1450" class="step">⑤ 终局合成 LLM（流式输出）</text>
+  <text x="94" y="1472" class="box-d">REDUCE_SYSTEM_PROMPT · reduce_max_length=2000 词</text>
+  <text x="94" y="1492" class="box-d">保留 <tspan class="mons">[Data: Reports (ids)]</tspan> 引用 · 输出 markdown</text>
+  <text x="94" y="1510" class="box-d" fill="#be123c">allow_general_knowledge=False：只准依据报告，不许自由发挥</text>
+
+  <!-- right: assembled reduce context -->
+  <rect x="720" y="1150" width="652" height="238" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="736" y="1172" class="box-t" fill="#334155">拼好的 reduce 上下文（按 score 降序截断后）</text>
+  <line x1="730" y1="1182" x2="1362" y2="1182" stroke="#e2e8f0"/>
+  <text x="736" y="1202" class="mono">----Analyst 1----</text>
+  <text x="736" y="1220" class="mono">Importance Score: 90</text>
+  <text x="736" y="1238" class="mono">Acme 是叙事核心 [Data: Reports (12,34)]</text>
+  <text x="736" y="1258" class="mono">----Analyst 3----　Importance Score: 85</text>
+  <text x="736" y="1276" class="mono">Alice 是关键人物 [Data: Reports (3,9)]</text>
+  <text x="736" y="1296" class="mono">----Analyst 2----　Importance Score: 75</text>
+  <text x="736" y="1314" class="mono">Berlin 是主要地理背景 [Data: Reports (7)]</text>
+  <text x="736" y="1338" class="mons" fill="#be123c">融资(40) 若累加已超 12000 预算 → 被丢弃（截断）</text>
+  <text x="736" y="1362" class="small" fill="#475569">→ 这份文本喂给最后一个 LLM（⑤）流式合成答案</text>
+
+  <!-- right: final answer -->
+  <rect x="720" y="1400" width="652" height="118" rx="10" fill="#dcfce7" stroke="#4ade80" stroke-width="1.6"/>
+  <text x="736" y="1422" class="box-t" fill="#14532d">有据可依的全局答案（流式 markdown）</text>
+  <text x="736" y="1444" class="mono" fill="#166534">"这批文档主要围绕 Acme 公司展开，Alice 是</text>
+  <text x="736" y="1462" class="mono" fill="#166534">关键人物 [Data: Reports (3,9)]，以柏林为主要</text>
+  <text x="736" y="1480" class="mono" fill="#166534">地理背景 [Data: Reports (7)] …"</text>
+  <text x="736" y="1506" class="small" fill="#15803d">→ 返回 GlobalSearchResult（含 map_responses，可追溯每批要点）</text>
+  <line x1="1046" y1="1388" x2="1046" y2="1398" stroke="#16a34a" stroke-width="2" marker-end="url(#b)"/>
+
+  <!-- C -> D arrow -->
+  <line x1="725" y1="1578" x2="725" y2="1616" stroke="#2563eb" stroke-width="2.4" marker-end="url(#bb)"/>
+
+  <!-- ===================== STAGE D ===================== -->
+  <text x="58" y="1616" class="band">D · 机制本质 · 适用问题 · 与 Local Search 的分工</text>
+  <rect x="58" y="1630" width="1334" height="250" rx="14" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1.5"/>
+
+  <!-- rationale -->
+  <rect x="80" y="1652" width="806" height="206" rx="10" fill="#fff" stroke="#7dd3fc" stroke-width="1.2"/>
+  <text x="96" y="1676" class="box-t" fill="#0369a1">🧵 Map-Reduce 的本质与适用</text>
+  <text x="96" y="1700" class="note" fill="#075985">· <tspan font-weight="700">为什么 Map-Reduce</tspan>：社区报告数远超单窗口 → 分批各自出要点+打分(map)，</text>
+  <text x="108" y="1720" class="note" fill="#075985">再汇总、按重要度排序截断、终局合成(reduce)。用<tspan font-weight="700">并行</tspan>换<tspan font-weight="700">海量报告全覆盖</tspan>。</text>
+  <text x="96" y="1746" class="note" fill="#075985">· <tspan font-weight="700">适用问题</tspan>：全局性、数据集级主题（"主要在讲什么""整体趋势"）——</text>
+  <text x="108" y="1766" class="note" fill="#075985">需综合<tspan font-weight="700">全部</tspan>社区，而非局部检索。每份报告都有机会发声，又不撑爆上下文。</text>
+  <text x="96" y="1792" class="note" fill="#075985">· <tspan font-weight="700">配置默认</tspan>：批分/reduce 预算均 12000 · map/reduce 词限 1000/2000 · 并发 32 · score 0–100。</text>
+  <text x="96" y="1816" class="small" fill="#0369a1">⚠️ 搜索引擎类构造默认(8000/32) 会被 query/factory.py 用 <tspan font-weight="700">config 默认覆盖</tspan> → 以 config 为准</text>
+  <text x="108" y="1834" class="small" fill="#0369a1">（defaults.py:200-203）。所以你会看到两套数字，config 默认为权威。</text>
+
+  <!-- Local mini panel -->
+  <rect x="906" y="1652" width="466" height="206" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="922" y="1676" class="box-t" fill="#334155">对照 · Local Search（本篇无独立配图）</text>
+  <text x="922" y="1698" class="box-d" fill="#475569"><tspan font-weight="700">只调一次 LLM</tspan>，功夫全在"拼一份混合上下文"：</text>
+  <text x="922" y="1720" class="mons" fill="#1d4ed8">max_context_tokens=12000　先扣对话历史</text>
+  <text x="922" y="1740" class="mons" fill="#475569">community_prop=0.15　社区报告 ≈ 1800</text>
+  <text x="922" y="1758" class="mons" fill="#475569">实体/关系表 =0.35　　　　　≈ 4200</text>
+  <text x="922" y="1776" class="mons" fill="#475569">text_unit_prop=0.5　原文块 ≈ 6000</text>
+  <line x1="916" y1="1790" x2="1362" y2="1790" stroke="#e2e8f0"/>
+  <text x="922" y="1810" class="small" fill="#475569">关系：<tspan font-weight="700">in-network</tspan>（两端都选中）优先，out-network</text>
+  <text x="922" y="1828" class="small" fill="#475569">（指向圈外）按<tspan font-weight="700">互链数</tspan>排。见 03/07。</text>
+  <text x="922" y="1848" class="small" fill="#be123c">⚠️ Local 允许常识，Global 默认不允许。</text>
+</svg>

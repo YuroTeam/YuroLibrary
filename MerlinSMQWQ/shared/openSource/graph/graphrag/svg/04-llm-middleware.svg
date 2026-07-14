@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="640" viewBox="0 0 1180 640" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="down" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0d9488"/>
+    </marker>
+    <marker id="up" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9333ea"/>
+    </marker>
+    <style>
+      .title{font-size:28px;font-weight:700;fill:#0f172a}
+      .sub{font-size:14px;fill:#64748b}
+      .mt{font-size:15px;font-weight:700}
+      .md{font-size:11.5px}
+      .lg{font-size:13px;font-weight:700}
+    </style>
+  </defs>
+  <rect width="1180" height="640" fill="#f8fafc"/>
+  <text x="60" y="50" class="title">LLM 中间件管道 · graphrag-llm</text>
+  <text x="60" y="74" class="sub">with_middleware_pipeline.py — 层层包裹；后应用者在最外层(最先运行)。chat 与 embedding 共用同栈</text>
+
+  <!-- request / response labels -->
+  <text x="120" y="118" class="lg" fill="#0d9488">▼ 请求下行 (request)</text>
+  <text x="1000" y="118" class="lg" fill="#9333ea" text-anchor="end">响应上行 (response) ▲</text>
+
+  <!-- nested boxes representing wrapping order -->
+  <!-- outermost -->
+  <g>
+    <rect x="120" y="132" width="940" height="44" rx="9" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <text x="140" y="159" class="mt" fill="#0e7490">with_logging</text>
+    <text x="1040" y="159" text-anchor="end" class="md" fill="#155e75">边界记录 请求/响应 · 恒启用 (最外层)</text>
+  </g>
+  <g>
+    <rect x="150" y="184" width="880" height="44" rx="9" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+    <text x="170" y="211" class="mt" fill="#0f766e">with_request_count</text>
+    <text x="1010" y="211" text-anchor="end" class="md" fill="#115e59">计数请求/成功/失败 · 若有 metrics_processor</text>
+  </g>
+  <g>
+    <rect x="180" y="236" width="820" height="52" rx="9" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="200" y="260" class="mt" fill="#1d4ed8">with_cache</text>
+    <text x="200" y="279" class="md" fill="#1e40af">命中即短路返回 · 成功即写缓存 (跳过流式/mock)</text>
+    <text x="980" y="266" text-anchor="end" class="md" fill="#1e3a8a" font-weight="700">★ 缓存先于重试/限流：命中不耗预算</text>
+  </g>
+  <g>
+    <rect x="210" y="296" width="760" height="44" rx="9" fill="#fef9c3" stroke="#fde047" stroke-width="1.5"/>
+    <text x="230" y="323" class="mt" fill="#a16207">with_retries</text>
+    <text x="950" y="323" text-anchor="end" class="md" fill="#854d0e">重试 · 置于限流之外(重试重新排队限流)</text>
+  </g>
+  <g>
+    <rect x="240" y="348" width="700" height="44" rx="9" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+    <text x="260" y="375" class="mt" fill="#c2410c">with_rate_limiting</text>
+    <text x="920" y="375" text-anchor="end" class="md" fill="#9a3412">用 Tokenizer 估 token 成本节流</text>
+  </g>
+  <g>
+    <rect x="270" y="400" width="640" height="44" rx="9" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text x="290" y="427" class="mt" fill="#7c3aed">with_metrics</text>
+    <text x="890" y="427" text-anchor="end" class="md" fill="#6d28d9">逐请求计时 / token 指标</text>
+  </g>
+  <g>
+    <rect x="300" y="452" width="580" height="40" rx="9" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+    <text x="320" y="477" class="mt" fill="#b91c1c" font-size="13px">with_errors_for_testing</text>
+    <text x="860" y="477" text-anchor="end" class="md" fill="#991b1b">测试注入故障 · failure_rate&gt;0</text>
+  </g>
+  <!-- core -->
+  <g>
+    <rect x="330" y="500" width="520" height="48" rx="9" fill="#1e293b"/>
+    <text x="590" y="530" text-anchor="middle" class="mt" fill="#f8fafc">基础 model_fn — litellm chat / embedding 调用</text>
+  </g>
+
+  <!-- down arrows (left side) -->
+  <g stroke="#0d9488" stroke-width="2" marker-end="url(#down)">
+    <line x1="132" y1="176" x2="132" y2="500"/>
+  </g>
+  <!-- up arrows (right side) -->
+  <g stroke="#9333ea" stroke-width="2" marker-end="url(#up)">
+    <line x1="1048" y1="504" x2="1048" y2="178"/>
+  </g>
+
+  <!-- footer note -->
+  <rect x="120" y="572" width="940" height="48" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="140" y="592" class="md" fill="#334155" font-weight="700">请求流向 (最外→最内)：</text>
+  <text x="140" y="610" class="md" fill="#475569">logging → request_count → cache → retries → rate_limiting → metrics → errors_for_testing → 基础调用；响应沿同栈冒泡。除 logging 外均条件启用。</text>
+</svg>

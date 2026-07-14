@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1000" viewBox="0 0 1160 1000" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="r_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1160" height="1000" fill="#f8fafc"/>
+
+  <text x="580" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 重排算法 · RRF 与 MMR</text>
+  <text x="580" y="72" text-anchor="middle" font-size="14" fill="#64748b">RRF 管「融合多路召回」· MMR 管「去冗余、保多样」</text>
+
+  <!-- ============ RRF ============ -->
+  <rect x="30" y="96" width="550" height="420" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.2"/>
+  <text x="305" y="126" text-anchor="middle" font-size="18" font-weight="700" fill="#1d4ed8">RRF · 倒数排名融合 ⭐默认</text>
+  <text x="305" y="148" text-anchor="middle" font-size="12" fill="#475569">只看排名，不看分数（分数量纲不可比）</text>
+
+  <!-- formula -->
+  <rect x="55" y="164" width="500" height="46" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="305" y="184" text-anchor="middle" font-size="14" font-weight="700" fill="#1e40af" font-family="monospace">score = Σ 1/(排名 + 1)</text>
+  <text x="305" y="202" text-anchor="middle" font-size="10.5" fill="#1e40af">各路召回列表　第1名→1.0　第2名→0.5　第3名→0.33…</text>
+
+  <!-- worked example -->
+  <text x="55" y="234" font-size="12.5" font-weight="700" fill="#1d4ed8">算例：3 路召回，X vs Y</text>
+  <!-- table header -->
+  <g font-size="11">
+    <rect x="55" y="244" width="120" height="28" fill="#bfdbfe"/><text x="115" y="263" text-anchor="middle" font-weight="700" fill="#1e3a8a">结果</text>
+    <rect x="175" y="244" width="100" height="28" fill="#bfdbfe"/><text x="225" y="263" text-anchor="middle" font-weight="700" fill="#1e3a8a">BM25</text>
+    <rect x="275" y="244" width="100" height="28" fill="#bfdbfe"/><text x="325" y="263" text-anchor="middle" font-weight="700" fill="#1e3a8a">向量</text>
+    <rect x="375" y="244" width="80" height="28" fill="#bfdbfe"/><text x="415" y="263" text-anchor="middle" font-weight="700" fill="#1e3a8a">BFS</text>
+    <rect x="455" y="244" width="100" height="28" fill="#93c5fd"/><text x="505" y="263" text-anchor="middle" font-weight="700" fill="#1e3a8a">总分</text>
+  </g>
+  <g font-size="11" fill="#334155">
+    <rect x="55" y="272" width="120" height="30" fill="#ffffff" stroke="#dbeafe"/><text x="115" y="292" text-anchor="middle" font-weight="700">X</text>
+    <rect x="175" y="272" width="100" height="30" fill="#ffffff" stroke="#dbeafe"/><text x="225" y="292" text-anchor="middle">第1 (1.0)</text>
+    <rect x="275" y="272" width="100" height="30" fill="#ffffff" stroke="#dbeafe"/><text x="325" y="292" text-anchor="middle">第3 (.33)</text>
+    <rect x="375" y="272" width="80" height="30" fill="#ffffff" stroke="#dbeafe"/><text x="415" y="292" text-anchor="middle" fill="#94a3b8">未上榜</text>
+    <rect x="455" y="272" width="100" height="30" fill="#eff6ff" stroke="#93c5fd"/><text x="505" y="292" text-anchor="middle" font-weight="700">1.33</text>
+  </g>
+  <g font-size="11" fill="#334155">
+    <rect x="55" y="302" width="120" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="115" y="322" text-anchor="middle" font-weight="700">Y</text>
+    <rect x="175" y="302" width="100" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="225" y="322" text-anchor="middle">第2 (0.5)</text>
+    <rect x="275" y="302" width="100" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="325" y="322" text-anchor="middle">第1 (1.0)</text>
+    <rect x="375" y="302" width="80" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="415" y="322" text-anchor="middle">第1 (1.0)</text>
+    <rect x="455" y="302" width="100" height="30" fill="#dcfce7" stroke="#16a34a"/><text x="505" y="322" text-anchor="middle" font-weight="700" fill="#15803d">2.5 ✅</text>
+  </g>
+
+  <rect x="55" y="348" width="500" height="70" rx="8" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="70" y="370" font-size="12" font-weight="700" fill="#1d4ed8">💡 Y 赢在哪</text>
+  <text x="70" y="390" font-size="11" fill="#475569">X 只在 BM25 夺冠但其他路平庸；Y 三路都名列前茅</text>
+  <text x="70" y="408" font-size="11" font-weight="600" fill="#1d4ed8">RRF 奖励「多路都认可」的结果，比单路冠军更可靠</text>
+
+  <rect x="55" y="430" width="500" height="66" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="70" y="452" font-size="11.5" font-weight="700" fill="#334155">要点</text>
+  <text x="70" y="472" font-size="10.5" fill="#475569">• 不需要嵌入，纯累加排序，成本极低</text>
+  <text x="70" y="489" font-size="10.5" fill="#475569">• rank_const=1 头部权重高；调大会压平头部差距</text>
+
+  <!-- ============ MMR ============ -->
+  <rect x="600" y="96" width="530" height="420" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.2"/>
+  <text x="865" y="126" text-anchor="middle" font-size="18" font-weight="700" fill="#6d28d9">MMR · 最大边际相关性</text>
+  <text x="865" y="148" text-anchor="middle" font-size="12" fill="#475569">在「相关」与「不重复」之间权衡</text>
+
+  <rect x="625" y="164" width="480" height="46" rx="8" fill="#f3e8ff" stroke="#a78bfa"/>
+  <text x="865" y="184" text-anchor="middle" font-size="13.5" font-weight="700" fill="#6d28d9" font-family="monospace">mmr = λ·相关性 − (1−λ)·冗余度</text>
+  <text x="865" y="202" text-anchor="middle" font-size="10.5" fill="#6d28d9">相关=cos(query,候选)　冗余=max cos(候选,其他候选)　λ=0.5</text>
+
+  <text x="625" y="234" font-size="12.5" font-weight="700" fill="#6d28d9">算例：λ=0.5，A/B 是近似重复</text>
+  <g font-size="10.5">
+    <rect x="625" y="244" width="90" height="28" fill="#e9d5ff"/><text x="670" y="263" text-anchor="middle" font-weight="700" fill="#5b21b6">候选</text>
+    <rect x="715" y="244" width="110" height="28" fill="#e9d5ff"/><text x="770" y="263" text-anchor="middle" font-weight="700" fill="#5b21b6">相关性</text>
+    <rect x="825" y="244" width="130" height="28" fill="#e9d5ff"/><text x="890" y="263" text-anchor="middle" font-weight="700" fill="#5b21b6">冗余(和他人)</text>
+    <rect x="955" y="244" width="150" height="28" fill="#d8b4fe"/><text x="1030" y="263" text-anchor="middle" font-weight="700" fill="#5b21b6">MMR 分</text>
+  </g>
+  <g font-size="10.5" fill="#334155">
+    <rect x="625" y="272" width="90" height="30" fill="#ffffff" stroke="#e9d5ff"/><text x="670" y="292" text-anchor="middle" font-weight="700">A</text>
+    <rect x="715" y="272" width="110" height="30" fill="#ffffff" stroke="#e9d5ff"/><text x="770" y="292" text-anchor="middle">0.80 高</text>
+    <rect x="825" y="272" width="130" height="30" fill="#ffffff" stroke="#e9d5ff"/><text x="890" y="292" text-anchor="middle">0.90(≈B)</text>
+    <rect x="955" y="272" width="150" height="30" fill="#fef2f2" stroke="#fca5a5"/><text x="1030" y="292" text-anchor="middle" font-weight="700" fill="#b91c1c">−0.05</text>
+  </g>
+  <g font-size="10.5" fill="#334155">
+    <rect x="625" y="302" width="90" height="30" fill="#ffffff" stroke="#e9d5ff"/><text x="670" y="322" text-anchor="middle" font-weight="700">B</text>
+    <rect x="715" y="302" width="110" height="30" fill="#ffffff" stroke="#e9d5ff"/><text x="770" y="322" text-anchor="middle">0.78</text>
+    <rect x="825" y="302" width="130" height="30" fill="#ffffff" stroke="#e9d5ff"/><text x="890" y="322" text-anchor="middle">0.90(≈A)</text>
+    <rect x="955" y="302" width="150" height="30" fill="#fef2f2" stroke="#fca5a5"/><text x="1030" y="322" text-anchor="middle" font-weight="700" fill="#b91c1c">−0.06</text>
+  </g>
+  <g font-size="10.5" fill="#334155">
+    <rect x="625" y="332" width="90" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="670" y="352" text-anchor="middle" font-weight="700">C</text>
+    <rect x="715" y="332" width="110" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="770" y="352" text-anchor="middle">0.70 略低</text>
+    <rect x="825" y="332" width="130" height="30" fill="#f0fdf4" stroke="#bbf7d0"/><text x="890" y="352" text-anchor="middle">0.30 独特</text>
+    <rect x="955" y="332" width="150" height="30" fill="#dcfce7" stroke="#16a34a"/><text x="1030" y="352" text-anchor="middle" font-weight="700" fill="#15803d">+0.20 ✅</text>
+  </g>
+
+  <rect x="625" y="378" width="480" height="70" rx="8" fill="#ffffff" stroke="#e9d5ff"/>
+  <text x="640" y="400" font-size="12" font-weight="700" fill="#6d28d9">💡 C 逆袭</text>
+  <text x="640" y="420" font-size="11" fill="#475569">A、B 是「双胞胎」，互相冗余 0.90 被狠扣分</text>
+  <text x="640" y="438" font-size="11" font-weight="600" fill="#6d28d9">宁选稍不相关但独特的 C，也不让列表被近似重复占满</text>
+
+  <rect x="625" y="460" width="480" height="46" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="640" y="480" font-size="10.5" fill="#475569">λ 越大越看重相关（近纯向量检索），越小越看重多样</text>
+  <text x="640" y="497" font-size="10.5" fill="#475569">成本较高：要建 N×N 相似度矩阵 O(N²)，需嵌入</text>
+
+  <!-- ============ comparison ============ -->
+  <text x="30" y="556" font-size="16" font-weight="700" fill="#1e293b">对比 + 另外两个重排器</text>
+  <g font-size="11">
+    <rect x="30" y="568" width="1100" height="30" fill="#e2e8f0"/>
+    <text x="45" y="588" font-weight="700" fill="#334155">维度</text>
+    <text x="300" y="588" font-weight="700" fill="#1d4ed8">RRF</text>
+    <text x="560" y="588" font-weight="700" fill="#6d28d9">MMR</text>
+    <text x="820" y="588" font-weight="700" fill="#334155">何时用</text>
+  </g>
+  <g font-size="11" fill="#475569">
+    <rect x="30" y="598" width="1100" height="28" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="45" y="616">解决什么</text><text x="300" y="616">融合多路排名</text><text x="560" y="616">去冗余、保多样</text><text x="820" y="616" fill="#64748b">RRF 默认；MMR 结果易雷同时</text>
+    <rect x="30" y="626" width="1100" height="28" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="45" y="644">需要嵌入</text><text x="300" y="644">❌ 不需要</text><text x="560" y="644">✅ 需要算相似度</text><text x="820" y="644" fill="#64748b">RRF 快、MMR 慢(O(N²))</text>
+    <rect x="30" y="654" width="1100" height="28" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="45" y="672">超参</text><text x="300" y="672">rank_const=1</text><text x="560" y="672">λ=0.5</text><text x="820" y="672" fill="#64748b">调 λ 平衡相关↔多样</text>
+  </g>
+
+  <!-- other two rerankers -->
+  <rect x="30" y="698" width="360" height="130" rx="10" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="50" y="722" font-size="13" font-weight="700" fill="#0f766e">node_distance</text>
+  <text x="50" y="744" font-size="11" fill="#475569">给中心节点，离它近的排前面</text>
+  <text x="50" y="763" font-size="10.5" fill="#64748b">Cypher 查 (center)-[:RELATES_TO]-(n)</text>
+  <text x="50" y="781" font-size="10.5" fill="#64748b">直接邻居距离 1，非邻居 inf，升序排</text>
+  <text x="50" y="799" font-size="10.5" fill="#64748b">返回分 = 1/距离，中心节点置顶</text>
+  <text x="50" y="819" font-size="10.5" fill="#0f766e">用途：「以某实体为中心」的检索</text>
+
+  <rect x="405" y="698" width="360" height="130" rx="10" fill="#fef3c7" stroke="#d97706"/>
+  <text x="425" y="722" font-size="13" font-weight="700" fill="#b45309">episode_mentions</text>
+  <text x="425" y="744" font-size="11" fill="#475569">按被多少 episode 提及排序</text>
+  <text x="425" y="763" font-size="10.5" fill="#64748b">先 RRF 初排，再 count MENTIONS 边</text>
+  <text x="425" y="781" font-size="10.5" fill="#64748b">(Episodic)-[:MENTIONS]-&gt;(n)</text>
+  <text x="425" y="799" font-size="10.5" fill="#64748b">边版：按 len(edge.episodes) 降序</text>
+  <text x="425" y="819" font-size="10.5" fill="#b45309">用途：越常被提及越「重要」</text>
+
+  <rect x="780" y="698" width="350" height="130" rx="10" fill="#fdf4ff" stroke="#a21caf"/>
+  <text x="800" y="722" font-size="13" font-weight="700" fill="#86198f">cross_encoder</text>
+  <text x="800" y="744" font-size="11" fill="#475569">最准但最慢，不在 search_utils</text>
+  <text x="800" y="763" font-size="10.5" fill="#64748b">调 Provider 层 CrossEncoderClient.rank()</text>
+  <text x="800" y="781" font-size="10.5" fill="#64748b">(query, 每条候选) 成对喂重排模型精打分</text>
+  <text x="800" y="805" font-size="10.5" fill="#86198f">详见 Provider 抽象层文档</text>
+
+  <!-- footer -->
+  <rect x="30" y="846" width="1100" height="120" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="50" y="872" font-size="14" font-weight="700" fill="#b45309">💡 一句话</text>
+  <text x="50" y="896" font-size="12.5" fill="#334155">RRF 只用排名把多路召回融合（Σ1/(排名+1)），奖励「多路都靠前」，妙在无需可比的分数量纲。</text>
+  <text x="50" y="920" font-size="12.5" fill="#334155">MMR 用 λ·相关 −(1−λ)·冗余（λ=0.5）在相关与多样间权衡，宁选独特也不让列表被近似重复占满。</text>
+  <text x="50" y="946" font-size="12.5" font-weight="600" fill="#b45309">一个管「融合」、一个管「去冗余」——混合检索「召回保全、重排保准」里"保准"的核心。</text>
+</svg>

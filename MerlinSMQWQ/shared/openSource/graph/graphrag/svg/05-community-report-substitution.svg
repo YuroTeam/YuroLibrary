@@ -1,0 +1,297 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="2110" viewBox="0 0 1440 2110" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="t" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#0d9488"/></marker>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#ea580c"/></marker>
+    <marker id="gr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/></marker>
+    <marker id="tb" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#0d9488"/></marker>
+    <marker id="grb" markerWidth="13" markerHeight="13" refX="9" refY="4.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L11,4.5 L0,9 Z" fill="#16a34a"/></marker>
+    <style>
+      .title{font-size:30px;font-weight:700;fill:#0f172a}
+      .sub{font-size:15px;fill:#64748b}
+      .band{font-size:18px;font-weight:700;letter-spacing:.03em;fill:#0d9488}
+      .bandn{font-size:18px;font-weight:800;fill:#fff}
+      .box-t{font-size:13.5px;font-weight:700;fill:#115e59}
+      .box-d{font-size:11.5px;fill:#0f766e}
+      .note{font-size:12.5px;fill:#475569}
+      .small{font-size:11px;fill:#64748b}
+      .mono{font-size:12px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#334155}
+      .mons{font-size:11px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#475569}
+      .th{font-size:11px;font-weight:700;fill:#0f766e}
+      .amber{font-size:12.5px;font-weight:700;fill:#c2410c}
+      .lvl{font-size:13px;font-weight:800;fill:#0d9488}
+      .stepn{font-size:12px;font-weight:800;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1440" height="2110" fill="#f8fafc"/>
+
+  <!-- ===================== HEADER ===================== -->
+  <text x="48" y="52" class="title">③ 社区报告 · 自底向上递归摘要　★核心创新</text>
+  <text x="48" y="82" class="sub">index/operations/summarize_communities/ — 给社区树每个社区写报告：叶子先摘要 → 父社区超预算时用子报告替换原始数据 → 跨层引用闭环</text>
+
+  <!-- running example banner -->
+  <rect x="48" y="100" width="1344" height="64" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="66" y="126" class="box-t" fill="#92400e">🧵 贯穿示例 · ② 聚出的一棵小树</text>
+  <text x="66" y="150" class="mono" fill="#92400e">叶子社区「Acme 公司及其创始人」(Alice / Acme Corp / Berlin，≤10 实体) → 父社区「柏林商业社区」→ 根社区（整个语料的商业版图）</text>
+
+  <!-- stage circles on left spine -->
+  <circle cx="30" cy="210" r="16" fill="#0d9488"/><text x="30" y="216" text-anchor="middle" class="bandn">A</text>
+  <circle cx="30" cy="656" r="16" fill="#0d9488"/><text x="30" y="662" text-anchor="middle" class="bandn">B</text>
+  <circle cx="30" cy="1298" r="16" fill="#0d9488"/><text x="30" y="1304" text-anchor="middle" class="bandn">C</text>
+  <circle cx="30" cy="1640" r="16" fill="#0d9488"/><text x="30" y="1646" text-anchor="middle" class="bandn">D</text>
+
+  <!-- ===================== STAGE A ===================== -->
+  <text x="58" y="200" class="band">A · 自底向上的处理顺序（谁先写、谁后写）</text>
+  <rect x="58" y="212" width="1334" height="380" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+
+  <!-- bottom-up arrow with order circles -->
+  <line x1="95" y1="546" x2="95" y2="250" stroke="#16a34a" stroke-width="2.6" marker-end="url(#grb)"/>
+  <text x="74" y="410" class="small" fill="#15803d" transform="rotate(-90 74 410)">处理顺序 · 先叶子后根</text>
+  <circle cx="95" cy="508" r="12" fill="#4d7c0f"/><text x="95" y="512" text-anchor="middle" class="stepn">①</text>
+  <circle cx="95" cy="388" r="12" fill="#16a34a"/><text x="95" y="392" text-anchor="middle" class="stepn">②</text>
+  <circle cx="95" cy="277" r="12" fill="#15803d"/><text x="95" y="281" text-anchor="middle" class="stepn">③</text>
+
+  <!-- tree edges -->
+  <g stroke="#94a3b8" stroke-width="1.6" fill="none">
+    <path d="M355,306 L500,360"/>
+    <path d="M260,416 L392,482"/>
+    <path d="M260,416 L544,482"/>
+  </g>
+  <!-- example highlighted path -->
+  <g stroke="#f59e0b" stroke-width="2.4" fill="none">
+    <path d="M355,306 L260,360"/>
+    <path d="M260,416 L215,480"/>
+  </g>
+
+  <!-- root L0 -->
+  <rect x="240" y="252" width="230" height="54" rx="10" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.8"/>
+  <text x="256" y="274" class="box-t" fill="#14532d">Level 0 · 根社区</text>
+  <text x="256" y="294" class="box-d" fill="#3f6212">跨语料 · 上万实体 · 装不下原始数据</text>
+
+  <!-- mid L1 example (highlighted) -->
+  <rect x="150" y="360" width="220" height="56" rx="9" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="166" y="382" class="box-t" fill="#92400e">L1 · 柏林商业社区</text>
+  <text x="166" y="401" class="box-d" fill="#b45309">数百实体 · 本例父社区</text>
+  <!-- mid L1 sibling -->
+  <rect x="410" y="362" width="184" height="52" rx="9" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="426" y="383" class="box-t" fill="#166534">L1 · 其他城市社区</text>
+  <text x="426" y="401" class="box-d">…别的分支</text>
+
+  <!-- leaves L2 -->
+  <rect x="120" y="480" width="190" height="56" rx="8" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+  <text x="134" y="502" class="box-t" fill="#92400e" font-size="12">L2 · Acme 及创始人</text>
+  <text x="134" y="521" class="box-d" fill="#b45309">Alice/Acme/Berlin　≤10 实体</text>
+  <rect x="322" y="482" width="146" height="52" rx="8" fill="#ecfccb" stroke="#a3e635" stroke-width="1.5"/>
+  <text x="336" y="503" class="small" fill="#4d7c0f" font-weight="700">L2 · 柏林其他企业</text>
+  <text x="336" y="521" class="small" fill="#4d7c0f">≤10 实体</text>
+  <rect x="480" y="482" width="146" height="52" rx="8" fill="#ecfccb" stroke="#a3e635" stroke-width="1.5"/>
+  <text x="494" y="503" class="small" fill="#4d7c0f" font-weight="700">L2 · 某行业协会</text>
+  <text x="494" y="521" class="small" fill="#4d7c0f">≤10 实体</text>
+
+  <text x="150" y="560" class="small" fill="#475569">这三个叶子聚成父社区「柏林商业社区」；它又和「其他城市社区」聚成根社区。</text>
+
+  <!-- right box 1: get_levels -->
+  <rect x="700" y="242" width="672" height="158" rx="10" fill="#ccfbf1" stroke="#2dd4bf" stroke-width="1.3"/>
+  <text x="716" y="264" class="box-t">get_levels(utils.py:11-17) —— 强制「叶子先摘要」的降序驱动</text>
+  <text x="716" y="290" class="mono">levels = [l for l in levels if l != -1]   <tspan class="mons"># 丢掉哨兵 -1（无社区归属）</tspan></text>
+  <text x="716" y="312" class="mono">return sorted(levels, reverse=True)       <tspan class="mons"># 降序返回</tspan></text>
+  <text x="716" y="338" class="box-d">本例：<tspan font-weight="700">[2, 1, 0]</tspan> → 先 level 2（叶子 ①）→ level 1（柏林商业 ②）→ level 0（根 ③）</text>
+  <text x="716" y="362" class="box-d" fill="#be123c">⚠️ 顺序不能颠倒：父社区要复用孩子报告 → 孩子必须先写完，否则替换机制（B）失灵。</text>
+  <text x="716" y="384" class="small" fill="#0f766e">「自底向上」指处理顺序（先叶子后根），不是指数据流向。level 越大越深越靠叶子。</text>
+
+  <!-- right box 2: leaf summarize -->
+  <rect x="700" y="410" width="672" height="170" rx="10" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.4"/>
+  <text x="716" y="432" class="box-t" fill="#155e75">① 叶子社区：直接从原始数据摘要（不复用任何子报告）</text>
+  <text x="716" y="456" class="box-d" fill="#0e7490">叶子本来就小(≤10 实体) → build_local_context 用原始 实体 + 关系 + 声明 构建上下文；</text>
+  <text x="716" y="478" class="box-d" fill="#0e7490">sort_context 按<tspan font-weight="700">度数降序</tspan>贪心填充（最连通 / 最有信息量的边优先塞给 LLM）。</text>
+  <text x="716" y="502" class="mono" fill="#155e75">context_exceed_flag = (context_size &gt; 8000)</text>
+  <text x="716" y="526" class="box-d" fill="#0e7490">叶子一装就下 → context_exceed_flag = <tspan font-weight="700" fill="#15803d">False</tspan> → 直接摘要成报告 ✓</text>
+  <text x="716" y="550" class="box-d" fill="#be123c">而大的父 / 根社区：原始数据太多 → context_exceed_flag = <tspan font-weight="700">True</tspan>（超预算）→ 见 B。</text>
+  <text x="716" y="572" class="small" fill="#155e75">每个社区都产出 title / summary / findings[5-10] / rating（结构见 D）。</text>
+
+  <!-- A -> B arrow -->
+  <line x1="725" y1="594" x2="725" y2="626" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== STAGE B ===================== -->
+  <text x="58" y="646" class="band">B · 超预算替换算法：用最大孩子的报告顶替它的原始数据　★皇冠上的明珠</text>
+  <rect x="58" y="658" width="1334" height="600" rx="14" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="80" y="684" class="note" fill="#9a3412">处理父社区「柏林商业社区」：三个孩子的原始数据合计 20000 token 远超 8000 → context_exceed_flag=True → build_mixed_context 启动贪心替换。</text>
+
+  <!-- children table -->
+  <rect x="80" y="700" width="540" height="150" rx="9" fill="#fff" stroke="#14b8a6" stroke-width="1.3"/>
+  <text x="94" y="722" class="box-t">「柏林商业社区」的三个孩子（build_mixed_context.py:15-74）</text>
+  <text x="94" y="752" class="th">子社区</text><text x="360" y="752" class="th">原始实体 token</text><text x="500" y="752" class="th">报告 token</text>
+  <line x1="90" y1="760" x2="610" y2="760" stroke="#99f6e4"/>
+  <text x="94" y="780" class="mons">子A · Acme 及创始人</text><text x="380" y="780" class="mons" fill="#c2410c" font-weight="700">12000</text><text x="512" y="780" class="mons" fill="#15803d">400</text>
+  <text x="94" y="802" class="mons">子B · 柏林行业协会</text><text x="380" y="802" class="mons">5000</text><text x="512" y="802" class="mons" fill="#15803d">350</text>
+  <text x="94" y="824" class="mons">子C · 柏林小企业群</text><text x="380" y="824" class="mons">3000</text><text x="512" y="824" class="mons" fill="#15803d">300</text>
+  <line x1="90" y1="832" x2="610" y2="832" stroke="#e2e8f0"/>
+  <text x="94" y="847" class="small" fill="#334155">合计原始 = 20000 ✗ 远超预算　　合计报告 ≈ 1050</text>
+
+  <!-- first-try box -->
+  <rect x="640" y="700" width="732" height="150" rx="9" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.3"/>
+  <text x="656" y="722" class="box-t" fill="#854d0e">第一步：先老实试原始数据，看装不装得下</text>
+  <text x="656" y="746" class="box-d" fill="#a16207">build_local_context 用 sort_context 按度数降序累加 token：</text>
+  <text x="668" y="768" class="mono" fill="#334155">12000 + 5000 + 3000 = 20000 token</text>
+  <text x="656" y="792" class="mono" fill="#be123c">context_exceed_flag = 20000 &gt; 8000 = True → 超预算 ✗</text>
+  <text x="656" y="816" class="box-d" fill="#a16207">→ 触发 build_level_context + build_mixed_context 替换算法（下方演算）</text>
+  <text x="656" y="838" class="small" fill="#9a3412">📌 一句话：最占地方的孩子，从「一堆原始明细」换成「它那份紧凑报告」，换到能装下为止。</text>
+
+  <!-- budget bars section -->
+  <text x="80" y="878" class="box-t" fill="#9a3412">token 预算演算 · 每换一个最大子社区就重算，一旦 ≤ 8000 立即停止</text>
+  <text x="545" y="888" class="small" fill="#9a3412">8000 预算线 ↓</text>
+  <text x="850" y="888" class="small" fill="#c2410c">→ 超出预算区</text>
+  <!-- over-budget shaded zone -->
+  <rect x="540" y="894" width="612" height="152" fill="#fef2f2"/>
+  <!-- budget line -->
+  <line x1="540" y1="894" x2="540" y2="1046" stroke="#9a3412" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+  <!-- progression down arrows -->
+  <line x1="118" y1="934" x2="118" y2="952" stroke="#ea580c" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="118" y1="990" x2="118" y2="1008" stroke="#ea580c" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- round 0 -->
+  <text x="140" y="896" class="small" fill="#334155">第 0 轮 · 全部原始数据</text>
+  <rect x="140" y="902" width="600" height="30" rx="4" fill="#fecaca" stroke="#ef4444"/>
+  <rect x="740" y="902" width="250" height="30" rx="0" fill="#e2e8f0" stroke="#94a3b8"/>
+  <rect x="990" y="902" width="150" height="30" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="440" y="921" text-anchor="middle" class="mons" fill="#991b1b" font-weight="700">子A 原始 12000</text>
+  <text x="865" y="921" text-anchor="middle" class="mons">子B 5000</text>
+  <text x="1065" y="921" text-anchor="middle" class="mons">子C 3000</text>
+  <text x="1160" y="921" class="small" fill="#991b1b" font-weight="700">Σ = 20000　✗ 超预算</text>
+
+  <!-- round 1 -->
+  <text x="140" y="952" class="small" fill="#334155">第 1 轮 · 换掉最大的子A（12000 → 报告 400，成绿色薄条）</text>
+  <rect x="140" y="958" width="20" height="30" rx="4" fill="#dcfce7" stroke="#4ade80"/>
+  <rect x="160" y="958" width="250" height="30" fill="#fecaca" stroke="#ef4444"/>
+  <rect x="410" y="958" width="150" height="30" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="285" y="977" text-anchor="middle" class="mons" fill="#991b1b" font-weight="700">子B 原始 5000</text>
+  <text x="485" y="977" text-anchor="middle" class="mons">子C 3000</text>
+  <text x="580" y="977" class="small" fill="#c2410c" font-weight="700">Σ = 8400　仍 &gt; 8000 ✗ 继续</text>
+
+  <!-- round 2 -->
+  <text x="140" y="1008" class="small" fill="#334155">第 2 轮 · 再换子B（5000 → 报告 350，子A·子B 均成绿色薄条）</text>
+  <rect x="140" y="1014" width="20" height="30" rx="4" fill="#dcfce7" stroke="#4ade80"/>
+  <rect x="160" y="1014" width="18" height="30" fill="#dcfce7" stroke="#4ade80"/>
+  <rect x="178" y="1014" width="150" height="30" rx="4" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="253" y="1033" text-anchor="middle" class="mons">子C 原始 3000</text>
+  <text x="345" y="1033" class="small" fill="#15803d" font-weight="700">Σ = 3750　≤ 8000 ✓ 停止！子C 保留原始</text>
+
+  <!-- legend -->
+  <rect x="600" y="1062" width="16" height="12" fill="#fecaca" stroke="#ef4444"/><text x="622" y="1072" class="small" fill="#475569">原始数据 · 占地方大 / 待替换</text>
+  <rect x="810" y="1062" width="16" height="12" fill="#dcfce7" stroke="#4ade80"/><text x="832" y="1072" class="small" fill="#475569">子报告 full_content · 紧凑</text>
+  <rect x="1010" y="1062" width="16" height="12" fill="#e2e8f0" stroke="#94a3b8"/><text x="1032" y="1072" class="small" fill="#475569">原始数据 · 装得下 → 保留</text>
+
+  <!-- rules box -->
+  <rect x="80" y="1096" width="800" height="146" rx="10" fill="#fff" stroke="#fdba74" stroke-width="1.3"/>
+  <text x="96" y="1118" class="box-t" fill="#9a3412">🔧 四个容易忽略的细节，务必记牢</text>
+  <text x="96" y="1142" class="box-d" fill="#c2410c"><tspan font-weight="700">1. 降序排、最大先换</tspan> —— 贪心挑最占地方的，省得最狠（不是随便挑一个）。</text>
+  <text x="96" y="1166" class="box-d" fill="#c2410c"><tspan font-weight="700">2. 每换一次都重算 token</tspan> —— 「换一个、量一次、够了就收手」，所以子C 压根没轮到就停了。</text>
+  <text x="96" y="1190" class="box-d" fill="#c2410c"><tspan font-weight="700">3. 装下就停</tspan> —— 不追求全换成报告，尽量保留信息更全的原始数据（子C 保留原始明细）。</text>
+  <text x="96" y="1214" class="box-d" fill="#c2410c"><tspan font-weight="700">4. 兜底才全换</tspan> —— 连全换成报告都装不下的极端大社区，才逐条加报告 CSV 到「再加就溢出」。</text>
+  <text x="96" y="1236" class="small" fill="#9a3412">build_mixed_context.py:15-74 · sort_context 按度数降序 · max_context_tokens = 8000</text>
+
+  <!-- adaptive callout -->
+  <rect x="900" y="1096" width="472" height="146" rx="10" fill="#ffedd5" stroke="#fb923c" stroke-width="1.4"/>
+  <text x="916" y="1118" class="box-t" fill="#9a3412">📌 为什么这套替换如此精妙？自适应</text>
+  <text x="916" y="1142" class="box-d" fill="#9a3412">· 小社区 → 保留信息丰富的原始数据；</text>
+  <text x="916" y="1164" class="box-d" fill="#9a3412">· 大社区 → 自动降级成孩子的摘要。</text>
+  <text x="916" y="1188" class="box-d" fill="#9a3412">在「信息尽量全」与「必须装得下」之间，</text>
+  <text x="916" y="1210" class="box-d" fill="#9a3412">逐个孩子地做权衡。</text>
+  <text x="916" y="1234" class="small" fill="#c2410c" font-weight="700">→ 任意规模语料都写得出根报告。</text>
+
+  <!-- B -> C arrow -->
+  <line x1="725" y1="1260" x2="725" y2="1284" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== STAGE C ===================== -->
+  <text x="58" y="1288" class="band">C · 跨层引用闭环（-----Reports----- 段让父报告能引用子报告）</text>
+  <rect x="58" y="1300" width="1334" height="300" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+
+  <!-- left: context layout -->
+  <rect x="80" y="1324" width="520" height="256" rx="9" fill="#fff" stroke="#14b8a6" stroke-width="1.3"/>
+  <text x="96" y="1346" class="box-t">父社区上下文 · 固定段落顺序（sort_context.py:27-54）</text>
+  <rect x="96" y="1356" width="488" height="72" rx="6" fill="#dcfce7" stroke="#4ade80"/>
+  <text x="108" y="1376" class="mono" fill="#14532d">-----Reports-----　← 替换进来的子报告(CSV·带 id)</text>
+  <text x="120" y="1396" class="mons" fill="#166534">id=1　子A 报告 (Acme 及创始人) …</text>
+  <text x="120" y="1414" class="mons" fill="#166534">id=2　子B 报告 (柏林行业协会) …</text>
+  <text x="108" y="1450" class="mono">-----Entities-----　← 仍保留原始的孩子(子C)的实体明细</text>
+  <text x="108" y="1472" class="mono">-----Claims-----　　…</text>
+  <text x="108" y="1494" class="mono">-----Relationships-----　…</text>
+  <text x="96" y="1524" class="box-d">📌 顺序固定：Reports → Entities → Claims → Relationships</text>
+  <text x="96" y="1546" class="small" fill="#0f766e">子报告排在最前 → 父社区一眼先看到孩子们的结论。</text>
+  <text x="96" y="1566" class="small" fill="#0f766e">这里正是 B 里「换成报告」的那些孩子的落脚处。</text>
+
+  <!-- right: citation closure -->
+  <rect x="620" y="1324" width="752" height="256" rx="9" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1.4"/>
+  <text x="636" y="1346" class="box-t" fill="#3730a3">妙处：Reports 是合法的引用数据集名（community_report.py 提示词）</text>
+  <text x="636" y="1370" class="box-d" fill="#4338ca">报告要求 LLM 在正文标注出处，格式：</text>
+  <rect x="636" y="1382" width="720" height="34" rx="6" fill="#fff" stroke="#c4b5fd"/>
+  <text x="648" y="1404" class="mono" fill="#4338ca">[Data: Reports (1), Entities (5,7); Relationships (23); Claims (2,+more)]</text>
+  <text x="636" y="1442" class="box-d" fill="#4338ca"><tspan font-weight="700">Reports (1)</tspan> = 引用编号 1 的那份子报告（Acme 那份）。</text>
+  <text x="636" y="1464" class="box-d" fill="#4338ca">→ 父报告「柏林商业社区」就能写出这样一句：</text>
+  <rect x="636" y="1474" width="720" height="36" rx="6" fill="#f5f3ff" stroke="#c4b5fd"/>
+  <text x="648" y="1497" class="mono" fill="#3730a3">"该地区科技力量以 Acme 为代表 [Data: Reports (1)]"</text>
+  <text x="636" y="1536" class="box-t" fill="#3730a3">→ 跨层级引用闭环 ✓</text>
+  <text x="636" y="1558" class="small" fill="#4338ca">父报告 → 子报告有可回溯的引用链，层与层之间不再是断裂的孤岛。</text>
+
+  <!-- C -> D arrow -->
+  <line x1="725" y1="1602" x2="725" y2="1626" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== STAGE D ===================== -->
+  <text x="58" y="1630" class="band">D · 结构化报告输出 + 产出（CommunityReportResponse · JSON 模式）</text>
+  <rect x="58" y="1642" width="1334" height="330" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+
+  <!-- schema box -->
+  <rect x="80" y="1666" width="600" height="200" rx="9" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.3"/>
+  <text x="96" y="1688" class="box-t">强制结构化返回（community_reports_extractor.py:25-41）</text>
+  <text x="96" y="1710" class="mono">class CommunityReportResponse(BaseModel):</text>
+  <text x="108" y="1730" class="mono">title: str　　　　　　<tspan class="mons"># 含代表性实体的标题</tspan></text>
+  <text x="108" y="1750" class="mono">summary: str　　　　 <tspan class="mons"># 结构 / 关系的执行摘要</tspan></text>
+  <text x="108" y="1770" class="mono">findings: list　　　 <tspan class="mons"># 5-10 条 {summary, explanation}</tspan></text>
+  <text x="108" y="1790" class="mono" fill="#c2410c">rating: float　　　　<tspan class="mons" fill="#c2410c"># 0-10 影响力 / 严重度</tspan></text>
+  <text x="108" y="1810" class="mono">rating_explanation: str <tspan class="mons"># 一句话解释评分</tspan></text>
+  <text x="96" y="1836" class="box-d">response_format 强制字段齐整、好解析，不让 LLM 自由发挥。</text>
+  <text x="96" y="1856" class="small" fill="#be123c">rating 后面用于社区排序：④ Global search 优先看高分社区。</text>
+
+  <!-- example box -->
+  <rect x="700" y="1666" width="340" height="200" rx="9" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="716" y="1688" class="box-t" fill="#92400e">🧵 本例 · Acme 叶子报告</text>
+  <text x="716" y="1712" class="mons" fill="#92400e">title: "Acme Corporation</text>
+  <text x="716" y="1730" class="mons" fill="#92400e">　　　 及其创始人 Alice"</text>
+  <text x="716" y="1752" class="mons" fill="#92400e">rating: 7.5</text>
+  <text x="716" y="1774" class="mons" fill="#92400e">findings[0]:</text>
+  <text x="716" y="1792" class="mons" fill="#92400e">　summary: "Alice 是核心人物"</text>
+  <text x="716" y="1810" class="mons" fill="#92400e">　explanation: "作为创始人，与</text>
+  <text x="716" y="1828" class="mons" fill="#92400e">　Acme 及 Berlin 强关联…</text>
+  <text x="716" y="1846" class="mons" fill="#92400e">　[Data: Entities (5,7)]"</text>
+
+  <!-- outputs box -->
+  <rect x="1060" y="1666" width="312" height="200" rx="9" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="1076" y="1688" class="box-t" fill="#14532d">两个关键产物</text>
+  <text x="1076" y="1712" class="box-d" fill="#166534" font-weight="700">full_content</text>
+  <text x="1076" y="1730" class="small" fill="#166534">渲染成 markdown 的完整正文。</text>
+  <text x="1076" y="1746" class="small" fill="#166534">= ④ Global search 主检索单元</text>
+  <text x="1076" y="1762" class="small" fill="#166534">= B 里替换用的紧凑材料</text>
+  <text x="1076" y="1788" class="box-d" fill="#166534" font-weight="700">full_content_embedding</text>
+  <text x="1076" y="1806" class="small" fill="#166534">正文向量，按相似度检索报告</text>
+  <line x1="1070" y1="1820" x2="1362" y2="1820" stroke="#bbf7d0"/>
+  <text x="1076" y="1840" class="small" fill="#15803d">默认 max_input_length=8000 /</text>
+  <text x="1076" y="1858" class="small" fill="#15803d">max_report_length=2000 词 (defaults.py:82-83)</text>
+
+  <!-- D output line -->
+  <text x="96" y="1902" class="note" fill="#166534">跑完 ③：<tspan font-weight="700">community_reports 表</tspan> —— 社区树每一个社区(叶子 → 根)各一份报告，层层覆盖整个语料。</text>
+  <text x="96" y="1926" class="small" fill="#15803d">细问题有叶子报告顶着，全局问题有根报告顶着 → 无论「针尖」还是「森林」，总有某一层报告对上。</text>
+  <rect x="1060" y="1888" width="312" height="64" rx="9" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.6"/>
+  <text x="1076" y="1912" class="box-t" fill="#14532d">④ Global / Local 检索</text>
+  <text x="1076" y="1934" class="small" fill="#15803d">Map-Reduce 综合各社区报告答全局问题</text>
+  <line x1="1030" y1="1918" x2="1058" y2="1918" stroke="#16a34a" stroke-width="2" marker-end="url(#gr)"/>
+
+  <!-- D -> bottom arrow -->
+  <line x1="725" y1="1974" x2="725" y2="1998" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== BOTTOM ===================== -->
+  <rect x="58" y="2002" width="1334" height="96" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="80" y="2032" class="band" fill="#15803d">为什么这是核心创新（皇冠上的明珠）</text>
+  <text x="80" y="2060" class="note" fill="#166534">根社区横跨整个语料、<tspan font-weight="700">装不下自己的原始实体</tspan> —— 但它<tspan font-weight="700">装得下孩子们的报告</tspan>。自底向上的递归压缩，让「全局图景」在<tspan font-weight="700">任意规模语料</tspan>上都可摘要。</text>
+  <text x="80" y="2084" class="note" fill="#166534">普通向量 RAG 只能检索「最相似的几段」，答不了「整体主题」这类答案不长在某一段里的全局问题 —— 这正是 GraphRAG 用 community_reports 补上的短板。</text>
+</svg>

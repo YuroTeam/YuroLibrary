@@ -1,0 +1,315 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1930" viewBox="0 0 1440 1930" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="p" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#7c3aed"/></marker>
+    <marker id="pg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#a78bfa"/></marker>
+    <marker id="pd" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#c4b5fd"/></marker>
+    <marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#e11d48"/></marker>
+    <marker id="pb" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#7c3aed"/></marker>
+    <style>
+      .title{font-size:30px;font-weight:700;fill:#0f172a}
+      .sub{font-size:15px;fill:#64748b}
+      .band{font-size:18px;font-weight:700;letter-spacing:.03em;fill:#6d28d9}
+      .bandn{font-size:18px;font-weight:800;fill:#fff}
+      .box-t{font-size:13.5px;font-weight:700;fill:#5b21b6}
+      .box-d{font-size:11.5px;fill:#6d28d9}
+      .note{font-size:12.5px;fill:#475569}
+      .small{font-size:11px;fill:#64748b}
+      .mono{font-size:12px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#334155}
+      .mons{font-size:11px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#475569}
+      .th{font-size:11px;font-weight:700;fill:#6d28d9}
+      .lp{font-size:12.5px;font-weight:700;fill:#be123c}
+      .amber{font-size:12.5px;font-weight:700;fill:#b45309}
+      .an{font-size:11px;font-weight:700;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1440" height="1930" fill="#f8fafc"/>
+
+  <!-- ===================== HEADER ===================== -->
+  <text x="48" y="52" class="title">⑤ DRIFT Search · 详细数据流图</text>
+  <text x="48" y="82" class="sub">query/structured_search/drift_search/ — 复杂多跳问题：primer 定调(广) → 问题树迭代下钻(深) → reduce 汇总，全程串同一个多跳例子</text>
+
+  <!-- running example banner -->
+  <rect x="48" y="100" width="1344" height="64" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="66" y="126" class="box-t" fill="#92400e">🧵 贯穿示例 · 用户的多跳问题</text>
+  <text x="66" y="150" class="mono" fill="#92400e">"创办 Acme 的人，还和柏林的哪些组织有关联？"　→ 拆两跳：① 先查创始人 = Alice　② 再顺着 Alice 查她在柏林的其他组织关系（每一跳的答案 = 下一跳的提问）</text>
+
+  <!-- stage circles -->
+  <circle cx="30" cy="205" r="16" fill="#7c3aed"/><text x="30" y="211" text-anchor="middle" class="bandn">A</text>
+  <circle cx="30" cy="698" r="16" fill="#7c3aed"/><text x="30" y="704" text-anchor="middle" class="bandn">B</text>
+  <circle cx="30" cy="1360" r="16" fill="#7c3aed"/><text x="30" y="1366" text-anchor="middle" class="bandn">C</text>
+  <circle cx="30" cy="1610" r="16" fill="#7c3aed"/><text x="30" y="1616" text-anchor="middle" class="bandn">D</text>
+
+  <!-- ===================== STAGE A · PRIMER ===================== -->
+  <text x="58" y="200" class="band">A · PRIMER 定调（四步）：HyDE → 余弦选报告 → 5 折分解 → 折叠成根节点</text>
+  <rect x="58" y="214" width="1334" height="414" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+
+  <!-- step 1 -->
+  <rect x="76" y="246" width="296" height="170" rx="9" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="90" y="270" class="box-t">1 · HyDE 扩展</text>
+  <text x="90" y="292" class="box-d">secrets.choice 随机抽一篇报告</text>
+  <text x="90" y="310" class="box-d">当『格式模板』(只借排版长相)</text>
+  <text x="90" y="328" class="box-d">LLM 造假想答案 · 不引入新实体</text>
+  <text x="90" y="346" class="box-d">只拿去嵌入算向量 · 用完即弃</text>
+  <text x="90" y="364" class="box-d">返回空 → 回退用原始 query</text>
+  <text x="90" y="386" class="small" fill="#6d28d9">💡 假想答案措辞更贴文档 → 检索更准</text>
+  <text x="90" y="406" class="mons">primer.py:70-103</text>
+
+  <!-- step 2 -->
+  <rect x="404" y="246" width="296" height="170" rx="9" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="418" y="270" class="box-t">2 · 余弦排序选报告</text>
+  <text x="418" y="292" class="box-d">把 HyDE 文本嵌入成向量</text>
+  <text x="418" y="310" class="box-d">对所有社区报告的</text>
+  <text x="418" y="328" class="mono" fill="#5b21b6">full_content_embedding</text>
+  <text x="418" y="346" class="box-d">逐一算余弦相似度</text>
+  <text x="418" y="364" class="amber">取 nlargest(drift_k_followups=20)</text>
+  <text x="418" y="386" class="small" fill="#6d28d9">= 从一柜卷宗挑最相关 20 份重点看</text>
+  <text x="418" y="406" class="mons">drift_context.py:202-229</text>
+
+  <!-- step 3 -->
+  <rect x="732" y="246" width="296" height="170" rx="9" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="746" y="270" class="box-t">3 · 分解（5 折并行）</text>
+  <text x="746" y="292" class="box-d">top-20 报告 np.array_split</text>
+  <text x="746" y="310" class="box-d">切成 primer_folds=5 折(每折~4篇)</text>
+  <text x="746" y="328" class="box-d">5 路 LLM 同时并行跑</text>
+  <text x="746" y="346" class="box-d">每折返回 PrimerResponse：</text>
+  <text x="758" y="364" class="mons" fill="#6d28d9">intermediate_answer(~2000字)</text>
+  <text x="758" y="382" class="mons" fill="#6d28d9">score(0-100)·follow_ups(≥5)</text>
+  <text x="746" y="404" class="mons">primer.py · decompose_query</text>
+
+  <!-- step 4 -->
+  <rect x="1060" y="246" width="296" height="170" rx="9" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="1074" y="270" class="box-t">4 · 折叠成初始 DriftAction</text>
+  <text x="1074" y="292" class="box-d">拼接各折中间答案</text>
+  <text x="1074" y="310" class="box-d">摊平所有折的跟进问题</text>
+  <text x="1074" y="328" class="box-d">score 取 5 折均值</text>
+  <text x="1074" y="346" class="box-d" font-weight="700">→ 整棵问题树的『根节点』</text>
+  <text x="1074" y="364" class="box-d">每个跟进问题 → 一个未答子节点</text>
+  <text x="1074" y="386" class="small" fill="#6d28d9">根 + 一批待查子节点，方向定好</text>
+  <text x="1074" y="406" class="mons">search.py:111-157</text>
+
+  <!-- step arrows -->
+  <line x1="374" y1="330" x2="402" y2="330" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#p)"/>
+  <line x1="702" y1="330" x2="730" y2="330" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#p)"/>
+  <line x1="1030" y1="330" x2="1058" y2="330" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#p)"/>
+
+  <!-- example callout -->
+  <rect x="76" y="432" width="796" height="184" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.4"/>
+  <text x="92" y="456" class="amber">🧵 primer 定调结果（我们的例子）</text>
+  <text x="92" y="480" class="box-d" fill="#92400e">初步判断（intermediate_answer 摘要）：</text>
+  <text x="92" y="500" class="mono" fill="#92400e">"创办 Acme 的很可能是 Alice……（一段基于报告的初步回答）"</text>
+  <text x="92" y="524" class="box-d" fill="#92400e">甩出一串待查问题 → 成为树上第一批未答子节点：</text>
+  <text x="92" y="546" class="mons" fill="#b45309">q1 · "创办 Acme 的是谁?"</text>
+  <text x="92" y="566" class="mons" fill="#b45309">q2 · "Alice 与柏林哪些组织有关系?"</text>
+  <text x="92" y="586" class="mons" fill="#b45309">q3 · "这些组织分别是什么性质?"</text>
+  <text x="92" y="608" class="small" fill="#9a3412">⚠️ 假想答案只算向量做检索，绝不当真答案给用户 —— 用完即弃。</text>
+
+  <!-- A output -->
+  <rect x="888" y="432" width="468" height="184" rx="10" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.3"/>
+  <text x="904" y="456" class="box-t">A · PRIMER 产出</text>
+  <text x="904" y="480" class="box-d">· 一个根节点（初步答案 + 5 折均分 score）</text>
+  <text x="904" y="500" class="box-d">· 外加一批待查的未答子节点</text>
+  <text x="904" y="520" class="box-d">方向定好 → 交给主循环一条条深挖 →</text>
+  <line x1="900" y1="532" x2="1342" y2="532" stroke="#ddd6fe"/>
+  <text x="904" y="556" class="box-t">📌 为什么切 5 折并行？</text>
+  <text x="904" y="576" class="box-d">20 篇一次塞太长又慢；切 5 份并行既快，</text>
+  <text x="904" y="594" class="box-d">又不撑爆单次上下文 —— 分治 + 并行提速。</text>
+  <text x="904" y="611" class="small" fill="#7c3aed">defaults.py:99-104 · n_depth=3 · drift_k=20 · folds=5</text>
+
+  <!-- A -> B arrow -->
+  <line x1="725" y1="634" x2="725" y2="700" stroke="#7c3aed" stroke-width="2.4" marker-end="url(#pb)"/>
+
+  <!-- ===================== STAGE B · MAIN LOOP ===================== -->
+  <text x="58" y="692" class="band">B · 主循环：问题树逐轮生长（QueryState = networkx MultiDiGraph）</text>
+  <rect x="58" y="706" width="1334" height="624" rx="14" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="80" y="732" class="note">primer 甩出的未答问题当线索，一轮轮往下挖：每个未答节点跑一次内部 Local 搜索，查完又长出新跟进 → 树越滚越大（search.py:239-263）。</text>
+
+  <!-- code box -->
+  <rect x="80" y="748" width="468" height="316" rx="10" fill="#fff" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="96" y="770" class="box-t">主循环源码（逐行注释）</text>
+  <text x="96" y="792" class="mono">while epochs &lt; n_depth:<tspan class="mons"> # ① 最多 3 轮</tspan></text>
+  <text x="96" y="812" class="mono">  actions = rank_incomplete_actions()</text>
+  <text x="112" y="830" class="mons">＃ ② 取图里所有未答节点</text>
+  <text x="96" y="850" class="mono">  if len(actions)==0: break<tspan class="mons"> # ③ 罕见早退</tspan></text>
+  <text x="96" y="870" class="mono">  actions = actions[:drift_k_followups]</text>
+  <text x="112" y="888" class="mons">＃ ④ 每轮最多取前 20 个</text>
+  <text x="96" y="908" class="mono">  results = await _search_step(actions)</text>
+  <text x="112" y="926" class="mons">＃ ⑤ 这批节点并发各查一次</text>
+  <text x="96" y="946" class="mono">  for a in results:<tspan class="mons"> # ⑥ 遍历结果</tspan></text>
+  <text x="96" y="966" class="mono">    add_all_follow_ups(a, a.follow_ups)</text>
+  <text x="112" y="984" class="mons">＃ ⑦ 新跟进挂成未答子节点</text>
+  <text x="96" y="1004" class="mono">  epochs += 1<tspan class="mons"> # ⑧ 轮数+1 → 回 ①</tspan></text>
+  <line x1="90" y1="1020" x2="538" y2="1020" stroke="#ede9fe"/>
+  <text x="96" y="1042" class="small" fill="#be123c">⚠️ rank 名为『排序』实为随机洗牌 → 见 D①</text>
+
+  <!-- reasoning tree -->
+  <text x="566" y="768" class="small" fill="#6d28d9">networkx MultiDiGraph：节点 = DriftAction，边 = 父子派生关系</text>
+  <!-- edges primer->epoch1 -->
+  <g stroke="#a78bfa" stroke-width="1.6" fill="none" marker-end="url(#pg)">
+    <path d="M756,818 L668,872"/>
+    <path d="M775,828 L775,873"/>
+    <path d="M794,818 L882,872"/>
+  </g>
+  <!-- edges epoch1->epoch2 -->
+  <g stroke="#c4b5fd" stroke-width="1.4" fill="none" marker-end="url(#pd)" stroke-dasharray="4 3">
+    <path d="M636,912 L622,978"/>
+    <path d="M666,912 L698,986"/>
+    <path d="M888,912 L852,986"/>
+    <path d="M914,910 L932,978"/>
+  </g>
+  <!-- root -->
+  <circle cx="775" cy="800" r="28" fill="#8b5cf6" stroke="#6d28d9" stroke-width="2"/>
+  <text x="775" y="797" text-anchor="middle" class="an">primer</text>
+  <text x="775" y="810" text-anchor="middle" class="an" font-size="8" font-weight="400">根·均分μ</text>
+  <!-- epoch 1 -->
+  <text x="566" y="850" class="small" fill="#7c3aed" font-weight="700">第1轮 已答 ✓</text>
+  <circle cx="650" cy="892" r="25" fill="#a78bfa" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="650" y="896" text-anchor="middle" class="an" font-size="10">q1 ✓</text>
+  <circle cx="775" cy="900" r="25" fill="#a78bfa" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="775" y="904" text-anchor="middle" class="an" font-size="10">q2 ✓</text>
+  <circle cx="900" cy="892" r="25" fill="#a78bfa" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="900" y="896" text-anchor="middle" class="an" font-size="10">q3 ✓</text>
+  <!-- epoch 2 -->
+  <text x="566" y="1000" class="small" fill="#8b5cf6" font-weight="700">第2轮 未答</text>
+  <circle cx="615" cy="1000" r="21" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="615" y="1004" text-anchor="middle" class="an" font-size="10" fill="#5b21b6">q4</text>
+  <circle cx="705" cy="1008" r="21" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="705" y="1012" text-anchor="middle" class="an" font-size="10" fill="#5b21b6">q5</text>
+  <circle cx="845" cy="1008" r="21" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="845" y="1012" text-anchor="middle" class="an" font-size="10" fill="#5b21b6">q6</text>
+  <circle cx="935" cy="1000" r="21" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="935" y="1004" text-anchor="middle" class="an" font-size="10" fill="#5b21b6">q7</text>
+  <text x="566" y="1044" class="small" fill="#64748b">每个已答节点又长出一批新未答子节点 → 前沿持续生长</text>
+
+  <!-- right panel -->
+  <rect x="1010" y="748" width="346" height="316" rx="10" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="1026" y="770" class="box-t">每个节点怎么『查一次』？</text>
+  <text x="1026" y="792" class="box-d">Action.search = 一次内部 LocalSearch</text>
+  <text x="1026" y="810" class="box-d">(④ 讲的 Local，走 drift_query 分支)</text>
+  <text x="1026" y="830" class="box-d" font-weight="700">额外注入两样：</text>
+  <text x="1026" y="848" class="box-d">· global_query（用户最初整体问题）</text>
+  <text x="1026" y="866" class="box-d">· followups（本节点要查的子问题）</text>
+  <text x="1026" y="886" class="box-d">返回 JSON：</text>
+  <text x="1026" y="905" class="mons" fill="#5b21b6">{response, score, follow_up_queries}</text>
+  <text x="1026" y="925" class="box-d">· response → 存为 answer(未答→已答)</text>
+  <text x="1026" y="943" class="box-d">· follow_up_queries → 新未答子节点</text>
+  <line x1="1020" y1="956" x2="1346" y2="956" stroke="#c4b5fd"/>
+  <text x="1026" y="978" class="box-d">内部 local 上下文配比：</text>
+  <text x="1026" y="996" class="mons" fill="#5b21b6">text_unit_prop=0.9 / community_prop=0.1</text>
+  <text x="1026" y="1018" class="small" fill="#7c3aed">🔧 DriftAction 按 query 的 hash 判等</text>
+  <text x="1026" y="1036" class="small" fill="#7c3aed">→ 同名问题自动合并成一个节点，不重复跑</text>
+
+  <!-- three-round table -->
+  <text x="80" y="1082" class="box-t">🧵 顺着例子走三轮（假设 n_depth=3，每一跳答案自动成下一跳提问）</text>
+  <rect x="80" y="1094" width="1276" height="132" rx="8" fill="#fff" stroke="#a78bfa" stroke-width="1.2"/>
+  <line x1="168" y1="1094" x2="168" y2="1226" stroke="#ede9fe"/>
+  <line x1="556" y1="1094" x2="556" y2="1226" stroke="#ede9fe"/>
+  <line x1="900" y1="1094" x2="900" y2="1226" stroke="#ede9fe"/>
+  <text x="94" y="1114" class="th">轮次</text>
+  <text x="180" y="1114" class="th">图里未答节点（取样）</text>
+  <text x="568" y="1114" class="th">各跑一次 Local 搜索得到</text>
+  <text x="912" y="1114" class="th">新长出的未答子节点</text>
+  <line x1="80" y1="1120" x2="1356" y2="1120" stroke="#ede9fe"/>
+  <text x="94" y="1144" class="mons" fill="#7c3aed" font-weight="700">第1轮</text>
+  <text x="180" y="1144" class="mons">"创办 Acme 的是谁?" · "Alice 与柏林啥关系?"</text>
+  <text x="568" y="1144" class="mons">创始人 = Alice · Alice 在柏林工作</text>
+  <text x="912" y="1144" class="mons">"Alice 在柏林还任职哪些组织?" · "什么类型?"</text>
+  <line x1="80" y1="1156" x2="1356" y2="1156" stroke="#f1f5f9"/>
+  <text x="94" y="1180" class="mons" fill="#7c3aed" font-weight="700">第2轮</text>
+  <text x="180" y="1180" class="mons">"Alice 在柏林任职哪些组织?"</text>
+  <text x="568" y="1180" class="mons">查到 BerlinTech / BerlinArts 两组织</text>
+  <text x="912" y="1180" class="mons">"BerlinTech 和 Acme 有业务往来吗?"</text>
+  <line x1="80" y1="1192" x2="1356" y2="1192" stroke="#f1f5f9"/>
+  <text x="94" y="1216" class="mons" fill="#7c3aed" font-weight="700">第3轮</text>
+  <text x="180" y="1216" class="mons">"BerlinTech 和 Acme 有往来?"</text>
+  <text x="568" y="1216" class="mons">查到具体往来细节</text>
+  <text x="912" y="1216" class="mons">(还会冒新问题，但满 3 轮即停)</text>
+
+  <text x="80" y="1252" class="note">每一跳的答案自动变成下一跳的提问 —— 这正是 DRIFT 处理多跳的精髓：不用预设步骤，树自己顺着线索往下长。</text>
+  <rect x="80" y="1268" width="1276" height="46" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.2"/>
+  <text x="96" y="1296" class="box-t">B 产出：<tspan class="box-d" font-weight="400">一棵长满『已答节点』的问题树，每个节点各持一段 Local 得来的答案 · 终止：epochs ≥ n_depth(3) 或无未答节点（后者罕见）</tspan></text>
+
+  <!-- B -> C arrow -->
+  <line x1="725" y1="1334" x2="725" y2="1368" stroke="#7c3aed" stroke-width="2.4" marker-end="url(#pb)"/>
+
+  <!-- ===================== STAGE C · REDUCE ===================== -->
+  <text x="58" y="1354" class="band">C · REDUCE：把整棵树的答案汇成一个最终答案</text>
+  <rect x="58" y="1368" width="1334" height="212" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="80" y="1394" class="note">循环结束后（_reduce_response, search.py:350-410）：整棵图序列化 → 收齐每个已答节点的答案 → 一次 LLM 合成。</text>
+
+  <!-- reduce box 1 -->
+  <rect x="80" y="1414" width="390" height="130" rx="10" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="94" y="1436" class="box-t">1 · 序列化 + 收集答案</text>
+  <text x="94" y="1458" class="box-d">· serialize 整个图（摊平成数据）</text>
+  <text x="94" y="1476" class="box-d">· 收集每个已答节点的 answer</text>
+  <text x="94" y="1494" class="box-d">= primer 中间答案 + 所有 local 答案</text>
+  <text x="94" y="1514" class="box-d" fill="#be123c" font-weight="700">⚠️ 只取 answer，不含 query / score</text>
+  <text x="94" y="1534" class="small">喂给 LLM 的是『结论』不是『问题/分数』</text>
+
+  <line x1="470" y1="1479" x2="508" y2="1479" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#p)"/>
+
+  <!-- reduce box 2 -->
+  <rect x="510" y="1414" width="390" height="130" rx="10" fill="#ddd6fe" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="524" y="1436" class="box-t">2 · DRIFT_REDUCE_PROMPT · 1 次 LLM</text>
+  <text x="524" y="1458" class="box-d">把这堆答案当『数据报告』喂进去</text>
+  <text x="524" y="1476" class="box-d">一次性合成，保留出处引用</text>
+  <text x="524" y="1494" class="box-d">流式变体：逐 token 边生成边显示</text>
+  <text x="524" y="1516" class="small" fill="#6d28d9">📌 只看结论、不看当初的疑问清单</text>
+  <text x="524" y="1534" class="small" fill="#6d28d9">→ 像侦探把各组结论写成结案报告</text>
+
+  <line x1="900" y1="1479" x2="938" y2="1479" stroke="#7c3aed" stroke-width="1.8" marker-end="url(#p)"/>
+
+  <!-- reduce box 3 -->
+  <rect x="940" y="1414" width="416" height="130" rx="10" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="956" y="1436" class="box-t" fill="#14532d">3 · 多跳最终答案</text>
+  <text x="956" y="1458" class="mono" fill="#166534">SearchResult</text>
+  <text x="956" y="1480" class="box-d" fill="#3f6212">综合整棵推理树 · 带出处引用</text>
+  <line x1="950" y1="1494" x2="1346" y2="1494" stroke="#bbf7d0"/>
+  <text x="956" y="1516" class="box-d" fill="#3f6212">广(primer 定调) + 深(local 下钻)</text>
+  <text x="956" y="1534" class="box-d" fill="#3f6212">+ 结构化(可追溯问题树)</text>
+
+  <text x="80" y="1566" class="small" fill="#15803d">REDUCE 产出：一个综合整棵推理树、带引用的多跳最终答案 —— DRIFT 把 ④ 的 Global(广) 与 Local(深) 拧成一股绳。</text>
+
+  <!-- C -> D arrow -->
+  <line x1="725" y1="1584" x2="725" y2="1618" stroke="#7c3aed" stroke-width="2.4" marker-end="url(#pb)"/>
+
+  <!-- ===================== STAGE D · GOTCHAS ===================== -->
+  <text x="58" y="1604" class="band">D · 三个实现级反直觉点（代码行为 ≠ 名字/直觉，读源码最易看走眼）</text>
+  <rect x="58" y="1618" width="1334" height="294" rx="14" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="80" y="1644" class="note" fill="#92400e">这三处都是『代码实际行为』和『名字/直觉』对不上的地方，加一个关键认识。</text>
+
+  <!-- gotcha 1 -->
+  <rect x="80" y="1660" width="414" height="180" rx="10" fill="#fff1f2" stroke="#fb7185" stroke-width="1.3"/>
+  <text x="94" y="1682" class="lp" fill="#9f1239">① 『排序』实为随机洗牌</text>
+  <text x="94" y="1704" class="box-d" fill="#be123c">函数名 rank_incomplete_actions + 节点有 score</text>
+  <text x="94" y="1722" class="box-d" fill="#be123c">直觉：每轮挑分最高的先查</text>
+  <text x="94" y="1742" class="box-d" fill="#9f1239" font-weight="700">真相：只有传 scorer 才按分排；</text>
+  <text x="94" y="1760" class="box-d" fill="#be123c">生产路径不传 → 退化成随机 shuffle</text>
+  <text x="94" y="1780" class="box-d" fill="#be123c">score 算了也存了，但不用于优先级</text>
+  <text x="94" y="1802" class="small" fill="#9f1239">影响：广撒网 + 随机取样，非贪心追最优</text>
+  <text x="94" y="1822" class="mons" fill="#be123c">state.py · rank_incomplete_actions</text>
+
+  <!-- gotcha 2 -->
+  <rect x="513" y="1660" width="414" height="180" rx="10" fill="#fff1f2" stroke="#fb7185" stroke-width="1.3"/>
+  <text x="527" y="1682" class="lp" fill="#9f1239">② drift_k_followups(20) 三重复用</text>
+  <text x="527" y="1704" class="box-d" fill="#be123c">同一个 20，用在三个无关的地方：</text>
+  <text x="527" y="1724" class="mons" fill="#334155">① primer 选报告数：top-20</text>
+  <text x="527" y="1742" class="mons" fill="#334155">② 每轮 action 批大小：≤20（代码④）</text>
+  <text x="527" y="1760" class="mons" fill="#334155">③ 每次 local 索要跟进数：20</text>
+  <text x="527" y="1782" class="box-d" fill="#9f1239" font-weight="700">共用一个旋钮，无独立配置</text>
+  <text x="527" y="1802" class="small" fill="#9f1239">想单独调其一做不到 —— 一改全改</text>
+  <text x="527" y="1822" class="mons" fill="#be123c">defaults.py:99-104</text>
+
+  <!-- gotcha 3 -->
+  <rect x="946" y="1660" width="410" height="180" rx="10" fill="#fff1f2" stroke="#fb7185" stroke-width="1.3"/>
+  <text x="960" y="1682" class="lp" fill="#9f1239">③ 失败隔离：不抛错，置 score=-∞</text>
+  <text x="960" y="1704" class="box-d" fill="#be123c">local 返回无法解析的 JSON 时：</text>
+  <text x="960" y="1724" class="box-d" fill="#9f1239" font-weight="700">不 raise，把 score 设 -∞ 当极差分支</text>
+  <text x="960" y="1744" class="box-d" fill="#be123c">因为一轮 20 节点并发 gather，</text>
+  <text x="960" y="1762" class="box-d" fill="#be123c">一个抛错会拖垮整轮、废掉另 19 个</text>
+  <text x="960" y="1784" class="box-d" fill="#9f1239" font-weight="700">故障隔离：坏分支不中断整轮</text>
+  <text x="960" y="1804" class="small" fill="#9f1239">并发系统常见设计，反直觉但实用</text>
+
+  <!-- key insight -->
+  <rect x="80" y="1856" width="1276" height="44" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="96" y="1883" class="box-t" fill="#92400e">🔧 n_depth 才是真正硬上限：<tspan class="box-d" fill="#a16207" font-weight="400">每次 local 又生成新跟进，未答前沿常保持很大 → 几乎总跑满 n_depth=3 轮，很少因『无未答节点』早退。想挖更深就调大 n_depth。</tspan></text>
+</svg>

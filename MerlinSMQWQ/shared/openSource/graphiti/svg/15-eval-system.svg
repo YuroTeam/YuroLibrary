@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="920" viewBox="0 0 1140 920" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="e_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1140" height="920" fill="#f8fafc"/>
+
+  <text x="570" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 评估体系 · LLM-as-judge</text>
+  <text x="570" y="72" text-anchor="middle" font-size="14" fill="#64748b">用 LLM 当裁判成对比较，衡量抽取质量的「相对回归」而非绝对精度</text>
+
+  <!-- three-step flow -->
+  <text x="40" y="112" font-size="16" font-weight="700" fill="#1e293b">一、图构建评估流程（唯一实际在跑的评估）</text>
+
+  <!-- step 1 baseline -->
+  <rect x="40" y="128" width="330" height="120" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="60" y="152" font-size="13.5" font-weight="700" fill="#1d4ed8">① 建基线图（跑一次）</text>
+  <text x="60" y="174" font-size="11" fill="#334155">固定 gpt-4.1-mini 喂 LongMemEval</text>
+  <text x="60" y="192" font-size="11" fill="#334155">抽取结果落盘：</text>
+  <text x="60" y="210" font-size="10.5" fill="#64748b" font-family="monospace">baseline_graph_results.json</text>
+  <text x="60" y="234" font-size="10.5" fill="#1d4ed8">= 参照物（不是人工标注！）</text>
+
+  <line x1="370" y1="188" x2="410" y2="188" stroke="#475569" stroke-width="2" marker-end="url(#e_arrow)"/>
+
+  <!-- step 2 candidate -->
+  <rect x="410" y="128" width="330" height="120" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="430" y="152" font-size="13.5" font-weight="700" fill="#6d28d9">② 建候选图</text>
+  <text x="430" y="174" font-size="11" fill="#334155">用当前要测的配置/模型</text>
+  <text x="430" y="192" font-size="11" fill="#334155">跑同样数据再抽一遍</text>
+  <text x="430" y="210" font-size="10.5" fill="#64748b" font-family="monospace">candidate_graph_results.json</text>
+  <text x="430" y="234" font-size="10.5" fill="#6d28d9">= 你想评估的新版本</text>
+
+  <line x1="740" y1="188" x2="780" y2="188" stroke="#475569" stroke-width="2" marker-end="url(#e_arrow)"/>
+
+  <!-- step 3 judge -->
+  <rect x="780" y="128" width="320" height="120" rx="12" fill="#fdf4ff" stroke="#a21caf" stroke-width="1.8"/>
+  <text x="800" y="152" font-size="13.5" font-weight="700" fill="#86198f">③ LLM 裁判逐条比对 🧠</text>
+  <text x="800" y="174" font-size="11" fill="#334155">同一条消息的 baseline vs</text>
+  <text x="800" y="192" font-size="11" fill="#334155">candidate 一起给裁判</text>
+  <text x="800" y="210" font-size="11" fill="#334155">→ candidate_is_worse?</text>
+  <text x="800" y="234" font-size="10.5" fill="#86198f">累加打分 → 0~1 分数</text>
+
+  <!-- scoring detail -->
+  <text x="40" y="292" font-size="16" font-weight="700" fill="#1e293b">二、评分机制（成对比较）</text>
+
+  <rect x="40" y="308" width="530" height="200" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6"/>
+  <text x="60" y="332" font-size="13" font-weight="700" fill="#86198f">裁判输入 4 样（eval_add_episode_results）</text>
+  <text x="60" y="354" font-size="11" fill="#334155">• baseline：基线抽的图（nodes/edges）</text>
+  <text x="60" y="372" font-size="11" fill="#334155">• candidate：候选抽的图</text>
+  <text x="60" y="390" font-size="11" fill="#334155">• message：当前消息　• previous_messages：上下文</text>
+  <line x1="60" y1="404" x2="550" y2="404" stroke="#e2e8f0"/>
+  <text x="60" y="426" font-size="12.5" font-weight="700" fill="#86198f">打分规则</text>
+  <rect x="60" y="436" width="230" height="30" rx="6" fill="#fef2f2" stroke="#dc2626"/>
+  <text x="175" y="456" text-anchor="middle" font-size="11" fill="#b91c1c">candidate_is_worse=True → 0 分</text>
+  <rect x="300" y="436" width="250" height="30" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="425" y="456" text-anchor="middle" font-size="11" fill="#15803d">False(不比基线差) → 1 分</text>
+  <text x="60" y="490" font-size="10.5" fill="#64748b">两层平均：单用户分=消息得分/消息数 → 最终=用户分平均</text>
+
+  <rect x="590" y="308" width="510" height="200" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.6"/>
+  <text x="610" y="332" font-size="13" font-weight="700" fill="#1d4ed8">💡 为什么不用 P/R/F1？</text>
+  <text x="610" y="356" font-size="11.5" fill="#334155">知识图谱抽取没有唯一标准答案：</text>
+  <text x="610" y="374" font-size="11" fill="#475569">"张三入职A公司" 抽成1条边或2条都对</text>
+  <text x="610" y="392" font-size="11" fill="#475569">人工标注既贵又难统一</text>
+  <line x1="610" y1="406" x2="1080" y2="406" stroke="#dbeafe"/>
+  <text x="610" y="430" font-size="11.5" font-weight="700" fill="#1d4ed8">类比</text>
+  <text x="610" y="452" font-size="11" fill="#475569">不判百分制，而是把 A、B 答案并排问</text>
+  <text x="610" y="470" font-size="11" fill="#475569">「B 是不是比 A 差？」不差就记 1 分</text>
+  <text x="610" y="492" font-size="11" font-weight="600" fill="#1d4ed8">结果 = 候选相对基线的「不劣率」(0~1)</text>
+
+  <!-- four prompts -->
+  <text x="40" y="548" font-size="16" font-weight="700" fill="#1e293b">三、eval.py 的四个评估 prompt</text>
+  <g font-size="11">
+    <rect x="40" y="562" width="1060" height="30" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="56" y="582" font-weight="700" fill="#15803d">✅ eval_add_episode_results</text>
+    <text x="380" y="582" fill="#334155">裁判：候选图是否比基线差 → {candidate_is_worse, reasoning}</text>
+    <text x="960" y="582" font-weight="700" fill="#15803d">唯一实际在用</text>
+  </g>
+  <g font-size="11" fill="#92400e">
+    <rect x="40" y="592" width="1060" height="28" fill="#fef3c7" stroke="#d97706"/>
+    <text x="56" y="611" font-weight="700">⚠️ query_expansion</text>
+    <text x="380" y="611">把问题改写成更适合检索的查询 → {query}</text>
+    <text x="960" y="611" font-weight="700">未接线</text>
+  </g>
+  <g font-size="11" fill="#92400e">
+    <rect x="40" y="620" width="1060" height="28" fill="#fffbeb" stroke="#d97706"/>
+    <text x="56" y="639" font-weight="700">⚠️ qa_prompt</text>
+    <text x="380" y="639">用检索到的实体摘要+事实回答问题 → {ANSWER}</text>
+    <text x="960" y="639" font-weight="700">未接线</text>
+  </g>
+  <g font-size="11" fill="#92400e">
+    <rect x="40" y="648" width="1060" height="28" fill="#fef3c7" stroke="#d97706"/>
+    <text x="56" y="667" font-weight="700">⚠️ eval_prompt</text>
+    <text x="380" y="667">裁判：回答是否命中标准答案 → {is_correct, reasoning}</text>
+    <text x="960" y="667" font-weight="700">未接线</text>
+  </g>
+  <text x="40" y="698" font-size="11" fill="#64748b">后三个串起来本应是「改写查询→检索回答→判对错→QA准确率」的检索评估管线，但当前无脚本调用（预留脚手架）</text>
+
+  <!-- dataset + bug -->
+  <rect x="40" y="716" width="530" height="88" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+  <text x="60" y="740" font-size="13" font-weight="700" fill="#0f766e">📚 数据集：LongMemEval oracle（500 条）</text>
+  <text x="60" y="762" font-size="11" fill="#475569">多轮会话"干草堆"，question_type 多为</text>
+  <text x="60" y="780" font-size="11" fill="#475569">temporal-reasoning / multi-session / knowledge-update</text>
+  <text x="60" y="798" font-size="11" fill="#0f766e">专门考察长期记忆 + 时序推理（Graphiti 主场）</text>
+
+  <rect x="590" y="716" width="510" height="88" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="610" y="740" font-size="13" font-weight="700" fill="#b91c1c">🐛 一个疑似 Bug</text>
+  <text x="610" y="762" font-size="11" fill="#475569">episodes 其实是单条消息的<tspan font-weight="700">字符串</tspan>，却被</text>
+  <text x="610" y="780" font-size="11" fill="#475569">当列表切片 episodes[0] / episodes[1:]</text>
+  <text x="610" y="798" font-size="11" fill="#b91c1c">→ 裁判拿到的是被切碎的字符而非完整消息</text>
+
+  <!-- footer -->
+  <rect x="40" y="820" width="1060" height="72" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="60" y="846" font-size="14" font-weight="700" fill="#b45309">💡 一句话</text>
+  <text x="60" y="870" font-size="12" fill="#334155">用 LLM-as-judge 成对比较评抽取质量：拿固定基线当参照，裁判逐条判候选是否更差 → 0~1 不劣率，衡量"相对回归"防退化。</text>
+  <text x="60" y="888" font-size="12" font-weight="600" fill="#b45309">检索评估的 prompt 已写好但未接线，目前没有 recall@k / MRR。</text>
+</svg>

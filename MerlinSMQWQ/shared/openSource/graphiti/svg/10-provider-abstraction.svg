@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="940" viewBox="0 0 1180 940" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="pv_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1180" height="940" fill="#f8fafc"/>
+
+  <text x="590" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti Provider 抽象层</text>
+  <text x="590" y="72" text-anchor="middle" font-size="14" fill="#64748b">基类定统一契约 · 各厂商差异化实现 · 通用能力在基类沉淀</text>
+
+  <!-- upper: caller -->
+  <rect x="390" y="96" width="400" height="52" rx="12" fill="#1e293b"/>
+  <text x="590" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">上层管道（写入 / 检索）</text>
+  <text x="590" y="139" text-anchor="middle" font-size="11" fill="#cbd5e1">完全不关心底层是哪家厂商</text>
+
+  <!-- three abstract base classes -->
+  <line x1="590" y1="148" x2="240" y2="172" stroke="#475569" stroke-width="1.6" marker-end="url(#pv_arrow)"/>
+  <line x1="590" y1="148" x2="590" y2="172" stroke="#475569" stroke-width="1.6" marker-end="url(#pv_arrow)"/>
+  <line x1="590" y1="148" x2="940" y2="172" stroke="#475569" stroke-width="1.6" marker-end="url(#pv_arrow)"/>
+
+  <!-- ==== Column A: LLMClient ==== -->
+  <rect x="40" y="174" width="360" height="150" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.2"/>
+  <text x="220" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#6d28d9">LLMClient 基类</text>
+  <text x="220" y="218" text-anchor="middle" font-size="11.5" fill="#475569">抽象方法：_generate_response()</text>
+  <text x="220" y="236" text-anchor="middle" font-size="11" fill="#64748b">generate_response(messages, response_model,</text>
+  <text x="220" y="251" text-anchor="middle" font-size="11" fill="#64748b">model_size, group_id, prompt_name)</text>
+  <text x="56" y="276" font-size="11" font-weight="700" fill="#6d28d9">基类沉淀的通用能力：</text>
+  <text x="56" y="294" font-size="10.5" fill="#475569">输入清洗 · 多语言指令 · 缓存 · tracing</text>
+  <text x="56" y="310" font-size="10.5" fill="#475569">token 统计 · 结构化输出兜底(prompt注入schema)</text>
+
+  <!-- ==== Column B: Embedder ==== -->
+  <rect x="410" y="174" width="360" height="150" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2.2"/>
+  <text x="590" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#059669">EmbedderClient 基类</text>
+  <text x="590" y="220" text-anchor="middle" font-size="11.5" fill="#475569">抽象方法：create(input) → 向量</text>
+  <text x="590" y="240" text-anchor="middle" font-size="11" fill="#64748b">create_batch() 供覆盖批量</text>
+  <text x="590" y="266" text-anchor="middle" font-size="11" fill="#059669">EMBEDDING_DIM 默认 1024</text>
+  <text x="590" y="286" text-anchor="middle" font-size="10.5" fill="#64748b">所有 provider 按 dim 截断向量</text>
+  <text x="590" y="304" text-anchor="middle" font-size="10.5" fill="#64748b">保证全库维度一致（否则没法比较）</text>
+
+  <!-- ==== Column C: CrossEncoder ==== -->
+  <rect x="780" y="174" width="360" height="150" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2.2"/>
+  <text x="960" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#b45309">CrossEncoderClient 基类</text>
+  <text x="960" y="220" text-anchor="middle" font-size="11.5" fill="#475569">抽象方法：rank(query, passages)</text>
+  <text x="960" y="240" text-anchor="middle" font-size="11" fill="#64748b">→ [(passage, score)]，按分降序</text>
+  <text x="960" y="266" text-anchor="middle" font-size="11" fill="#b45309">对应检索管道的 cross-encoder 重排</text>
+  <text x="960" y="286" text-anchor="middle" font-size="10.5" fill="#64748b">「粗筛的候选，我来精排打分」</text>
+
+  <!-- providers under each -->
+  <!-- LLM providers -->
+  <line x1="220" y1="324" x2="220" y2="348" stroke="#7c3aed" stroke-width="1.6" marker-end="url(#pv_arrow)"/>
+  <rect x="40" y="350" width="360" height="92" rx="10" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="56" y="372" font-size="11.5" font-weight="700" fill="#6d28d9">LLM 厂商实现</text>
+  <text x="56" y="392" font-size="10.5" fill="#334155">OpenAI · Azure · Anthropic · Gemini · Groq</text>
+  <text x="56" y="409" font-size="10.5" fill="#334155">OpenAIGeneric（vLLM/Ollama/DeepSeek…）</text>
+  <text x="56" y="426" font-size="10.5" fill="#334155">GLiNER2（本地NER，其余委托别的LLM）</text>
+
+  <!-- Embedder providers -->
+  <line x1="590" y1="324" x2="590" y2="348" stroke="#10b981" stroke-width="1.6" marker-end="url(#pv_arrow)"/>
+  <rect x="410" y="350" width="360" height="92" rx="10" fill="#ffffff" stroke="#86efac"/>
+  <text x="426" y="372" font-size="11.5" font-weight="700" fill="#059669">Embedder 厂商实现</text>
+  <text x="426" y="392" font-size="10.5" fill="#334155">OpenAI (text-embedding-3-small)</text>
+  <text x="426" y="409" font-size="10.5" fill="#334155">Azure · Voyage (voyage-3)</text>
+  <text x="426" y="426" font-size="10.5" fill="#334155">Gemini（批量失败自动回退单条）</text>
+
+  <!-- CrossEncoder providers -->
+  <line x1="960" y1="324" x2="960" y2="348" stroke="#d97706" stroke-width="1.6" marker-end="url(#pv_arrow)"/>
+  <rect x="780" y="350" width="360" height="92" rx="10" fill="#ffffff" stroke="#fcd34d"/>
+  <text x="796" y="372" font-size="11.5" font-weight="700" fill="#b45309">Reranker 实现（打分机制迥异）</text>
+  <text x="796" y="392" font-size="10.5" fill="#334155">OpenAI：True/False 分类 + logprob</text>
+  <text x="796" y="409" font-size="10.5" fill="#334155">BGE：本地 sentence-transformers 推理</text>
+  <text x="796" y="426" font-size="10.5" fill="#334155">Gemini：直接输出 0-100 分再归一化</text>
+
+  <!-- divider -->
+  <line x1="40" y1="466" x2="1140" y2="466" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- structured output detail -->
+  <text x="40" y="498" font-size="16" font-weight="700" fill="#7c3aed">结构化输出：对上层完全透明，底层机制天差地别 🎯</text>
+  <text x="40" y="518" font-size="12" fill="#64748b">上层永远是「传 Pydantic 类，拿 dict」——但每家强制返回 JSON 的方式完全不同：</text>
+
+  <rect x="40" y="532" width="265" height="96" rx="10" fill="#f0fdf4" stroke="#16a34a"/>
+  <text x="56" y="554" font-size="12.5" font-weight="700" fill="#15803d">OpenAI</text>
+  <text x="56" y="575" font-size="11" fill="#475569">Responses API</text>
+  <text x="56" y="592" font-size="11" fill="#475569">responses.parse()</text>
+  <text x="56" y="609" font-size="10.5" fill="#64748b">约束解码，最强保证</text>
+
+  <rect x="320" y="532" width="265" height="96" rx="10" fill="#fff7ed" stroke="#ea580c"/>
+  <text x="336" y="554" font-size="12.5" font-weight="700" fill="#c2410c">Anthropic</text>
+  <text x="336" y="575" font-size="11" fill="#475569">强制 Tool Calling</text>
+  <text x="336" y="592" font-size="11" fill="#475569">schema 包成 tool</text>
+  <text x="336" y="609" font-size="10.5" fill="#64748b">从 tool_use 取 input</text>
+
+  <rect x="600" y="532" width="265" height="96" rx="10" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="616" y="554" font-size="12.5" font-weight="700" fill="#1d4ed8">Gemini</text>
+  <text x="616" y="575" font-size="11" fill="#475569">response_schema</text>
+  <text x="616" y="592" font-size="11" fill="#475569">+ mime=json</text>
+  <text x="616" y="609" font-size="10.5" fill="#64748b">system 双保险 + salvage</text>
+
+  <rect x="880" y="532" width="260" height="96" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="896" y="554" font-size="12.5" font-weight="700" fill="#334155">通用/本地</text>
+  <text x="896" y="575" font-size="11" fill="#475569">json_schema / json_object</text>
+  <text x="896" y="592" font-size="11" fill="#475569">strip 代码围栏 ```json```</text>
+  <text x="896" y="609" font-size="10.5" fill="#64748b">故意不加 strict</text>
+
+  <!-- retry + model size -->
+  <rect x="40" y="648" width="545" height="130" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="60" y="672" font-size="14" font-weight="700" fill="#b91c1c">🔁 重试 = 自我纠正循环</text>
+  <text x="60" y="694" font-size="11.5" fill="#334155">结构化输出校验失败时，不是简单重试——</text>
+  <text x="60" y="713" font-size="11.5" fill="#334155">把「上次响应无效 + 错误详情 + 请重新按格式输出」</text>
+  <text x="60" y="732" font-size="11.5" fill="#334155">拼成一条 user 消息追加回去，让模型看着自己的错误纠正</text>
+  <text x="60" y="754" font-size="11" fill="#64748b">RefusalError 拒答不重试 · 各家 2 次 · 基类另有 tenacity 4 次退避</text>
+
+  <rect x="605" y="648" width="535" height="130" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="625" y="672" font-size="14" font-weight="700" fill="#6d28d9">📐 大小模型分级 ModelSize</text>
+  <text x="625" y="694" font-size="11.5" fill="#334155">只有 small / medium 两档（没有 large）</text>
+  <text x="625" y="716" font-size="11.5" fill="#334155">• 简单/高频任务用<tspan font-weight="700" fill="#6d28d9">小模型</tspan>（去重、摘要）</text>
+  <text x="625" y="735" font-size="11.5" fill="#334155">• 高质量任务用<tspan font-weight="700" fill="#6d28d9">大模型</tspan>（抽取）</text>
+  <text x="625" y="757" font-size="11" fill="#64748b">省钱又不牺牲质量的关键权衡</text>
+
+  <!-- bottom: pluggable -->
+  <rect x="40" y="798" width="1100" height="112" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="60" y="824" font-size="14" font-weight="700" fill="#b45309">💡 可插拔靠什么实现</text>
+  <text x="60" y="848" font-size="12.5" fill="#334155">① <tspan font-weight="700">依赖注入</tspan>：构造函数接受外部 SDK client + config　② <tspan font-weight="700">惰性 import</tspan>：不装某厂商 SDK 也能 import 主包，用到才报错提示 pip install</text>
+  <text x="60" y="872" font-size="12.5" fill="#334155">③ <tspan font-weight="700">统一返回类型</tspan>：不管底层是谁，generate_response→dict、create→向量、rank→排序列表，上层零感知</text>
+  <text x="60" y="898" font-size="12.5" font-weight="600" fill="#b45309">想换厂商？改一行配置。核心库不动。</text>
+</svg>

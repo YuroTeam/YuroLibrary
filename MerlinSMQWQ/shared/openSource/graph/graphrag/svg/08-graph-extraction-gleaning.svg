@@ -1,0 +1,281 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1980" viewBox="0 0 1440 1980" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="t" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#0d9488"/></marker>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#e11d48"/></marker>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#ea580c"/></marker>
+    <marker id="tb" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#0d9488"/></marker>
+    <style>
+      .title{font-size:30px;font-weight:700;fill:#0f172a}
+      .sub{font-size:15px;fill:#64748b}
+      .band{font-size:18px;font-weight:700;letter-spacing:.03em;fill:#0d9488}
+      .bandn{font-size:18px;font-weight:800;fill:#fff}
+      .box-t{font-size:13.5px;font-weight:700;fill:#115e59}
+      .box-d{font-size:11.5px;fill:#0f766e}
+      .note{font-size:12.5px;fill:#475569}
+      .small{font-size:11px;fill:#64748b}
+      .mono{font-size:12px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#334155}
+      .mons{font-size:11px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#475569}
+      .lp{font-size:12.5px;font-weight:700;fill:#be123c}
+      .th{font-size:11px;font-weight:700;fill:#0f766e}
+      .amber{font-size:12.5px;font-weight:700;fill:#c2410c}
+    </style>
+  </defs>
+  <rect width="1440" height="1980" fill="#f8fafc"/>
+
+  <!-- ===================== HEADER ===================== -->
+  <text x="48" y="52" class="title">① LLM 图抽取 · 详细结构图</text>
+  <text x="48" y="82" class="sub">index/operations/extract_graph/ — 从一句话到知识图谱：抽取 → 解析 → 合并 → 描述摘要，全程用同一个示例串起来</text>
+
+  <!-- running example banner -->
+  <rect x="48" y="100" width="1344" height="58" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="66" y="126" class="box-t" fill="#92400e">🧵 贯穿示例（某个 text_unit 的内容）</text>
+  <text x="66" y="148" class="mono" fill="#92400e">"Alice works at Acme Corp in Berlin. She founded the company in 2010."　—— Alice 在柏林的 Acme 公司工作，她 2010 年创办了这家公司。</text>
+
+  <!-- stage numbers on left spine -->
+  <circle cx="30" cy="210" r="16" fill="#0d9488"/><text x="30" y="216" text-anchor="middle" class="bandn">A</text>
+  <circle cx="30" cy="705" r="16" fill="#0d9488"/><text x="30" y="711" text-anchor="middle" class="bandn">B</text>
+  <circle cx="30" cy="1065" r="16" fill="#0d9488"/><text x="30" y="1071" text-anchor="middle" class="bandn">C</text>
+  <circle cx="30" cy="1475" r="16" fill="#0d9488"/><text x="30" y="1481" text-anchor="middle" class="bandn">D</text>
+
+  <!-- ===================== STAGE A ===================== -->
+  <text x="58" y="200" class="band">A · 单个文本块抽取 + Gleaning 补抽循环</text>
+  <rect x="58" y="212" width="1334" height="452" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+
+  <!-- input text_unit -->
+  <rect x="80" y="234" width="360" height="66" rx="9" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="96" y="256" class="box-t" fill="#334155">text_unit（约 1200 token 的文本块）</text>
+  <text x="96" y="278" class="mons">占位符 {input_text}</text>
+  <text x="96" y="293" class="mons">"Alice works at Acme Corp in Berlin…"</text>
+
+  <!-- prompt -->
+  <rect x="80" y="316" width="360" height="118" rx="9" fill="#ccfbf1" stroke="#2dd4bf" stroke-width="1.3"/>
+  <text x="96" y="338" class="box-t">GRAPH_EXTRACTION_PROMPT</text>
+  <text x="96" y="358" class="box-d">· 内含 3 个 few-shot 示例</text>
+  <text x="96" y="376" class="box-d">· 只抽 4 类实体 {entity_types}：</text>
+  <text x="108" y="393" class="mons" fill="#0f766e">organization / person / geo / event</text>
+  <text x="96" y="414" class="box-d">· 定界符规则也写在提示词里</text>
+  <text x="108" y="430" class="small" fill="#0f766e">prompts/index/extract_graph.py</text>
+
+  <!-- LLM node -->
+  <rect x="470" y="300" width="150" height="80" rx="12" fill="#14b8a6" stroke="#0f766e" stroke-width="1.6"/>
+  <text x="545" y="333" text-anchor="middle" class="box-t" fill="#fff">LLM</text>
+  <text x="545" y="353" text-anchor="middle" fill="#d1fae5" font-size="11.5">首轮抽取</text>
+  <text x="545" y="369" text-anchor="middle" fill="#a7f3d0" font-size="10">graph_extractor.py:85</text>
+
+  <line x1="440" y1="267" x2="468" y2="322" stroke="#0d9488" stroke-width="1.6" marker-end="url(#t)"/>
+  <line x1="440" y1="360" x2="468" y2="352" stroke="#0d9488" stroke-width="1.6" marker-end="url(#t)"/>
+
+  <!-- raw output -->
+  <rect x="650" y="234" width="742" height="200" rx="10" fill="#fff" stroke="#2dd4bf" stroke-width="1.4"/>
+  <text x="666" y="256" class="box-t">LLM 返回：定界符编码的「记录流」→ 存入变量 results（还只是一坨字符串）</text>
+  <text x="666" y="282" class="mono">("entity"&lt;|&gt;ALICE&lt;|&gt;PERSON&lt;|&gt;Acme 创始人，在该司工作)##</text>
+  <text x="666" y="306" class="mono">("entity"&lt;|&gt;ACME CORP&lt;|&gt;ORGANIZATION&lt;|&gt;位于柏林、2010 成立的公司)##</text>
+  <text x="666" y="330" class="mono">("entity"&lt;|&gt;BERLIN&lt;|&gt;GEO&lt;|&gt;Acme 所在城市)##</text>
+  <text x="666" y="354" class="mono">("relationship"&lt;|&gt;ALICE&lt;|&gt;ACME CORP&lt;|&gt;创办并就职于 Acme&lt;|&gt;9)##</text>
+  <text x="666" y="378" class="mono">("relationship"&lt;|&gt;ACME CORP&lt;|&gt;BERLIN&lt;|&gt;Acme 位于柏林&lt;|&gt;7)##</text>
+  <text x="666" y="402" class="mono" fill="#0d9488">&lt;|COMPLETE|&gt;　← 结束标记</text>
+  <text x="666" y="424" class="small">为何不用 JSON？① 省 token　② 抗截断（代价：要自己写解析器 → B）</text>
+  <line x1="620" y1="320" x2="648" y2="320" stroke="#0d9488" stroke-width="1.6" marker-end="url(#t)"/>
+
+  <!-- gleaning loop -->
+  <rect x="80" y="452" width="700" height="196" rx="10" fill="#fff" stroke="#be123c" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <text x="98" y="476" class="lp">Gleaning 补抽循环 · for i in range(max_gleanings)　（graph_extractor.py:85-122）</text>
+  <text x="98" y="496" class="small" fill="#9f1239">道理：LLM 一遍常抽不全，追问它再抽几遍。</text>
+
+  <rect x="98" y="506" width="664" height="42" rx="8" fill="#ffe4e6" stroke="#fb7185" stroke-width="1.2"/>
+  <text x="112" y="524" class="box-t" fill="#9f1239">① CONTINUE_PROMPT → LLM："很多实体/关系被漏掉，用相同格式补充"</text>
+  <text x="112" y="540" class="box-d" fill="#be123c">新记录字符串拼接到 results 尾部（无分隔符，模型自带 ##，仍可解析）</text>
+
+  <rect x="98" y="554" width="320" height="42" rx="8" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="112" y="572" class="small" fill="#334155">② 到最后一轮直接停：</text>
+  <text x="112" y="588" class="mons">i ≥ max_gleanings−1 → break</text>
+
+  <rect x="430" y="554" width="332" height="42" rx="8" fill="#ffe4e6" stroke="#fb7185" stroke-width="1.2"/>
+  <text x="444" y="572" class="box-t" fill="#9f1239">③ 否则 LOOP_PROMPT 问"还有?只回 Y/N"</text>
+  <text x="444" y="588" class="mons" fill="#be123c">if content != "Y": break（:119）</text>
+
+  <text x="98" y="624" class="small" fill="#9f1239">💡 每轮循环 = 一次额外 LLM 调用（花钱花时间），所以默认很克制。</text>
+
+  <!-- gotcha -->
+  <rect x="800" y="452" width="572" height="120" rx="10" fill="#fef9c3" stroke="#fde047" stroke-width="1.4"/>
+  <text x="816" y="476" class="box-t" fill="#854d0e">⚠️ 初学者两个坑</text>
+  <text x="816" y="498" class="box-d" fill="#a16207"><tspan font-weight="700">坑 1</tspan>：max_gleanings 默认 = 1（defaults.py:150）。只跑一次 CONTINUE 就</text>
+  <text x="828" y="515" class="box-d" fill="#a16207">在 ② 处 break —— <tspan font-weight="700">③ 的 Y/N 判定根本不触发</tspan>（≥2 才生效）。</text>
+  <text x="816" y="538" class="box-d" fill="#a16207"><tspan font-weight="700">坑 2</tspan>：这版<tspan font-weight="700">没有 logit_bias</tspan>。回答不是精确 "Y"（如 "Yes"、" Y"</text>
+  <text x="828" y="555" class="box-d" fill="#a16207">带空格）都会被判"非 Y"而停止。经典 GraphRAG 那套约束被简化掉了。</text>
+
+  <!-- A output -->
+  <rect x="800" y="586" width="572" height="60" rx="9" fill="#f0fdfa" stroke="#5eead4"/>
+  <text x="816" y="610" class="box-t">A 产出</text>
+  <text x="816" y="630" class="box-d">一个文本块 → 一坨含全部实体/关系记录的原始字符串 results（尚未结构化）。</text>
+
+  <!-- A -> B arrow -->
+  <line x1="725" y1="666" x2="725" y2="688" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== STAGE B ===================== -->
+  <text x="58" y="695" class="band">B · 解析：把「记录流」拆成结构化两表</text>
+  <rect x="58" y="708" width="1334" height="322" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+
+  <!-- delimiter legend -->
+  <rect x="80" y="730" width="380" height="192" rx="9" fill="#ccfbf1" stroke="#2dd4bf" stroke-width="1.3"/>
+  <text x="96" y="752" class="box-t">三个定界符（graph_extractor.py:31-33）</text>
+  <text x="96" y="778" class="th">TUPLE_DELIMITER</text><text x="250" y="778" class="mono">&lt;|&gt;</text><text x="320" y="778" class="small">字段分隔</text>
+  <text x="96" y="800" class="th">RECORD_DELIMITER</text><text x="250" y="800" class="mono">##</text><text x="320" y="800" class="small">记录分隔</text>
+  <text x="96" y="822" class="th">COMPLETION_DELIM</text><text x="250" y="822" class="mono">&lt;|COMPLETE|&gt;</text>
+  <text x="96" y="850" class="box-d">解析步骤：按 ## 拆记录 → 剥外层括号 → 按 &lt;|&gt; 拆字段。</text>
+  <line x1="90" y1="866" x2="450" y2="866" stroke="#99f6e4"/>
+  <text x="96" y="888" class="small" fill="#be123c">🔧 耦合隐患：同一串符号在提示词文本里又硬编码了一遍，</text>
+  <text x="96" y="904" class="small" fill="#be123c">　　两处得手动保持一致，改一处忘另一处就解析出错。</text>
+
+  <!-- entity table -->
+  <rect x="480" y="730" width="452" height="150" rx="9" fill="#fff" stroke="#14b8a6" stroke-width="1.3"/>
+  <text x="494" y="750" class="box-t">实体表　record 首字段 = "entity"，≥4 字段</text>
+  <line x1="490" y1="760" x2="922" y2="760" stroke="#99f6e4"/>
+  <text x="496" y="778" class="th">title</text><text x="600" y="778" class="th">type</text><text x="720" y="778" class="th">description</text><text x="880" y="778" class="th">src</text>
+  <line x1="490" y1="786" x2="922" y2="786" stroke="#e2e8f0"/>
+  <text x="496" y="804" class="mons">ALICE</text><text x="600" y="804" class="mons">PERSON</text><text x="720" y="804" class="mons">Acme 创始人</text><text x="880" y="804" class="mons">t1</text>
+  <text x="496" y="824" class="mons">ACME CORP</text><text x="600" y="824" class="mons">ORGANIZATION</text><text x="720" y="824" class="mons">柏林的公司</text><text x="880" y="824" class="mons">t1</text>
+  <text x="496" y="844" class="mons">BERLIN</text><text x="600" y="844" class="mons">GEO</text><text x="720" y="844" class="mons">Acme 所在地</text><text x="880" y="844" class="mons">t1</text>
+  <text x="494" y="870" class="small" fill="#0f766e">名字 / 类型统一转大写（clean_str(x.upper())）</text>
+
+  <!-- relationship table -->
+  <rect x="948" y="730" width="424" height="150" rx="9" fill="#fff" stroke="#14b8a6" stroke-width="1.3"/>
+  <text x="962" y="750" class="box-t">关系表　首字段 = "relationship"，≥5 字段</text>
+  <line x1="958" y1="760" x2="1362" y2="760" stroke="#99f6e4"/>
+  <text x="964" y="778" class="th">source</text><text x="1058" y="778" class="th">target</text><text x="1168" y="778" class="th">desc</text><text x="1258" y="778" class="th">weight</text><text x="1330" y="778" class="th">src</text>
+  <line x1="958" y1="786" x2="1362" y2="786" stroke="#e2e8f0"/>
+  <text x="964" y="806" class="mons">ALICE</text><text x="1058" y="806" class="mons">ACME</text><text x="1168" y="806" class="mons">创办</text><text x="1268" y="806" class="mons" fill="#c2410c">9</text><text x="1330" y="806" class="mons">t1</text>
+  <text x="964" y="828" class="mons">ACME</text><text x="1058" y="828" class="mons">BERLIN</text><text x="1168" y="828" class="mons">位于</text><text x="1268" y="828" class="mons" fill="#c2410c">7</text><text x="1330" y="828" class="mons">t1</text>
+  <text x="962" y="858" class="small" fill="#0f766e">weight = 最后一个字段 float()；</text>
+  <text x="962" y="874" class="small" fill="#0f766e">转换失败则回退 1.0。src = 来源块 id。</text>
+
+  <text x="480" y="908" class="note">B 产出：每个文本块各自得到「实体表 + 关系表」两张扁平表 —— 但此刻还是<tspan font-weight="700" fill="#0f766e">每块独立</tspan>，同一实体在多块里各有一行。（graph_extractor.py:124-178）</text>
+
+  <!-- B -> C arrow -->
+  <line x1="725" y1="1032" x2="725" y2="1054" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== STAGE C ===================== -->
+  <text x="58" y="1055" class="band">C · 跨文本块合并（concat + groupby，把重复的点线并起来）</text>
+  <rect x="58" y="1068" width="1334" height="372" rx="14" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+  <text x="80" y="1094" class="note">同一实体（如 ACME CORP）可能在几百个块里出现 → B 是每块独立解析的，这里把它们并成一个点/一条边。</text>
+
+  <!-- chunk t1 -->
+  <rect x="80" y="1110" width="300" height="86" rx="9" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="94" y="1130" class="box-t" fill="#334155">块 t1 的解析结果</text>
+  <text x="94" y="1152" class="mons">ALICE (PERSON)　desc="创始人"</text>
+  <text x="94" y="1172" class="mons">ALICE → ACME　weight = <tspan fill="#c2410c" font-weight="700">9</tspan></text>
+  <text x="94" y="1190" class="small">…以及本块其它实体/关系</text>
+
+  <!-- chunk t2 -->
+  <rect x="80" y="1212" width="300" height="86" rx="9" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="94" y="1232" class="box-t" fill="#334155">块 t2 的解析结果</text>
+  <text x="94" y="1254" class="mons">ALICE (PERSON)　desc="CEO"</text>
+  <text x="94" y="1274" class="mons">ALICE → ACME　weight = <tspan fill="#c2410c" font-weight="700">8</tspan></text>
+  <text x="94" y="1292" class="small">…（同一实体，又出现一次）</text>
+
+  <!-- groupby node -->
+  <rect x="418" y="1150" width="188" height="120" rx="12" fill="#14b8a6" stroke="#0f766e" stroke-width="1.6"/>
+  <text x="512" y="1178" text-anchor="middle" class="box-t" fill="#fff">concat + groupby</text>
+  <text x="512" y="1200" text-anchor="middle" fill="#d1fae5" font-size="11.5">实体 → (title, type)</text>
+  <text x="512" y="1220" text-anchor="middle" fill="#d1fae5" font-size="11.5">关系 → (source, target)</text>
+  <text x="512" y="1244" text-anchor="middle" fill="#a7f3d0" font-size="10.5">extract_graph.py</text>
+  <text x="512" y="1259" text-anchor="middle" fill="#a7f3d0" font-size="10.5">:104-129</text>
+  <line x1="380" y1="1153" x2="416" y2="1180" stroke="#0d9488" stroke-width="1.6" marker-end="url(#t)"/>
+  <line x1="380" y1="1255" x2="416" y2="1240" stroke="#0d9488" stroke-width="1.6" marker-end="url(#t)"/>
+
+  <!-- merged entity -->
+  <rect x="644" y="1110" width="470" height="98" rx="9" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="660" y="1132" class="box-t" fill="#14532d">合并后实体　ALICE（PERSON）</text>
+  <text x="660" y="1154" class="mons">description　= ["创始人", "CEO"]　← list，先不合并</text>
+  <text x="660" y="1174" class="mons">text_unit_ids = [t1, t2]　　　记住出处</text>
+  <text x="660" y="1194" class="mons">frequency　　= 2　　　　　　出现次数</text>
+
+  <!-- merged relationship -->
+  <rect x="644" y="1224" width="470" height="86" rx="9" fill="#ffedd5" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="660" y="1246" class="box-t" fill="#9a3412">合并后关系　ALICE → ACME CORP</text>
+  <text x="660" y="1270" class="amber">weight = 9 + 8 = 17　← 权重「相加」！</text>
+  <text x="660" y="1292" class="mons">description=[…]　text_unit_ids=[t1,t2]</text>
+  <line x1="606" y1="1160" x2="642" y2="1155" stroke="#0d9488" stroke-width="1.6" marker-end="url(#t)"/>
+  <line x1="606" y1="1250" x2="642" y2="1258" stroke="#ea580c" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- why sum callout -->
+  <rect x="644" y="1322" width="470" height="98" rx="9" fill="#fff7ed" stroke="#fdba74" stroke-width="1.3"/>
+  <text x="660" y="1344" class="box-t" fill="#9a3412">📌 为什么权重要「相加」？</text>
+  <text x="660" y="1366" class="box-d" fill="#c2410c">同一关系在越多块里被提到 → 越重要 → 边越「重」。</text>
+  <text x="660" y="1386" class="box-d" fill="#c2410c">这个累加权重会喂给 ② 层次化 Leiden：权重越大的点</text>
+  <text x="660" y="1404" class="box-d" fill="#c2410c">越可能被聚进同一个社区。而实体 description 仍是列表 → D 合并。</text>
+
+  <!-- orphan filter -->
+  <rect x="1140" y="1110" width="232" height="200" rx="9" fill="#ffe4e6" stroke="#fb7185" stroke-width="1.3"/>
+  <text x="1156" y="1132" class="box-t" fill="#9f1239">孤儿边过滤</text>
+  <text x="1156" y="1152" class="small" fill="#be123c">utils.py:13-53</text>
+  <text x="1156" y="1178" class="box-d" fill="#9f1239">删掉「端点不存在」的关系：</text>
+  <text x="1156" y="1202" class="mons" fill="#334155">X → GHOST</text>
+  <text x="1156" y="1222" class="small" fill="#be123c">GHOST 不在实体表 → 整条丢弃</text>
+  <text x="1156" y="1252" class="box-d" fill="#9f1239">防 LLM 幻觉出没抽成</text>
+  <text x="1156" y="1270" class="box-d" fill="#9f1239">实体的端点名，保证</text>
+  <text x="1156" y="1288" class="box-d" fill="#9f1239">每条线两端都是真点。</text>
+
+  <!-- C -> D arrow -->
+  <line x1="725" y1="1442" x2="725" y2="1464" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== STAGE D ===================== -->
+  <text x="58" y="1465" class="band">D · 描述摘要：把一堆描述压成一句话（滚动 Map-Reduce）</text>
+  <rect x="58" y="1478" width="1334" height="368" rx="14" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+  <text x="80" y="1504" class="note">C 合并后每个实体的 description 还是<tspan font-weight="700">一个列表</tspan>。一个实体可能被描述几十次 → 这里把列表压成唯一、连贯的一句。（description_summary_extractor.py:75-118）</text>
+
+  <!-- desc list -->
+  <rect x="80" y="1522" width="300" height="230" rx="9" fill="#cffafe" stroke="#22d3ee" stroke-width="1.3"/>
+  <text x="96" y="1544" class="box-t" fill="#155e75">ACME CORP 的 description 列表</text>
+  <text x="96" y="1568" class="mons" fill="#0e7490">· "位于柏林的公司"</text>
+  <text x="96" y="1588" class="mons" fill="#0e7490">· "Alice 领导的软件公司"</text>
+  <text x="96" y="1608" class="mons" fill="#0e7490">· "2010 年成立的创业公司"</text>
+  <text x="96" y="1628" class="mons" fill="#0e7490">· … 可能几十条</text>
+  <line x1="90" y1="1648" x2="370" y2="1648" stroke="#a5f3fc"/>
+  <text x="96" y="1672" class="box-d" fill="#155e75">先走捷径（省 LLM 调用）：</text>
+  <text x="96" y="1692" class="mons" fill="#be123c">0 条 → "" </text>
+  <text x="96" y="1712" class="mons" fill="#be123c">1 条 → 原样返回（不调 LLM）</text>
+  <text x="96" y="1734" class="mons" fill="#155e75">≥2 条 → 进入右侧滚动摘要</text>
+
+  <line x1="380" y1="1620" x2="428" y2="1620" stroke="#0d9488" stroke-width="1.8" marker-end="url(#t)"/>
+
+  <!-- rolling window -->
+  <rect x="438" y="1522" width="600" height="230" rx="9" fill="#a5f3fc" stroke="#06b6d4" stroke-width="1.4"/>
+  <text x="454" y="1544" class="box-t" fill="#155e75">滚动窗口 Map-Reduce</text>
+  <text x="454" y="1568" class="box-d" fill="#0e7490">1) 算预算：usable = max_input_tokens(4000) − 提示词 token</text>
+  <text x="454" y="1590" class="box-d" fill="#0e7490">2) 逐条塞描述、逐条扣 token</text>
+  <text x="454" y="1612" class="box-d" fill="#0e7490">3) 塞爆就 flush：usable&lt;0 且已攒 &gt;1 条 → 调 LLM 摘这批</text>
+  <rect x="454" y="1626" width="568" height="42" rx="7" fill="#fff" stroke="#22d3ee"/>
+  <text x="466" y="1644" class="mons" fill="#155e75">4) 滚动折叠(reduce)：这批摘要 result</text>
+  <text x="466" y="1662" class="mons" fill="#155e75">　 → 当作下一批的第一条 collected=[result]</text>
+  <path d="M700,1668 C700,1700 560,1700 560,1670" fill="none" stroke="#0891b2" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#t)"/>
+  <text x="512" y="1694" class="small" fill="#0e7490">像滚雪球，重复到消费完所有描述</text>
+  <text x="454" y="1724" class="box-d" fill="#0e7490">提示词要求：合并全部、<tspan font-weight="700">化解矛盾</tspan>、第三人称、限 max_length=500 词</text>
+  <text x="454" y="1742" class="small" fill="#155e75">（"2010 成立" vs "2011 成立" 这类冲突，让 LLM 给出连贯说法）</text>
+
+  <line x1="1038" y1="1620" x2="1086" y2="1620" stroke="#0d9488" stroke-width="1.8" marker-end="url(#t)"/>
+
+  <!-- canonical output -->
+  <rect x="1096" y="1548" width="276" height="150" rx="9" fill="#dcfce7" stroke="#4ade80" stroke-width="1.6"/>
+  <text x="1112" y="1572" class="box-t" fill="#14532d">唯一规范描述</text>
+  <text x="1112" y="1594" class="box-d" fill="#3f6212">（≤500 词 · 第三人称 · 无矛盾）</text>
+  <text x="1112" y="1620" class="mons" fill="#166534">"Acme Corp 是一家</text>
+  <text x="1112" y="1638" class="mons" fill="#166534">2010 年成立于柏林、</text>
+  <text x="1112" y="1656" class="mons" fill="#166534">由 Alice 创办并领导</text>
+  <text x="1112" y="1674" class="mons" fill="#166534">的软件公司。"</text>
+  <text x="1112" y="1734" class="small" fill="#15803d">→ 供社区报告 &amp; 向量嵌入</text>
+
+  <!-- D -> output arrow -->
+  <line x1="725" y1="1848" x2="725" y2="1872" stroke="#0d9488" stroke-width="2.4" marker-end="url(#tb)"/>
+
+  <!-- ===================== OUTPUT ===================== -->
+  <rect x="58" y="1876" width="1334" height="86" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="80" y="1904" class="band" fill="#15803d">① 的产出</text>
+  <rect x="240" y="1888" width="200" height="30" rx="6" fill="#dcfce7" stroke="#4ade80"/><text x="256" y="1908" class="box-t" fill="#14532d">entities 表（点）</text>
+  <rect x="456" y="1888" width="230" height="30" rx="6" fill="#dcfce7" stroke="#4ade80"/><text x="472" y="1908" class="box-t" fill="#14532d">relationships 表（线）</text>
+  <text x="80" y="1940" class="note" fill="#166534">每个实体/边：<tspan font-weight="700">唯一描述 + embedding 向量</tspan>；关系带<tspan font-weight="700">累加权重</tspan>。这张带权重的知识图谱，就是下一步的输入 →</text>
+  <rect x="1090" y="1892" width="282" height="52" rx="9" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.6"/>
+  <text x="1106" y="1914" class="box-t" fill="#14532d">② 层次化 Leiden 聚类</text>
+  <text x="1106" y="1933" class="small" fill="#15803d">按关系权重把点聚成多层社区树</text>
+</svg>

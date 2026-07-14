@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="960" viewBox="0 0 1140 960" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="f_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1140" height="960" fill="#f8fafc"/>
+
+  <text x="570" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 检索过滤器 · SearchFilters</text>
+  <text x="570" y="72" text-anchor="middle" font-size="14" fill="#64748b">声明式过滤 → 参数化 Cypher WHERE 下推数据库 · 支撑双时态时间旅行查询</text>
+
+  <!-- translation pipeline -->
+  <text x="40" y="112" font-size="16" font-weight="700" fill="#1e293b">一、过滤下推：声明 → Cypher WHERE → 数据库</text>
+
+  <rect x="40" y="128" width="300" height="150" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="60" y="152" font-size="13" font-weight="700" fill="#1d4ed8">① 声明 SearchFilters</text>
+  <text x="60" y="174" font-size="10.5" fill="#475569" font-family="monospace">valid_at=[[</text>
+  <text x="60" y="190" font-size="10.5" fill="#475569" font-family="monospace"> DateFilter(&gt;, 2024-01),</text>
+  <text x="60" y="206" font-size="10.5" fill="#475569" font-family="monospace"> DateFilter(&lt;, 2024-06)</text>
+  <text x="60" y="222" font-size="10.5" fill="#475569" font-family="monospace">]]</text>
+  <text x="60" y="248" font-size="10.5" fill="#1d4ed8">外层 list=OR，内层 list=AND</text>
+  <text x="60" y="266" font-size="10.5" fill="#64748b">（析取范式 OR-of-AND）</text>
+
+  <line x1="340" y1="203" x2="380" y2="203" stroke="#475569" stroke-width="2" marker-end="url(#f_arrow)"/>
+
+  <rect x="380" y="128" width="360" height="150" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="400" y="152" font-size="13" font-weight="700" fill="#6d28d9">② 构造器翻译</text>
+  <text x="400" y="174" font-size="10.5" fill="#475569">edge_search_filter_query_constructor</text>
+  <text x="400" y="192" font-size="10.5" fill="#64748b">→ (Cypher 片段列表, 参数字典)</text>
+  <rect x="400" y="202" width="320" height="30" rx="5" fill="#f3e8ff" stroke="#a78bfa"/>
+  <text x="410" y="221" font-size="9.5" fill="#5b21b6" font-family="monospace">((e.valid_at &gt; $valid_at_0) AND (...&lt; $valid_at_1))</text>
+  <text x="400" y="252" font-size="10.5" fill="#6d28d9">值走参数 $xxx（不拼字符串→防注入）</text>
+  <text x="400" y="270" font-size="10.5" fill="#64748b">同层 AND、跨层 OR、外包括号</text>
+
+  <line x1="740" y1="203" x2="780" y2="203" stroke="#475569" stroke-width="2" marker-end="url(#f_arrow)"/>
+
+  <rect x="780" y="128" width="320" height="150" rx="12" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.8"/>
+  <text x="800" y="152" font-size="13" font-weight="700" fill="#075985">③ 拼进 WHERE 下推 💾</text>
+  <text x="800" y="176" font-size="10.5" fill="#475569">' WHERE ' + ' AND '.join(片段)</text>
+  <text x="800" y="194" font-size="10.5" fill="#475569">插到 MATCH 和 RETURN 之间</text>
+  <text x="800" y="212" font-size="10.5" fill="#475569">**filter_params 展开传入</text>
+  <line x1="800" y1="224" x2="1080" y2="224" stroke="#bae6fd"/>
+  <text x="800" y="244" font-size="10.5" fill="#075985">数据库扫描阶段就丢弃不匹配行</text>
+  <text x="800" y="262" font-size="10.5" fill="#64748b">走索引 + 与打分/LIMIT 同查询完成</text>
+
+  <!-- why pushdown -->
+  <rect x="40" y="294" width="1060" height="40" rx="8" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="60" y="319" font-size="12" fill="#334155"><tspan font-weight="700" fill="#059669">为何"下推"胜过"取回再过滤"：</tspan>减少传输/内存 · 利用索引提前剪枝 · 与 score&gt;min 和 ORDER BY LIMIT 同查询(避免先取TopK再过滤致结果不足) · 参数化缓存计划</text>
+
+  <!-- fields table -->
+  <text x="40" y="374" font-size="16" font-weight="700" fill="#1e293b">二、SearchFilters 字段</text>
+  <g font-size="11">
+    <rect x="40" y="388" width="1060" height="28" fill="#e2e8f0"/>
+    <text x="56" y="407" font-weight="700" fill="#334155">字段</text>
+    <text x="360" y="407" font-weight="700" fill="#334155">过滤什么</text>
+    <text x="820" y="407" font-weight="700" fill="#334155">时间轴</text>
+  </g>
+  <g font-size="11" fill="#475569">
+    <rect x="40" y="416" width="1060" height="26" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="56" y="433" font-family="monospace">node_labels</text><text x="360" y="433">按实体类型（节点标签）</text><text x="820" y="433" fill="#94a3b8">—</text>
+    <rect x="40" y="442" width="1060" height="26" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="56" y="459" font-family="monospace">edge_types</text><text x="360" y="459">按关系类型（边 name，如 WORKS_AT）</text><text x="820" y="459" fill="#94a3b8">—</text>
+    <rect x="40" y="468" width="1060" height="26" fill="#f0fdf4" stroke="#e2e8f0"/>
+    <text x="56" y="485" font-family="monospace" fill="#15803d">valid_at / invalid_at</text><text x="360" y="485">事实开始/停止为真</text><text x="820" y="485" fill="#15803d" font-weight="700">🟢 事件轴</text>
+    <rect x="40" y="494" width="1060" height="26" fill="#eff6ff" stroke="#e2e8f0"/>
+    <text x="56" y="511" font-family="monospace" fill="#1d4ed8">created_at / expired_at</text><text x="360" y="511">记录写入/被取代</text><text x="820" y="511" fill="#1d4ed8" font-weight="700">🔵 系统轴</text>
+    <rect x="40" y="520" width="1060" height="26" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="56" y="537" font-family="monospace">edge_uuids</text><text x="360" y="537">按具体边 UUID 白名单</text><text x="820" y="537" fill="#94a3b8">—</text>
+    <rect x="40" y="546" width="1060" height="26" fill="#fef2f2" stroke="#e2e8f0"/>
+    <text x="56" y="563" font-family="monospace" fill="#b91c1c">property_filters</text><text x="360" y="563">通用属性过滤</text><text x="820" y="563" fill="#b91c1c">⚠️ 已定义但未接线</text>
+  </g>
+
+  <!-- bitemporal time travel -->
+  <text x="40" y="606" font-size="16" font-weight="700" fill="#1e293b">三、双时态时间旅行查询 🕰️</text>
+  <rect x="40" y="620" width="1060" height="150" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="60" y="644" font-size="13" font-weight="700" fill="#b45309">例：用户 3 月说"住北京"，6 月说"搬到上海" → "住北京"边的 invalid_at 被设为 6 月</text>
+
+  <!-- timeline -->
+  <line x1="120" y1="700" x2="1000" y2="700" stroke="#334155" stroke-width="2"/>
+  <circle cx="260" cy="700" r="6" fill="#16a34a"/><text x="260" y="686" text-anchor="middle" font-size="10.5" fill="#15803d">3月 valid_at</text>
+  <circle cx="620" cy="700" r="6" fill="#dc2626"/><text x="620" y="686" text-anchor="middle" font-size="10.5" fill="#b91c1c">6月 invalid_at</text>
+  <rect x="260" y="695" width="360" height="10" rx="5" fill="#86efac" opacity="0.7"/>
+  <text x="440" y="723" text-anchor="middle" font-size="10.5" fill="#15803d">"住北京" 有效区间</text>
+  <rect x="620" y="695" width="380" height="10" rx="5" fill="#93c5fd" opacity="0.6"/>
+  <text x="810" y="723" text-anchor="middle" font-size="10.5" fill="#1d4ed8">"住上海" 有效区间</text>
+
+  <text x="60" y="752" font-size="11.5" fill="#334155">查"<tspan font-weight="700">5月</tspan>住哪" → valid_at≤5月 AND invalid_at&gt;5月 → 命中<tspan font-weight="700" fill="#15803d">北京</tspan> ✅　　查"<tspan font-weight="700">7月</tspan>" → 命中<tspan font-weight="700" fill="#1d4ed8">上海</tspan> ✅</text>
+
+  <!-- backend diff + footer -->
+  <rect x="40" y="786" width="520" height="80" rx="10" fill="#f0fdfa" stroke="#0d9488"/>
+  <text x="60" y="810" font-size="12.5" font-weight="700" fill="#0f766e">多后端差异（仅两处）</text>
+  <text x="60" y="831" font-size="10.5" fill="#475569">node_labels：Neo4j 用 n:A|B 拼接；Kuzu 用 list_has_all(参数)</text>
+  <text x="60" y="849" font-size="10.5" fill="#475569">边拓扑：Kuzu 物化成 RelatesToNode_ 中间节点</text>
+  <text x="60" y="864" font-size="10" fill="#64748b">日期/edge_types/edge_uuids 三类对所有后端一致</text>
+
+  <rect x="580" y="786" width="520" height="80" rx="10" fill="#faf5ff" stroke="#7c3aed"/>
+  <text x="600" y="810" font-size="12.5" font-weight="700" fill="#6d28d9">贯穿主流程</text>
+  <text x="600" y="831" font-size="10.5" fill="#475569">search(search_filter=None) → 默认空 filter（不加 WHERE）</text>
+  <text x="600" y="849" font-size="10.5" fill="#475569">同一 filter 分发四路 scope</text>
+  <text x="600" y="864" font-size="10" fill="#64748b">日期/类型过滤主要作用于 edge 和 node scope</text>
+
+  <rect x="40" y="882" width="1060" height="58" rx="12" fill="#1e293b"/>
+  <text x="60" y="906" font-size="13" font-weight="700" fill="#ffffff">💡 一句话</text>
+  <text x="60" y="928" font-size="11.5" fill="#cbd5e1">声明式 OR-of-AND 过滤 → 参数化 Cypher WHERE 下推数据库，在扫描/打分阶段完成过滤；双时态字段配 ≤/&gt;/IS NULL 实现任意时间点历史真相查询。</text>
+</svg>

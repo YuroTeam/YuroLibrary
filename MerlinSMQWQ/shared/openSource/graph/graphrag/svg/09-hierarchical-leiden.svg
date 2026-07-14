@@ -1,0 +1,255 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1990" viewBox="0 0 1440 1990" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="i" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#4f46e5"/></marker>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#e11d48"/></marker>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/></marker>
+    <marker id="ib" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,4 L0,8 Z" fill="#4f46e5"/></marker>
+    <style>
+      .title{font-size:30px;font-weight:700;fill:#0f172a}
+      .sub{font-size:15px;fill:#64748b}
+      .band{font-size:18px;font-weight:700;letter-spacing:.03em;fill:#4338ca}
+      .bandn{font-size:18px;font-weight:800;fill:#fff}
+      .box-t{font-size:13.5px;font-weight:700;fill:#3730a3}
+      .box-d{font-size:11.5px;fill:#4338ca}
+      .note{font-size:12.5px;fill:#475569}
+      .small{font-size:11px;fill:#64748b}
+      .mono{font-size:12px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#334155}
+      .mons{font-size:11px;font-family:'SF Mono',Menlo,Consolas,monospace;fill:#475569}
+      .th{font-size:11px;font-weight:700;fill:#4338ca}
+      .lvl{font-size:13px;font-weight:800;fill:#4338ca}
+      .nd{font-size:10px;fill:#1e1b4b}
+      .amber{font-size:12.5px;font-weight:700;fill:#b45309}
+    </style>
+  </defs>
+  <rect width="1440" height="1990" fill="#f8fafc"/>
+
+  <!-- ===================== HEADER ===================== -->
+  <text x="48" y="52" class="title">② 层次化 Leiden 聚类 · 详细结构图</text>
+  <text x="48" y="82" class="sub">graphs/hierarchical_leiden.py — 把 ① 的知识图谱聚成多层社区树：调用 → 递归细分 → 确定性保证 → communities 表</text>
+
+  <!-- input example banner -->
+  <rect x="48" y="100" width="1344" height="64" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="66" y="126" class="box-t" fill="#92400e">🧵 贯穿示例 · 输入 = ① 产出的知识图谱（带权重的边）</text>
+  <text x="66" y="150" class="mono" fill="#92400e">(ALICE, ACME CORP, 17)　(ACME CORP, BERLIN, 7)　(ALICE, BERLIN, 5)　…外加成百上千条边　　　点=实体 · 线=关系 · 权重=① 累加出的强度</text>
+
+  <!-- stage circles -->
+  <circle cx="30" cy="228" r="16" fill="#4f46e5"/><text x="30" y="234" text-anchor="middle" class="bandn">A</text>
+  <circle cx="30" cy="620" r="16" fill="#4f46e5"/><text x="30" y="626" text-anchor="middle" class="bandn">B</text>
+  <circle cx="30" cy="1245" r="16" fill="#4f46e5"/><text x="30" y="1251" text-anchor="middle" class="bandn">C</text>
+  <circle cx="30" cy="1655" r="16" fill="#4f46e5"/><text x="30" y="1661" text-anchor="middle" class="bandn">D</text>
+
+  <!-- ===================== STAGE A ===================== -->
+  <text x="58" y="200" class="band">A · 调用 Leiden + 它吐出的原始结构</text>
+  <rect x="58" y="214" width="1334" height="352" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+
+  <!-- call box -->
+  <rect x="80" y="238" width="580" height="308" rx="10" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1.3"/>
+  <text x="96" y="260" class="box-t">调用：写死超参跑 Leiden（hierarchical_leiden.py:11-26）</text>
+  <text x="96" y="288" class="mono">gn.hierarchical_leiden(</text>
+  <text x="112" y="310" class="mono">edges,                 <tspan class="mons"># [(源,目标,权重),…] ← ① 的边</tspan></text>
+  <text x="112" y="332" class="mono" fill="#be123c">max_cluster_size=10,   <tspan class="mons" fill="#be123c"># 社区 &gt;10 就拆</tspan></text>
+  <text x="112" y="354" class="mono" fill="#be123c">seed=0xDEADBEEF,       <tspan class="mons" fill="#be123c"># 固定骰子 → 可复现</tspan></text>
+  <text x="112" y="376" class="mono">resolution=1.0,        <tspan class="mons"># 分辨率(中庸)</tspan></text>
+  <text x="112" y="398" class="mono">randomness=0.001,      <tspan class="mons"># 极小随机</tspan></text>
+  <text x="112" y="420" class="mono">use_modularity=True,   <tspan class="mons"># 用「模块度」打分</tspan></text>
+  <text x="112" y="442" class="mono">iterations=1,</text>
+  <text x="96" y="464" class="mono">)</text>
+  <text x="96" y="492" class="box-d">模块度直觉：社区<tspan font-weight="700">内部边越多、跨社区边越少</tspan>，分数越高。</text>
+  <text x="96" y="512" class="box-d">Leiden 就朝「模块度最大」的方向分组。</text>
+  <text x="96" y="532" class="small" fill="#4338ca">GraphRAG 不自己实现聚类，调用 Rust 库 graspologic_native。</text>
+
+  <!-- output box -->
+  <rect x="688" y="238" width="694" height="308" rx="10" fill="#fff" stroke="#a5b4fc" stroke-width="1.3"/>
+  <text x="704" y="260" class="box-t">输出：扁平 HierarchicalCluster 列表（一条 = 一个节点在某层的归属）</text>
+  <line x1="700" y1="272" x2="1370" y2="272" stroke="#e0e7ff"/>
+  <text x="706" y="290" class="th">node</text><text x="880" y="290" class="th">cluster</text><text x="1010" y="290" class="th">level</text><text x="1110" y="290" class="th">parent</text><text x="1230" y="290" class="th">is_final</text>
+  <line x1="700" y1="298" x2="1370" y2="298" stroke="#eef2ff"/>
+  <text x="706" y="316" class="mons">ALICE</text><text x="880" y="316" class="mons">B</text><text x="1010" y="316" class="mons">0</text><text x="1110" y="316" class="mons">-1</text><text x="1230" y="316" class="mons">False</text>
+  <text x="706" y="336" class="mons" fill="#b45309">ALICE</text><text x="880" y="336" class="mons" fill="#b45309">B1</text><text x="1010" y="336" class="mons" fill="#b45309">1</text><text x="1110" y="336" class="mons" fill="#b45309">B</text><text x="1230" y="336" class="mons" fill="#b45309">True ←叶子</text>
+  <text x="706" y="356" class="mons">ACME CORP</text><text x="880" y="356" class="mons">B</text><text x="1010" y="356" class="mons">0</text><text x="1110" y="356" class="mons">-1</text><text x="1230" y="356" class="mons">False</text>
+  <text x="706" y="376" class="mons" fill="#b45309">ACME CORP</text><text x="880" y="376" class="mons" fill="#b45309">B1</text><text x="1010" y="376" class="mons" fill="#b45309">1</text><text x="1110" y="376" class="mons" fill="#b45309">B</text><text x="1230" y="376" class="mons" fill="#b45309">True</text>
+  <text x="706" y="396" class="mons">BERLIN</text><text x="880" y="396" class="mons">B1</text><text x="1010" y="396" class="mons">1</text><text x="1110" y="396" class="mons">B</text><text x="1230" y="396" class="mons">True</text>
+  <text x="706" y="416" class="mons" fill="#94a3b8">…（每个节点每层各一行）</text>
+  <line x1="700" y1="430" x2="1370" y2="430" stroke="#eef2ff"/>
+  <text x="704" y="450" class="box-d">📌 树的父子关系<tspan font-weight="700">藏在 parent 列里</tspan>——每条记录都记着"我爸是谁"。</text>
+  <text x="704" y="472" class="box-d">cluster_graph.py:51-99 把它<tspan font-weight="700">转置</tspan>成更好用的：</text>
+  <text x="716" y="494" class="mono">(level, cluster_id, parent_id, [node 列表])</text>
+  <text x="704" y="516" class="box-d">并约定 <tspan font-weight="700">root（最顶层）的 parent 记成 -1</tspan>（表示"我是根"）。</text>
+  <text x="704" y="536" class="small" fill="#4338ca">is_final=True 标记该节点触底的那层（不同节点在不同层触底）。</text>
+
+  <!-- A -> B arrow -->
+  <line x1="725" y1="568" x2="725" y2="596" stroke="#4f46e5" stroke-width="2.4" marker-end="url(#ib)"/>
+
+  <!-- ===================== STAGE B ===================== -->
+  <text x="58" y="592" class="band">B · 递归细分：大社区一层层拆成多层树（核心机制）</text>
+  <rect x="58" y="606" width="1334" height="576" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="80" y="632" class="note">标准 Leiden 只给<tspan font-weight="700">一个扁平划分</tspan>（不分层）。层次化 = 在外面套一层递归：<tspan font-weight="700">任何 &gt; max_cluster_size(10) 的社区，就抠出它的『导出子图』单独再跑一次 Leiden</tspan>，产出下一层。</text>
+
+  <!-- level brackets -->
+  <text x="80" y="712" class="lvl">Level 0</text><text x="80" y="728" class="small" fill="#6366f1">最粗</text>
+  <text x="80" y="892" class="lvl">Level 1</text><text x="80" y="908" class="small" fill="#6366f1">只拆超阈值的</text>
+  <text x="80" y="1058" class="lvl">Level 2</text><text x="80" y="1074" class="small" fill="#6366f1">B2 触底</text>
+
+  <!-- tree edges -->
+  <g stroke="#a5b4fc" stroke-width="1.6" fill="none">
+    <path d="M500,730 L430,845"/>
+    <path d="M540,730 L610,845"/>
+    <path d="M790,724 L760,848"/>
+    <path d="M812,724 L852,848"/>
+    <path d="M598,900 L540,1030"/>
+    <path d="M610,908 L610,1030"/>
+    <path d="M622,900 L680,1030"/>
+  </g>
+  <!-- Alice highlighted path -->
+  <path d="M500,730 L430,845" stroke="#f59e0b" stroke-width="2.4" fill="none"/>
+
+  <!-- Level 0 nodes -->
+  <circle cx="230" cy="712" r="34" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="230" y="706" text-anchor="middle" class="nd" font-weight="700">社区 A</text>
+  <text x="230" y="720" text-anchor="middle" class="nd">≤10 叶子✓</text>
+  <circle cx="520" cy="710" r="48" fill="#fde68a" stroke="#f59e0b" stroke-width="2.4"/>
+  <text x="520" y="700" text-anchor="middle" class="nd" font-weight="700" fill="#92400e">社区 B</text>
+  <text x="520" y="714" text-anchor="middle" class="nd" fill="#92400e">柏林公司圈</text>
+  <text x="520" y="728" text-anchor="middle" class="nd" fill="#b45309">&gt;10 → 拆</text>
+  <circle cx="800" cy="708" r="42" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.8"/>
+  <text x="800" y="702" text-anchor="middle" class="nd" font-weight="700">社区 C</text>
+  <text x="800" y="716" text-anchor="middle" class="nd">&gt;10 → 拆</text>
+
+  <!-- Level 1 nodes -->
+  <circle cx="430" cy="878" r="34" fill="#fde68a" stroke="#f59e0b" stroke-width="2.2"/>
+  <text x="430" y="870" text-anchor="middle" class="nd" font-weight="700" fill="#92400e">B1 ≤10 ✓</text>
+  <text x="430" y="884" text-anchor="middle" class="nd" fill="#92400e">Acme 及上下游</text>
+  <text x="430" y="897" text-anchor="middle" class="nd" fill="#b45309">Alice/Acme/Berlin</text>
+  <circle cx="610" cy="878" r="38" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.8"/>
+  <text x="610" y="872" text-anchor="middle" class="nd" font-weight="700">B2 &gt;10</text>
+  <text x="610" y="886" text-anchor="middle" class="nd">柏林其他大</text>
+  <text x="610" y="899" text-anchor="middle" class="nd">公司群 → 拆</text>
+  <circle cx="760" cy="878" r="28" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="760" y="882" text-anchor="middle" class="nd">C1 ✓</text>
+  <circle cx="852" cy="878" r="28" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="852" y="882" text-anchor="middle" class="nd">C2 ✓</text>
+
+  <!-- Level 2 nodes -->
+  <circle cx="540" cy="1052" r="24" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="540" y="1056" text-anchor="middle" class="nd">B2a ✓</text>
+  <circle cx="610" cy="1052" r="24" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="610" y="1056" text-anchor="middle" class="nd">B2b ✓</text>
+  <circle cx="680" cy="1052" r="24" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="680" y="1056" text-anchor="middle" class="nd">B2c ✓</text>
+
+  <!-- tree caption -->
+  <text x="150" y="1112" class="note">这棵树<tspan font-weight="700">参差不齐</tspan>：社区 A 一层就到底；Alice 那支走到 L1(B1) 触底；B2 那支要走到 L2 才触底。</text>
+  <text x="150" y="1134" class="note" fill="#be123c">⚠️ max_cluster_size 限的是<tspan font-weight="700">叶子粒度（每个叶子 ≤10）</tspan>，不是树深；树深由"局部有多密"决定。</text>
+  <text x="150" y="1156" class="small" fill="#4338ca">细分时只拿该社区的『导出子图』（把它的点和内部边单独抠出来），B 内部怎么分与 C 无关。</text>
+
+  <!-- right annotation panel -->
+  <rect x="1010" y="666" width="362" height="490" rx="10" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1.3"/>
+  <text x="1026" y="690" class="box-t">递归细分规则</text>
+  <rect x="1026" y="702" width="330" height="92" rx="8" fill="#fff" stroke="#c4b5fd"/>
+  <text x="1040" y="724" class="box-d" font-weight="700">触发条件</text>
+  <text x="1040" y="744" class="box-d">社区 size &gt; max_cluster_size(10)</text>
+  <text x="1040" y="764" class="box-d">→ 抠出它的导出子图</text>
+  <text x="1040" y="784" class="box-d">→ 单独再跑一次 Leiden → 深一层</text>
+  <rect x="1026" y="806" width="330" height="128" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.3"/>
+  <text x="1040" y="828" class="amber">🧵 Alice 的下钻路径</text>
+  <text x="1040" y="850" class="box-d" fill="#92400e">L0：落在<tspan font-weight="700">社区 B</tspan>（柏林公司</text>
+  <text x="1040" y="868" class="box-d" fill="#92400e">　　圈，几十个成员，&gt;10 要拆）</text>
+  <text x="1040" y="890" class="box-d" fill="#92400e">L1：落在 <tspan font-weight="700">B1</tspan>（Acme 及上下游，</text>
+  <text x="1040" y="908" class="box-d" fill="#92400e">　　≤10，<tspan font-weight="700">叶子✓，就此定型</tspan>）</text>
+  <text x="1040" y="928" class="small" fill="#b45309">→ 对应 A 输出表里 Alice 的两行</text>
+  <rect x="1026" y="946" width="330" height="88" rx="8" fill="#fff" stroke="#c4b5fd"/>
+  <text x="1040" y="968" class="box-d" font-weight="700">扁平列表 → 树</text>
+  <text x="1040" y="988" class="box-d">底层返回扁平 HierarchicalCluster</text>
+  <text x="1040" y="1008" class="box-d">列表；树形靠 parent_cluster 这根</text>
+  <text x="1040" y="1028" class="box-d">"指向父亲"的指针隐式表达。</text>
+  <rect x="1026" y="1046" width="330" height="94" rx="8" fill="#e0e7ff" stroke="#a5b4fc"/>
+  <text x="1040" y="1068" class="box-d" font-weight="700">📌 这一步只贴标签</text>
+  <text x="1040" y="1088" class="box-d">不改动图里任何点和线，只给每个</text>
+  <text x="1040" y="1108" class="box-d">点贴上"属于哪个社区、在第几层"</text>
+  <text x="1040" y="1128" class="box-d">的标签，最后整理成社区表（D）。</text>
+
+  <!-- B -> C arrow -->
+  <line x1="725" y1="1184" x2="725" y2="1212" stroke="#4f46e5" stroke-width="2.4" marker-end="url(#ib)"/>
+
+  <!-- ===================== STAGE C ===================== -->
+  <text x="58" y="1208" class="band">C · 确定性三层保证（同样的图，每次跑出一模一样的树）</text>
+  <rect x="58" y="1222" width="1334" height="358" rx="14" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="80" y="1248" class="note" fill="#be123c">为什么？聚类里有随机（掷骰子挪节点）。放任随机 → 今天 Alice 落社区 5、明天落社区 8，下游社区报告/检索全对不上。三道机制把随机彻底钉死：</text>
+
+  <!-- layer 1 -->
+  <rect x="80" y="1266" width="405" height="290" rx="10" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1.3"/>
+  <text x="96" y="1290" class="box-t">1 · 固定 seed</text>
+  <text x="96" y="1316" class="mono" fill="#be123c">seed = 0xDEADBEEF</text>
+  <text x="96" y="1338" class="box-d">把种子写死，喂给 Leiden 内部</text>
+  <text x="96" y="1358" class="box-d">那些随机细分。</text>
+  <text x="96" y="1384" class="box-d">同种子 → 同随机序列 → 同划分。</text>
+  <text x="96" y="1414" class="box-t">管的是：算法内部的随机。</text>
+  <line x1="90" y1="1430" x2="475" y2="1430" stroke="#e0e7ff"/>
+  <text x="96" y="1454" class="small" fill="#4338ca">defaults.py:71-73</text>
+  <text x="96" y="1478" class="box-d">💡 三层缺任何一层，结果都可能</text>
+  <text x="96" y="1498" class="box-d">悄悄漂移；三层齐了才字节级可复现。</text>
+
+  <!-- layer 2 -->
+  <rect x="505" y="1266" width="420" height="290" rx="10" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1.3"/>
+  <text x="521" y="1290" class="box-t">2 · 边规范化 + 去重 + 排序</text>
+  <text x="521" y="1310" class="small" fill="#4338ca">cluster_graph.py:63-84　管：边的喂入顺序</text>
+  <text x="521" y="1338" class="mons">乱序输入:</text>
+  <text x="533" y="1358" class="mons">(BERLIN,ACME,7) (acme,berlin,7)</text>
+  <text x="533" y="1376" class="mons">(ACME,ALICE,8)</text>
+  <text x="521" y="1400" class="box-d">① source=min, target=max（A—B 与</text>
+  <text x="533" y="1418" class="box-d">　B—A 写法统一）:</text>
+  <text x="533" y="1438" class="mons" fill="#4338ca">(ACME,BERLIN,7) (ACME,BERLIN,7)</text>
+  <text x="533" y="1456" class="mons" fill="#4338ca">(ALICE,ACME,8)</text>
+  <text x="521" y="1480" class="box-d">② drop_duplicates(keep="last") 去重</text>
+  <text x="521" y="1500" class="box-d">③ sorted() 排序</text>
+  <text x="521" y="1524" class="mons" fill="#059669">→ 字节级一致的边序</text>
+  <text x="521" y="1546" class="small" fill="#4338ca">有些算法对边顺序敏感，把它也钉死。</text>
+
+  <!-- layer 3 -->
+  <rect x="945" y="1266" width="427" height="290" rx="10" fill="#eef2ff" stroke="#a5b4fc" stroke-width="1.3"/>
+  <text x="961" y="1290" class="box-t">3 · stable_lcc（use_lcc=True）</text>
+  <text x="961" y="1310" class="small" fill="#4338ca">stable_lcc.py　管：节点名写法 + 图范围</text>
+  <text x="961" y="1336" class="box-d">节点名归一化：</text>
+  <text x="973" y="1356" class="mons">"Acme Corp"</text>
+  <text x="973" y="1374" class="mons">"ACME CORP"　　　全都折叠成</text>
+  <text x="973" y="1392" class="mons">"acme&amp;nbsp;corp"</text>
+  <text x="961" y="1414" class="mons" fill="#4338ca">html.unescape().upper().strip()</text>
+  <text x="961" y="1434" class="mono" fill="#059669">→ "ACME CORP"（认成同一个点）</text>
+  <line x1="955" y1="1450" x2="1362" y2="1450" stroke="#e0e7ff"/>
+  <text x="961" y="1474" class="box-d">取<tspan font-weight="700">最大连通分量(LCC)</tspan>：只对主干</text>
+  <text x="961" y="1494" class="box-d">聚类，丢掉跟主体完全不连的零散小岛。</text>
+  <text x="961" y="1522" class="box-d" fill="#be123c">⚠️ 有几个完全无关的碎片 → 会被</text>
+  <text x="961" y="1540" class="box-d" fill="#be123c">　 排除在社区树之外。</text>
+
+  <!-- C -> D arrow -->
+  <line x1="725" y1="1582" x2="725" y2="1610" stroke="#4f46e5" stroke-width="2.4" marker-end="url(#ib)"/>
+
+  <!-- ===================== STAGE D ===================== -->
+  <text x="58" y="1606" class="band">D · 物化成 communities 表 → 交给 ③</text>
+  <rect x="58" y="1620" width="1334" height="320" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="80" y="1646" class="note">create_communities（create_communities.py:55-192）给每个社区收齐"家当"并补上父子关系，物化成一张正经的表：</text>
+
+  <!-- table -->
+  <rect x="80" y="1662" width="900" height="150" rx="9" fill="#fff" stroke="#4ade80" stroke-width="1.3"/>
+  <text x="94" y="1684" class="th">community</text><text x="230" y="1684" class="th">level</text><text x="300" y="1684" class="th">parent</text><text x="390" y="1684" class="th">children</text><text x="520" y="1684" class="th">entity_ids</text><text x="740" y="1684" class="th">rel_ids</text><text x="880" y="1684" class="th">size</text>
+  <line x1="90" y1="1692" x2="970" y2="1692" stroke="#dcfce7"/>
+  <text x="94" y="1712" class="mons">B (Community 7)</text><text x="230" y="1712" class="mons">0</text><text x="300" y="1712" class="mons">-1</text><text x="390" y="1712" class="mons">[B1, B2]</text><text x="520" y="1712" class="mons">[ALICE,ACME,…35]</text><text x="740" y="1712" class="mons">[…]</text><text x="880" y="1712" class="mons">35</text>
+  <text x="94" y="1734" class="mons" fill="#b45309">B1 (Community 42)</text><text x="230" y="1734" class="mons" fill="#b45309">1</text><text x="300" y="1734" class="mons" fill="#b45309">B</text><text x="390" y="1734" class="mons" fill="#b45309">[]</text><text x="520" y="1734" class="mons" fill="#b45309">[ALICE,ACME,BERLIN,…8]</text><text x="740" y="1734" class="mons" fill="#b45309">[…]</text><text x="880" y="1734" class="mons" fill="#b45309">8</text>
+  <line x1="90" y1="1746" x2="970" y2="1746" stroke="#eef2ff"/>
+  <text x="94" y="1768" class="small" fill="#166534">· relationship_ids 只收<tspan font-weight="700">「两端都在社区内」</tspan>的边　· size = len(entity_ids)　· period = UTC 日期</text>
+  <text x="94" y="1788" class="small" fill="#166534">· parent ↔ children <tspan font-weight="700">双向树</tspan>（③ 自底向上摘要要"从父找子"也要"从子找父"）</text>
+  <text x="94" y="1806" class="mons" fill="#475569">列：id, community, level, parent, children, title, entity_ids, relationship_ids, text_unit_ids, period, size</text>
+
+  <!-- to next -->
+  <rect x="1010" y="1668" width="362" height="80" rx="10" fill="#bbf7d0" stroke="#22c55e" stroke-width="1.6"/>
+  <text x="1026" y="1694" class="box-t" fill="#14532d">③ 社区报告</text>
+  <text x="1026" y="1716" class="box-d" fill="#166534">对这棵社区树做自底向上递归摘要</text>
+  <text x="1026" y="1736" class="small" fill="#15803d">叶子先摘要 → 父社区复用子报告</text>
+  <line x1="982" y1="1720" x2="1008" y2="1710" stroke="#16a34a" stroke-width="2" marker-end="url(#i)"/>
+
+  <!-- side note -->
+  <rect x="1010" y="1762" width="362" height="60" rx="9" fill="#fff7ed" stroke="#fdba74" stroke-width="1.2"/>
+  <text x="1026" y="1784" class="box-d" fill="#9a3412">🔧 旁支：modularity.py / edge_weights.py 是</text>
+  <text x="1026" y="1804" class="box-d" fill="#9a3412">诊断 / 可选重加权(PMI·RRF)，不在默认主路径。</text>
+</svg>

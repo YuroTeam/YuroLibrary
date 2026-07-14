@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1180" viewBox="0 0 1240 1180" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="s_flow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+    <marker id="s_flowTeal" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0d9488"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1240" height="1180" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="620" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 检索管道 · search 全流程</text>
+  <text x="620" y="72" text-anchor="middle" font-size="14" fill="#64748b">一句查询 → 四个 scope 并行 → 每路「三路召回 + 重排融合」→ 返回最相关上下文</text>
+
+  <!-- Legend -->
+  <g font-size="12.5">
+    <rect x="792" y="90" width="15" height="15" rx="3" fill="#ccfbf1" stroke="#0d9488"/>
+    <text x="814" y="102" fill="#475569">召回 Recall</text>
+    <rect x="912" y="90" width="15" height="15" rx="3" fill="#fef3c7" stroke="#d97706"/>
+    <text x="934" y="102" fill="#475569">重排 Rerank</text>
+    <rect x="1020" y="90" width="15" height="15" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="1042" y="102" fill="#475569">💾 数据库</text>
+  </g>
+
+  <!-- ===== Two entry points ===== -->
+  <rect x="330" y="122" width="270" height="62" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="1.6"/>
+  <text x="465" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">search()  简单版</text>
+  <text x="465" y="167" text-anchor="middle" font-size="11.5" fill="#64748b">挑预设配方 → 返回 list[EntityEdge]</text>
+
+  <rect x="640" y="122" width="270" height="62" rx="12" fill="#ffffff" stroke="#64748b" stroke-width="1.6"/>
+  <text x="775" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">search_()  高级版</text>
+  <text x="775" y="167" text-anchor="middle" font-size="11.5" fill="#64748b">传 SearchConfig → 返回 SearchResults</text>
+
+  <line x1="465" y1="184" x2="590" y2="212" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <line x1="775" y1="184" x2="650" y2="212" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+
+  <!-- ===== Input query ===== -->
+  <rect x="470" y="214" width="300" height="52" rx="12" fill="#1e293b"/>
+  <text x="620" y="238" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">输入 query（自然语言）</text>
+  <text x="620" y="257" text-anchor="middle" font-size="11" fill="#cbd5e1">+ SearchConfig（搜什么·怎么召回·怎么重排）</text>
+  <line x1="620" y1="266" x2="620" y2="290" stroke="#475569" stroke-width="2.2" marker-end="url(#s_flow)"/>
+
+  <!-- ===== ② embed query ===== -->
+  <rect x="380" y="292" width="480" height="56" rx="12" fill="#ffffff" stroke="#0284c7" stroke-width="1.6"/>
+  <text x="400" y="316" font-size="14" font-weight="700" fill="#075985">② 按需嵌入 query</text>
+  <text x="400" y="337" font-size="11.5" fill="#334155">仅当某方法需要向量(cosine/MMR)时才调 embedder，否则用零向量省钱</text>
+  <line x1="620" y1="348" x2="620" y2="372" stroke="#475569" stroke-width="2.2" marker-end="url(#s_flow)"/>
+
+  <!-- ===== ③ fan-out bar ===== -->
+  <rect x="120" y="374" width="1000" height="34" rx="8" fill="#0f766e"/>
+  <text x="620" y="396" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">③ 四个 scope 并行召回（semaphore_gather 同时跑）</text>
+
+  <!-- fan-out lines to 4 columns -->
+  <line x1="245" y1="408" x2="245" y2="432" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <line x1="490" y1="408" x2="490" y2="432" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <line x1="740" y1="408" x2="740" y2="432" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <line x1="990" y1="408" x2="990" y2="432" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+
+  <!-- ============ 4 SCOPE COLUMNS ============ -->
+  <!-- column x-centers: 245, 490, 740, 990 ; width 220 -->
+
+  <!-- Column 1: edge_search -->
+  <rect x="135" y="434" width="220" height="470" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <text x="245" y="458" text-anchor="middle" font-size="14.5" font-weight="700" fill="#0f766e">edge_search</text>
+  <text x="245" y="476" text-anchor="middle" font-size="11" fill="#64748b">事实边 EntityEdge · 最常用</text>
+  <!-- recall -->
+  <rect x="150" y="486" width="190" height="150" rx="8" fill="#ccfbf1" stroke="#0d9488"/>
+  <text x="245" y="506" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f766e">召回（每路取 2×limit）💾</text>
+  <text x="163" y="530" font-size="11.5" fill="#334155">• BM25 全文（关键词）</text>
+  <text x="163" y="552" font-size="11.5" fill="#334155">• cosine 向量（语义）</text>
+  <text x="163" y="574" font-size="11.5" fill="#334155">• BFS 图遍历（结构）</text>
+  <text x="163" y="600" font-size="10.5" font-style="italic" fill="#0d9488">三路互补 = 混合检索</text>
+  <text x="163" y="618" font-size="10.5" font-style="italic" fill="#64748b">合并成候选池</text>
+  <line x1="245" y1="636" x2="245" y2="656" stroke="#0d9488" stroke-width="1.8" marker-end="url(#s_flowTeal)"/>
+  <!-- rerank -->
+  <rect x="150" y="658" width="190" height="180" rx="8" fill="#fef3c7" stroke="#d97706"/>
+  <text x="245" y="678" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">重排（5 选 1）</text>
+  <text x="163" y="700" font-size="11" fill="#334155">• RRF 倒数排名融合 ⭐默认</text>
+  <text x="163" y="721" font-size="11" fill="#334155">• MMR 相关+多样</text>
+  <text x="163" y="742" font-size="11" fill="#334155">• cross-encoder 最准</text>
+  <text x="163" y="763" font-size="11" fill="#334155">• node_distance 图距离</text>
+  <text x="163" y="784" font-size="11" fill="#334155">• episode_mentions 热度</text>
+  <text x="163" y="812" font-size="10.5" font-style="italic" fill="#b45309">融合成统一排序</text>
+  <text x="163" y="828" font-size="10.5" font-style="italic" fill="#64748b">截断到 limit</text>
+  <line x1="245" y1="838" x2="245" y2="866" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <rect x="165" y="868" width="160" height="30" rx="8" fill="#0f766e"/>
+  <text x="245" y="888" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Top-K 边</text>
+
+  <!-- Column 2: node_search -->
+  <rect x="380" y="434" width="220" height="470" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <text x="490" y="458" text-anchor="middle" font-size="14.5" font-weight="700" fill="#0f766e">node_search</text>
+  <text x="490" y="476" text-anchor="middle" font-size="11" fill="#64748b">实体节点 EntityNode</text>
+  <rect x="395" y="486" width="190" height="150" rx="8" fill="#ccfbf1" stroke="#0d9488"/>
+  <text x="490" y="506" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f766e">召回 💾</text>
+  <text x="408" y="530" font-size="11.5" fill="#334155">• BM25 全文</text>
+  <text x="408" y="552" font-size="11.5" fill="#334155">• cosine 向量</text>
+  <text x="408" y="574" font-size="11.5" fill="#334155">• BFS 图遍历</text>
+  <text x="408" y="600" font-size="10.5" font-style="italic" fill="#0d9488">找相关实体</text>
+  <line x1="490" y1="636" x2="490" y2="656" stroke="#0d9488" stroke-width="1.8" marker-end="url(#s_flowTeal)"/>
+  <rect x="395" y="658" width="190" height="180" rx="8" fill="#fef3c7" stroke="#d97706"/>
+  <text x="490" y="678" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">重排</text>
+  <text x="408" y="700" font-size="11" fill="#334155">• RRF ⭐</text>
+  <text x="408" y="721" font-size="11" fill="#334155">• MMR</text>
+  <text x="408" y="742" font-size="11" fill="#334155">• cross-encoder</text>
+  <text x="408" y="763" font-size="11" fill="#334155">• node_distance</text>
+  <text x="408" y="784" font-size="11" fill="#334155">• episode_mentions</text>
+  <line x1="490" y1="838" x2="490" y2="866" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <rect x="410" y="868" width="160" height="30" rx="8" fill="#0f766e"/>
+  <text x="490" y="888" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Top-K 节点</text>
+
+  <!-- Column 3: episode_search -->
+  <rect x="630" y="434" width="220" height="470" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <text x="740" y="458" text-anchor="middle" font-size="14.5" font-weight="700" fill="#0f766e">episode_search</text>
+  <text x="740" y="476" text-anchor="middle" font-size="11" fill="#64748b">原始情节 EpisodicNode</text>
+  <rect x="645" y="486" width="190" height="150" rx="8" fill="#ccfbf1" stroke="#0d9488"/>
+  <text x="740" y="506" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f766e">召回 💾</text>
+  <text x="658" y="532" font-size="11.5" fill="#334155">• 仅 BM25 全文</text>
+  <text x="658" y="562" font-size="10.5" font-style="italic" fill="#0d9488">溯源：信息出自</text>
+  <text x="658" y="578" font-size="10.5" font-style="italic" fill="#0d9488">哪条原始文本</text>
+  <line x1="740" y1="636" x2="740" y2="656" stroke="#0d9488" stroke-width="1.8" marker-end="url(#s_flowTeal)"/>
+  <rect x="645" y="658" width="190" height="180" rx="8" fill="#fef3c7" stroke="#d97706"/>
+  <text x="740" y="678" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">重排</text>
+  <text x="658" y="702" font-size="11" fill="#334155">• RRF ⭐</text>
+  <text x="658" y="723" font-size="11" fill="#334155">• cross-encoder</text>
+  <line x1="740" y1="838" x2="740" y2="866" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <rect x="660" y="868" width="160" height="30" rx="8" fill="#0f766e"/>
+  <text x="740" y="888" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Top-K 情节</text>
+
+  <!-- Column 4: community_search -->
+  <rect x="880" y="434" width="220" height="470" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <text x="990" y="458" text-anchor="middle" font-size="14.5" font-weight="700" fill="#0f766e">community_search</text>
+  <text x="990" y="476" text-anchor="middle" font-size="11" fill="#64748b">社区 CommunityNode</text>
+  <rect x="895" y="486" width="190" height="150" rx="8" fill="#ccfbf1" stroke="#0d9488"/>
+  <text x="990" y="506" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f766e">召回 💾</text>
+  <text x="908" y="532" font-size="11.5" fill="#334155">• BM25 全文</text>
+  <text x="908" y="554" font-size="11.5" fill="#334155">• cosine 向量</text>
+  <text x="908" y="582" font-size="10.5" font-style="italic" fill="#0d9488">高层主题/群组</text>
+  <line x1="990" y1="636" x2="990" y2="656" stroke="#0d9488" stroke-width="1.8" marker-end="url(#s_flowTeal)"/>
+  <rect x="895" y="658" width="190" height="180" rx="8" fill="#fef3c7" stroke="#d97706"/>
+  <text x="990" y="678" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">重排</text>
+  <text x="908" y="702" font-size="11" fill="#334155">• RRF ⭐</text>
+  <text x="908" y="723" font-size="11" fill="#334155">• MMR</text>
+  <text x="908" y="744" font-size="11" fill="#334155">• cross-encoder</text>
+  <line x1="990" y1="838" x2="990" y2="866" stroke="#475569" stroke-width="1.8" marker-end="url(#s_flow)"/>
+  <rect x="910" y="868" width="160" height="30" rx="8" fill="#0f766e"/>
+  <text x="990" y="888" text-anchor="middle" font-size="11.5" font-weight="600" fill="#ffffff">Top-K 社区</text>
+
+  <!-- ===== merge lines into results ===== -->
+  <line x1="245" y1="900" x2="560" y2="944" stroke="#475569" stroke-width="1.6" marker-end="url(#s_flow)"/>
+  <line x1="490" y1="900" x2="580" y2="944" stroke="#475569" stroke-width="1.6" marker-end="url(#s_flow)"/>
+  <line x1="740" y1="900" x2="660" y2="944" stroke="#475569" stroke-width="1.6" marker-end="url(#s_flow)"/>
+  <line x1="990" y1="900" x2="680" y2="944" stroke="#475569" stroke-width="1.6" marker-end="url(#s_flow)"/>
+
+  <!-- ===== ④ SearchResults ===== -->
+  <rect x="400" y="946" width="440" height="66" rx="12" fill="#0f766e"/>
+  <text x="620" y="972" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">④ 汇总 SearchResults</text>
+  <text x="620" y="994" text-anchor="middle" font-size="11.5" fill="#ccfbf1" font-family="monospace">edges · nodes · episodes · communities（各带重排分数）</text>
+
+  <!-- ===== bottom: hybrid retrieval note + perf ===== -->
+  <rect x="135" y="1036" width="480" height="118" rx="12" fill="#fffbeb" stroke="#f59e0b"/>
+  <text x="155" y="1060" font-size="13.5" font-weight="700" fill="#b45309">🔀 混合检索（Hybrid Retrieval）</text>
+  <text x="155" y="1082" font-size="11.5" fill="#475569">• 向量：擅长「意思相近」（语义）</text>
+  <text x="155" y="1102" font-size="11.5" fill="#475569">• BM25：擅长「精确命中术语」（关键词）</text>
+  <text x="155" y="1122" font-size="11.5" fill="#475569">• BFS：擅长「结构相关」（图遍历）</text>
+  <text x="155" y="1144" font-size="11" font-style="italic" fill="#b45309">三路召回保「全」，重排融合保「准」</text>
+
+  <rect x="640" y="1036" width="460" height="118" rx="12" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="660" y="1060" font-size="13.5" font-weight="700" fill="#1d4ed8">⚡ 性能设计</text>
+  <text x="660" y="1082" font-size="11.5" fill="#475569">• 并行：scope 之间 + 各路召回之间都并发</text>
+  <text x="660" y="1102" font-size="11.5" fill="#475569">• 按需嵌入：纯关键词检索时省掉 embedding 调用</text>
+  <text x="660" y="1122" font-size="11.5" fill="#475569">• 超额召回：每路取 2×limit，重排后再截断</text>
+  <text x="660" y="1144" font-size="11.5" fill="#475569">• 可观测：每阶段 OpenTelemetry span</text>
+</svg>

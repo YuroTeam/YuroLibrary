@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1000" viewBox="0 0 1180 1000" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="s_arrow" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3.5 L0,7 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1180" height="1000" fill="#f8fafc"/>
+
+  <text x="590" y="44" text-anchor="middle" font-size="27" font-weight="700" fill="#1e293b">Graphiti 服务封装层</text>
+  <text x="590" y="72" text-anchor="middle" font-size="14" fill="#64748b">REST 与 MCP 都是核心库的薄外壳 · 共同难题：把并发写请求串行化</text>
+
+  <!-- core engine at bottom center -->
+  <rect x="390" y="820" width="400" height="90" rx="14" fill="#1e293b"/>
+  <text x="590" y="850" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">graphiti_core.Graphiti（引擎）</text>
+  <text x="590" y="874" text-anchor="middle" font-size="12" fill="#cbd5e1">add_episode(...) 写　·　search(...) 读</text>
+  <text x="590" y="895" text-anchor="middle" font-size="11" fill="#94a3b8">两个服务都不重新实现图逻辑，只套协议外壳</text>
+
+  <!-- ============ LEFT: REST ============ -->
+  <rect x="40" y="100" width="540" height="690" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.2"/>
+  <text x="310" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#1d4ed8">server/ · FastAPI REST</text>
+  <text x="310" y="150" text-anchor="middle" font-size="11.5" fill="#64748b">面向通用后端 / 微服务</text>
+
+  <!-- clients -->
+  <rect x="70" y="166" width="480" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="310" y="191" text-anchor="middle" font-size="12" fill="#1e40af">HTTP 客户端（并发请求）</text>
+  <line x1="310" y1="206" x2="310" y2="228" stroke="#475569" stroke-width="2" marker-end="url(#s_arrow)"/>
+
+  <!-- endpoints -->
+  <rect x="70" y="230" width="480" height="118" rx="10" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="86" y="252" font-size="12.5" font-weight="700" fill="#1d4ed8">端点</text>
+  <text x="86" y="273" font-size="10.5" fill="#334155">写 ingest：POST /messages(202入队) · /entity-node</text>
+  <text x="86" y="290" font-size="10.5" fill="#334155">　　　　　DELETE /entity-edge · /group · /episode</text>
+  <text x="86" y="311" font-size="10.5" fill="#334155">读 retrieve：POST /search · GET /episodes</text>
+  <text x="86" y="328" font-size="10.5" fill="#334155">　　　　　　POST /get-memory（拼消息成 query）</text>
+  <text x="86" y="342" font-size="9.5" fill="#94a3b8">DTO：SearchQuery / FactResult（暴露双时态字段）</text>
+
+  <!-- ZepGraphiti -->
+  <rect x="70" y="360" width="480" height="54" rx="10" fill="#e0e7ff" stroke="#6366f1"/>
+  <text x="86" y="382" font-size="12.5" font-weight="700" fill="#4338ca">ZepGraphiti(Graphiti) —— 继承</text>
+  <text x="86" y="402" font-size="10.5" fill="#475569">薄扩展：删除便捷方法 + NotFound→HTTPException(404)</text>
+  <text x="530" y="382" text-anchor="end" font-size="10" fill="#6366f1">每请求新建/close</text>
+
+  <!-- queue -->
+  <rect x="70" y="428" width="480" height="200" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="86" y="450" font-size="13" font-weight="700" fill="#b91c1c">🔁 摄入顺序性：全局单队列 AsyncWorker</text>
+  <!-- concurrent requests -->
+  <g font-size="9.5" fill="#7f1d1d">
+    <rect x="90" y="466" width="60" height="24" rx="5" fill="#fecaca"/><text x="120" y="482" text-anchor="middle">req A</text>
+    <rect x="160" y="466" width="60" height="24" rx="5" fill="#fecaca"/><text x="190" y="482" text-anchor="middle">req B</text>
+    <rect x="230" y="466" width="60" height="24" rx="5" fill="#fecaca"/><text x="260" y="482" text-anchor="middle">req C</text>
+  </g>
+  <text x="330" y="482" font-size="10.5" fill="#b91c1c">（不同 group 也一样）</text>
+  <line x1="190" y1="490" x2="190" y2="508" stroke="#dc2626" stroke-width="1.6" marker-end="url(#s_arrow)"/>
+  <!-- single queue -->
+  <rect x="90" y="510" width="420" height="34" rx="6" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="300" y="532" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b91c1c">一个全局队列 asyncio.Queue</text>
+  <line x1="300" y1="544" x2="300" y2="562" stroke="#dc2626" stroke-width="1.6" marker-end="url(#s_arrow)"/>
+  <!-- single worker -->
+  <rect x="150" y="564" width="300" height="34" rx="6" fill="#fecaca" stroke="#b91c1c"/>
+  <text x="300" y="586" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7f1d1d">单 worker：await job() 串行</text>
+  <text x="86" y="618" font-size="10.5" fill="#64748b">✓ 严格串行避免竞态　✗ 所有 group 挤一条队排队</text>
+
+  <!-- to engine -->
+  <line x1="310" y1="628" x2="500" y2="818" stroke="#475569" stroke-width="2" marker-end="url(#s_arrow)"/>
+  <text x="70" y="672" font-size="11" fill="#1d4ed8">启动时仅 build_indices_and_constraints() 建一次索引，客户端不常驻</text>
+  <rect x="70" y="686" width="480" height="90" rx="10" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="86" y="708" font-size="11.5" font-weight="700" fill="#1d4ed8">配置</text>
+  <text x="86" y="729" font-size="10.5" fill="#475569">pydantic-settings 从 .env 读</text>
+  <text x="86" y="748" font-size="10.5" fill="#475569">db_backend = neo4j / falkordb</text>
+  <text x="86" y="767" font-size="10.5" fill="#64748b">传输：HTTP (uvicorn)</text>
+
+  <!-- ============ RIGHT: MCP ============ -->
+  <rect x="600" y="100" width="540" height="690" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.2"/>
+  <text x="870" y="130" text-anchor="middle" font-size="17" font-weight="700" fill="#0f766e">mcp_server/ · FastMCP</text>
+  <text x="870" y="150" text-anchor="middle" font-size="11.5" fill="#64748b">面向 Claude Desktop / Cursor 当长期记忆</text>
+
+  <rect x="630" y="166" width="480" height="40" rx="8" fill="#ccfbf1" stroke="#14b8a6"/>
+  <text x="870" y="191" text-anchor="middle" font-size="12" fill="#0f766e">AI 助手（stdio / http / sse）</text>
+  <line x1="870" y1="206" x2="870" y2="228" stroke="#475569" stroke-width="2" marker-end="url(#s_arrow)"/>
+
+  <!-- tools -->
+  <rect x="630" y="230" width="480" height="118" rx="10" fill="#ffffff" stroke="#5eead4"/>
+  <text x="646" y="252" font-size="12.5" font-weight="700" fill="#0f766e">@mcp.tool() 工具</text>
+  <text x="646" y="273" font-size="10.5" fill="#334155">写：add_memory（主）· add_triplet（绕过抽取）</text>
+  <text x="646" y="290" font-size="10.5" fill="#334155">读：search_nodes · search_memory_facts</text>
+  <text x="646" y="311" font-size="10.5" fill="#334155">运维：build_communities · summarize_saga</text>
+  <text x="646" y="328" font-size="10.5" fill="#334155">　　　delete_* · get_episodes · clear_graph · get_status</text>
+  <text x="646" y="342" font-size="9.5" fill="#94a3b8">溯源：get_episode_entities</text>
+
+  <!-- GraphitiService -->
+  <rect x="630" y="360" width="480" height="54" rx="10" fill="#cffafe" stroke="#06b6d4"/>
+  <text x="646" y="382" font-size="12.5" font-weight="700" fill="#0e7490">GraphitiService 持有 Graphiti —— 组合</text>
+  <text x="646" y="402" font-size="10.5" fill="#475569">常驻单例 client = await get_client()</text>
+  <text x="1090" y="382" text-anchor="end" font-size="10" fill="#06b6d4">常驻</text>
+
+  <!-- queue per group -->
+  <rect x="630" y="428" width="480" height="200" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.8"/>
+  <text x="646" y="450" font-size="13" font-weight="700" fill="#059669">🌟 摄入顺序性：按 group_id 分队列</text>
+  <!-- group A queue -->
+  <rect x="646" y="462" width="220" height="150" rx="8" fill="#d1fae5" stroke="#10b981"/>
+  <text x="756" y="482" text-anchor="middle" font-size="11" font-weight="700" fill="#059669">group A</text>
+  <rect x="662" y="492" width="188" height="24" rx="5" fill="#a7f3d0"/><text x="756" y="508" text-anchor="middle" font-size="10" fill="#065f46">队列 A</text>
+  <rect x="662" y="522" width="188" height="24" rx="5" fill="#6ee7b7"/><text x="756" y="538" text-anchor="middle" font-size="10" fill="#065f46">worker A 串行</text>
+  <text x="662" y="566" font-size="9.5" fill="#047857">A1→A2→A3 顺序</text>
+  <text x="662" y="584" font-size="9" fill="#059669">组内串行避免竞态</text>
+  <!-- group B queue -->
+  <rect x="874" y="462" width="220" height="150" rx="8" fill="#d1fae5" stroke="#10b981"/>
+  <text x="984" y="482" text-anchor="middle" font-size="11" font-weight="700" fill="#059669">group B</text>
+  <rect x="890" y="492" width="188" height="24" rx="5" fill="#a7f3d0"/><text x="984" y="508" text-anchor="middle" font-size="10" fill="#065f46">队列 B</text>
+  <rect x="890" y="522" width="188" height="24" rx="5" fill="#6ee7b7"/><text x="984" y="538" text-anchor="middle" font-size="10" fill="#065f46">worker B 串行</text>
+  <text x="890" y="566" font-size="9.5" fill="#047857">与 A 并行处理</text>
+  <text x="890" y="584" font-size="9" fill="#059669">组间并行→吞吐高</text>
+
+  <!-- to engine -->
+  <line x1="870" y1="628" x2="680" y2="818" stroke="#475569" stroke-width="2" marker-end="url(#s_arrow)"/>
+  <rect x="630" y="686" width="480" height="90" rx="10" fill="#ffffff" stroke="#99f6e4"/>
+  <text x="646" y="708" font-size="11.5" font-weight="700" fill="#0f766e">配置</text>
+  <text x="646" y="729" font-size="10.5" fill="#475569">三级优先级：CLI &gt; 环境变量 &gt; YAML &gt; 默认</text>
+  <text x="646" y="748" font-size="10.5" fill="#475569">entity_types / group_id(默认main) / SEMAPHORE_LIMIT</text>
+  <text x="646" y="767" font-size="10.5" fill="#64748b">默认 FalkorDB，支持 Neo4j</text>
+
+  <!-- bottom takeaway -->
+  <rect x="40" y="924" width="1100" height="60" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="60" y="948" font-size="13" font-weight="700" fill="#b45309">💡 共同点：都靠队列把并发写串行化（add_episode 必须串行，否则并发写图有竞态）</text>
+  <text x="60" y="970" font-size="12" fill="#334155">差异：REST 全局单队列（简单，所有 group 排一队）＋继承；MCP 按 group 分队列（组内串行组间并行，吞吐高）＋组合常驻</text>
+</svg>

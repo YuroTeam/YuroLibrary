@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="900" viewBox="0 0 1240 900" font-family="'Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <style>
+      .title{font-size:30px;font-weight:700;fill:#0f172a}
+      .sub{font-size:14px;fill:#64748b}
+      .band{font-size:13px;font-weight:700;letter-spacing:.08em;fill:#475569}
+      .box-t{font-size:15px;font-weight:700}
+      .box-s{font-size:11.5px}
+      .lbl{font-size:11px;fill:#64748b;font-style:italic}
+    </style>
+  </defs>
+
+  <rect width="1240" height="900" fill="#f8fafc"/>
+  <text x="60" y="52" class="title">Microsoft GraphRAG · 总体架构</text>
+  <text x="60" y="76" class="sub">graphrag 3.1.0 — LLM 驱动的知识图谱数据管道（索引 → 图谱制品 → 查询）</text>
+
+  <!-- CONFIG -->
+  <g>
+    <rect x="60" y="104" width="1120" height="86" rx="12" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+    <text x="80" y="128" class="band" fill="#7c3aed">CONFIGURATION</text>
+    <rect x="80" y="138" width="300" height="40" rx="8" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="230" y="163" text-anchor="middle" class="box-t" fill="#5b21b6">GraphRagConfig (pydantic 聚合根)</text>
+    <text x="420" y="150" class="box-s" fill="#6d28d9">settings.yaml / settings.json</text>
+    <text x="420" y="170" class="box-s" fill="#6d28d9">.env  +  ${ENV_VAR} 替换</text>
+    <rect x="700" y="138" width="220" height="40" rx="8" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="810" y="163" text-anchor="middle" class="box-t" fill="#5b21b6">defaults 单例 (DRY)</text>
+    <rect x="945" y="138" width="215" height="40" rx="8" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="1052" y="163" text-anchor="middle" class="box-t" fill="#5b21b6">enums · embeddings</text>
+  </g>
+
+  <!-- ENTRY -->
+  <g>
+    <rect x="60" y="212" width="1120" height="84" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="80" y="236" class="band" fill="#2563eb">ENTRY LAYER</text>
+    <rect x="80" y="246" width="330" height="40" rx="8" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="245" y="271" text-anchor="middle" class="box-t" fill="#1e40af">CLI (Typer) · graphrag</text>
+    <text x="430" y="272" class="box-s" fill="#1d4ed8">init · index · update · query · prompt-tune</text>
+    <rect x="820" y="246" width="340" height="40" rx="8" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="990" y="271" text-anchor="middle" class="box-t" fill="#1e40af">graphrag.api (公共入口 · unstable)</text>
+  </g>
+
+  <!-- config -> entry arrow -->
+  <line x1="620" y1="190" x2="620" y2="210" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- TWO SUBSYSTEMS -->
+  <!-- Indexing -->
+  <g>
+    <rect x="60" y="326" width="545" height="250" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+    <text x="80" y="350" class="band" fill="#16a34a">INDEXING 子系统</text>
+    <text x="80" y="372" class="lbl">build_index()  →  Pipeline (有序 workflow 列表)</text>
+
+    <rect x="80" y="386" width="230" height="34" rx="7" fill="#dcfce7" stroke="#4ade80"/>
+    <text x="195" y="408" text-anchor="middle" class="box-s" fill="#15803d" font-weight="700">PipelineFactory · run_pipeline</text>
+    <rect x="330" y="386" width="245" height="34" rx="7" fill="#dcfce7" stroke="#4ade80"/>
+    <text x="452" y="408" text-anchor="middle" class="box-s" fill="#15803d" font-weight="700">PipelineRunContext (state)</text>
+
+    <rect x="80" y="430" width="495" height="60" rx="7" fill="#ffffff" stroke="#86efac"/>
+    <text x="92" y="450" class="box-s" fill="#166534" font-weight="700">workflows</text>
+    <text x="92" y="468" class="box-s" fill="#3f6212">create_base_text_units → extract_graph → finalize_graph →</text>
+    <text x="92" y="483" class="box-s" fill="#3f6212">create_communities → create_community_reports → embeddings</text>
+
+    <rect x="80" y="500" width="240" height="56" rx="7" fill="#ffffff" stroke="#86efac"/>
+    <text x="92" y="520" class="box-s" fill="#166534" font-weight="700">operations</text>
+    <text x="92" y="537" class="box-s" fill="#3f6212">extract_graph · summarize ·</text>
+    <text x="92" y="550" class="box-s" fill="#3f6212">cluster_graph · embed_text</text>
+    <rect x="335" y="500" width="240" height="56" rx="7" fill="#ffffff" stroke="#86efac"/>
+    <text x="347" y="520" class="box-s" fill="#166534" font-weight="700">graphs</text>
+    <text x="347" y="537" class="box-s" fill="#3f6212">hierarchical_leiden ·</text>
+    <text x="347" y="550" class="box-s" fill="#3f6212">connected_components · modularity</text>
+  </g>
+
+  <!-- Query -->
+  <g>
+    <rect x="635" y="326" width="545" height="250" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+    <text x="655" y="350" class="band" fill="#ea580c">QUERY 子系统</text>
+    <text x="655" y="372" class="lbl">*_search()  →  ContextBuilder + Search 引擎 (BaseSearch)</text>
+
+    <rect x="655" y="386" width="252" height="46" rx="7" fill="#ffedd5" stroke="#fb923c"/>
+    <text x="781" y="404" text-anchor="middle" class="box-s" fill="#c2410c" font-weight="700">Local Search</text>
+    <text x="781" y="422" text-anchor="middle" class="box-s" fill="#9a3412">实体局部 · 混合上下文 · 单次</text>
+    <rect x="915" y="386" width="252" height="46" rx="7" fill="#ffedd5" stroke="#fb923c"/>
+    <text x="1041" y="404" text-anchor="middle" class="box-s" fill="#c2410c" font-weight="700">Global Search</text>
+    <text x="1041" y="422" text-anchor="middle" class="box-s" fill="#9a3412">全局主题 · 社区报告 · Map-Reduce</text>
+
+    <rect x="655" y="442" width="252" height="46" rx="7" fill="#ffedd5" stroke="#fb923c"/>
+    <text x="781" y="460" text-anchor="middle" class="box-s" fill="#c2410c" font-weight="700">DRIFT Search</text>
+    <text x="781" y="478" text-anchor="middle" class="box-s" fill="#9a3412">多跳推理 · 定调+迭代局部跟进</text>
+    <rect x="915" y="442" width="252" height="46" rx="7" fill="#ffedd5" stroke="#fb923c"/>
+    <text x="1041" y="460" text-anchor="middle" class="box-s" fill="#c2410c" font-weight="700">Basic Search</text>
+    <text x="1041" y="478" text-anchor="middle" class="box-s" fill="#9a3412">纯向量 RAG · 忽略图</text>
+
+    <rect x="655" y="500" width="512" height="56" rx="7" fill="#ffffff" stroke="#fdba74"/>
+    <text x="667" y="520" class="box-s" fill="#9a3412" font-weight="700">context_builder</text>
+    <text x="667" y="538" class="box-s" fill="#b45309">按 token 预算组装 实体/关系/社区报告/文本单元/声明 + 对话历史</text>
+    <text x="667" y="551" class="box-s" fill="#b45309">read_indexer_* 适配器：parquet DataFrame ↔ 领域对象</text>
+  </g>
+
+  <!-- entry -> subsystems -->
+  <line x1="330" y1="296" x2="330" y2="324" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="900" y1="296" x2="900" y2="324" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- ARTIFACTS -->
+  <g>
+    <rect x="60" y="600" width="1120" height="94" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="80" y="624" class="band" fill="#475569">制品层 · ARTIFACTS (parquet 表 + 向量库)</text>
+    <g font-weight="700">
+      <rect x="80" y="638" width="150" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="155" y="664" text-anchor="middle" class="box-s" fill="#334155">documents</text>
+      <rect x="240" y="638" width="150" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="315" y="664" text-anchor="middle" class="box-s" fill="#334155">text_units</text>
+      <rect x="400" y="638" width="150" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="475" y="664" text-anchor="middle" class="box-s" fill="#334155">entities</text>
+      <rect x="560" y="638" width="150" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="635" y="664" text-anchor="middle" class="box-s" fill="#334155">relationships</text>
+      <rect x="720" y="638" width="150" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="795" y="664" text-anchor="middle" class="box-s" fill="#334155">communities</text>
+      <rect x="880" y="638" width="150" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="955" y="659" text-anchor="middle" class="box-s" fill="#334155">community_</text><text x="955" y="672" text-anchor="middle" class="box-s" fill="#334155">reports</text>
+      <rect x="1040" y="638" width="120" height="42" rx="7" fill="#e2e8f0" stroke="#94a3b8"/><text x="1100" y="659" text-anchor="middle" class="box-s" fill="#334155">covariates ·</text><text x="1100" y="672" text-anchor="middle" class="box-s" fill="#334155">embeddings</text>
+    </g>
+  </g>
+
+  <!-- indexing -> artifacts (write), artifacts -> query (read) -->
+  <line x1="330" y1="576" x2="330" y2="598" stroke="#16a34a" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="338" y="592" class="lbl" fill="#16a34a">写</text>
+  <line x1="900" y1="598" x2="900" y2="576" stroke="#ea580c" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="908" y="592" class="lbl" fill="#ea580c">读</text>
+
+  <!-- INFRA -->
+  <g>
+    <rect x="60" y="718" width="1120" height="150" rx="12" fill="#f0fdfa" stroke="#5eead4" stroke-width="1.5"/>
+    <text x="80" y="742" class="band" fill="#0d9488">基础设施包 · 统一抽象 + Factory 选择后端 (惰性导入)</text>
+    <g>
+      <rect x="80" y="756" width="205" height="96" rx="8" fill="#ccfbf1" stroke="#2dd4bf"/>
+      <text x="182" y="778" text-anchor="middle" class="box-s" fill="#0f766e" font-weight="700">graphrag-storage</text>
+      <text x="182" y="798" text-anchor="middle" class="box-s" fill="#115e59">Storage / TableProvider</text>
+      <text x="182" y="814" text-anchor="middle" class="box-s" fill="#0d9488">File·Memory·Blob·Cosmos</text>
+      <text x="182" y="836" text-anchor="middle" class="box-s" fill="#0d9488">parquet / csv / cosmos 表</text>
+
+      <rect x="295" y="756" width="205" height="96" rx="8" fill="#ccfbf1" stroke="#2dd4bf"/>
+      <text x="397" y="778" text-anchor="middle" class="box-s" fill="#0f766e" font-weight="700">graphrag-llm</text>
+      <text x="397" y="798" text-anchor="middle" class="box-s" fill="#115e59">litellm chat/embedding</text>
+      <text x="397" y="814" text-anchor="middle" class="box-s" fill="#0d9488">中间件管道</text>
+      <text x="397" y="836" text-anchor="middle" class="box-s" fill="#0d9488">cache·retry·ratelimit·metrics</text>
+
+      <rect x="510" y="756" width="205" height="96" rx="8" fill="#ccfbf1" stroke="#2dd4bf"/>
+      <text x="612" y="778" text-anchor="middle" class="box-s" fill="#0f766e" font-weight="700">graphrag-vectors</text>
+      <text x="612" y="798" text-anchor="middle" class="box-s" fill="#115e59">VectorStore</text>
+      <text x="612" y="814" text-anchor="middle" class="box-s" fill="#0d9488">LanceDB · AzureAISearch</text>
+      <text x="612" y="836" text-anchor="middle" class="box-s" fill="#0d9488">CosmosDB</text>
+
+      <rect x="725" y="756" width="205" height="96" rx="8" fill="#ccfbf1" stroke="#2dd4bf"/>
+      <text x="827" y="778" text-anchor="middle" class="box-s" fill="#0f766e" font-weight="700">graphrag-cache</text>
+      <text x="827" y="798" text-anchor="middle" class="box-s" fill="#115e59">Cache</text>
+      <text x="827" y="814" text-anchor="middle" class="box-s" fill="#0d9488">Json · Memory · Noop</text>
+
+      <rect x="940" y="756" width="220" height="96" rx="8" fill="#ccfbf1" stroke="#2dd4bf"/>
+      <text x="1050" y="778" text-anchor="middle" class="box-s" fill="#0f766e" font-weight="700">chunking · input · common</text>
+      <text x="1050" y="798" text-anchor="middle" class="box-s" fill="#115e59">Token/Sentence 分块器</text>
+      <text x="1050" y="814" text-anchor="middle" class="box-s" fill="#0d9488">csv·json·text·markitdown 读取</text>
+      <text x="1050" y="836" text-anchor="middle" class="box-s" fill="#0d9488">Factory · hasher</text>
+    </g>
+  </g>
+
+  <!-- artifacts -> infra -->
+  <line x1="620" y1="718" x2="620" y2="694" stroke="#64748b" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+</svg>
